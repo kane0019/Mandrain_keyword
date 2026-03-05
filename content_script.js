@@ -1,51 +1,75 @@
 /**
  * Content Script - DOM操作层
  * 职责：
- * 1. 监听用户选词事件 (mouseup / 快捷键)
+ * 1. 监听用户选词事件 (mouseup)
  * 2. 提取选中词汇和语义上下文（前后200字符）
  * 3. 向background发起本地/云端查询请求
  * 4. Shadow DOM注入UI卡片
- * 5. 处理卡片交互事件（关闭、保存等）
+ * 5. 处理卡片交互事件（关闭、复制等）
  */
 
 // 当前活跃的UI卡片引用，防止重复创建
 let activeCard = null;
+let latestRequestId = 0;
+let lastSelectionSignature = '';
+let suppressedSelectionSignature = '';
 
 /**
  * 事件监听 - 鼠标松开时检测是否有文本选中
  */
-document.addEventListener('mouseup', () => {
-  handleTextSelection();
-});
+document.addEventListener('mouseup', onDocumentMouseUp);
+document.addEventListener('selectionchange', onSelectionChange);
 
-/**
- * 快捷键监听 (可选：Ctrl+/)
- */
-document.addEventListener('keydown', (event) => {
-  // Ctrl + / 或 Cmd + /
-  if ((event.ctrlKey || event.metaKey) && event.key === '/') {
-    handleTextSelection();
+function onDocumentMouseUp(event) {
+  if (event.button !== 0) return;
+
+  if (activeCard && event.target instanceof Node && activeCard.contains(event.target)) {
+    return;
   }
-});
+
+  handleTextSelection();
+}
+
+function onSelectionChange() {
+  const selection = window.getSelection();
+  const selectedText = selection ? selection.toString().trim() : '';
+
+  if (!selectedText) {
+    // 选区清空后，允许重新查询相同词条
+    lastSelectionSignature = '';
+    suppressedSelectionSignature = '';
+  }
+}
 
 /**
  * 处理文本选择
  */
 function handleTextSelection() {
-  const selectedText = window.getSelection().toString().trim();
+  const snapshot = getSelectionSnapshot();
 
-  if (!selectedText || selectedText.length === 0) {
-    destroyCard();
+  if (!snapshot) {
+    destroyCard({ cancelPending: true });
     return;
   }
 
-  // 提取选词周围的上下文（前后200字符）
-  const context = extractContext(selectedText);
+  const { selectedText, range, rect } = snapshot;
+  const selectionSignature = buildSelectionSignature(selectedText, rect);
+  console.log('[Mandrain] handleTextSelection got:', selectedText);
 
-  // 获取鼠标屏幕坐标
-  const selection = window.getSelection();
-  const range = selection.getRangeAt(0);
-  const rect = range.getBoundingClientRect();
+  // 关闭卡片后，未改变选区前不重复触发
+  if (selectionSignature === suppressedSelectionSignature) {
+    return;
+  }
+  suppressedSelectionSignature = '';
+
+  // 同一选区去重，避免重复查询
+  if (selectionSignature === lastSelectionSignature) {
+    return;
+  }
+  lastSelectionSignature = selectionSignature;
+
+  const context = extractContext(range, selectedText);
+  const requestId = ++latestRequestId;
 
   // 向background发送查询请求
   chrome.runtime.sendMessage(
@@ -59,6 +83,18 @@ function handleTextSelection() {
       }
     },
     (response) => {
+      // 只接收最新请求，丢弃过期响应
+      if (requestId !== latestRequestId) {
+        return;
+      }
+
+      if (chrome.runtime.lastError) {
+        console.warn('[Mandrain] runtime error:', chrome.runtime.lastError.message);
+        showErrorCard('查询失败', rect);
+        return;
+      }
+
+      console.log('[Mandrain] received response', response);
       if (response && response.success) {
         renderCard(response.data, rect);
       } else {
@@ -68,35 +104,84 @@ function handleTextSelection() {
   );
 }
 
+function getSelectionSnapshot() {
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) {
+    return null;
+  }
+
+  const selectedText = selection.toString().trim();
+  if (!selectedText) {
+    return null;
+  }
+
+  const range = selection.getRangeAt(0).cloneRange();
+  const rawRect = range.getBoundingClientRect();
+  const rect = {
+    left: rawRect.left,
+    top: rawRect.top,
+    bottom: rawRect.bottom,
+    width: rawRect.width,
+    height: rawRect.height
+  };
+
+  return {
+    selection,
+    selectedText,
+    range,
+    rect
+  };
+}
+
+function buildSelectionSignature(selectedText, rect) {
+  return `${selectedText}@@${Math.round(rect.left)}:${Math.round(rect.top)}:${Math.round(rect.width)}:${Math.round(rect.height)}`;
+}
+
 /**
  * 上下文提取 - 获取选词前后约200字符
+ * @param {Range} range 当前选区Range
  * @param {string} selectedText 用户选中的词汇
  * @returns {object} 包含选词、前缀、后缀的上下文
  */
-function extractContext(selectedText) {
-  const selection = window.getSelection();
-  const range = selection.getRangeAt(0);
-  
-  // 克隆Range，向前延伸获取前缀
-  const beforeRange = range.cloneRange();
-  beforeRange.collapse(true);
-  beforeRange.setStart(document.body, 0);
-  const beforeText = beforeRange.toString();
-  const prefixStartIdx = Math.max(0, beforeText.length - 200);
-  const prefix = beforeText.slice(prefixStartIdx);
+function extractContext(range, selectedText) {
+  try {
+    if (!document.body) {
+      return {
+        prefix: '',
+        word: selectedText,
+        suffix: '',
+        fullContext: selectedText
+      };
+    }
 
-  // 向后延伸获取后缀
-  const afterRange = range.cloneRange();
-  afterRange.collapse(false);
-  const afterText = afterRange.toString();
-  const suffix = afterText.slice(0, 200);
+    const beforeRange = document.createRange();
+    beforeRange.setStart(document.body, 0);
+    beforeRange.setEnd(range.startContainer, range.startOffset);
+    const beforeText = beforeRange.toString();
+    const prefixStartIdx = Math.max(0, beforeText.length - 200);
+    const prefix = beforeText.slice(prefixStartIdx);
 
-  return {
-    prefix: prefix,
-    word: selectedText,
-    suffix: suffix,
-    fullContext: prefix + selectedText + suffix
-  };
+    const afterRange = document.createRange();
+    afterRange.setStart(range.endContainer, range.endOffset);
+    afterRange.setEnd(document.body, document.body.childNodes.length);
+    const afterText = afterRange.toString();
+    const suffix = afterText.slice(0, 200);
+
+    return {
+      prefix: prefix,
+      word: selectedText,
+      suffix: suffix,
+      fullContext: prefix + selectedText + suffix
+    };
+  } catch (error) {
+    console.warn('[Mandrain] extractContext failed:', error);
+    return {
+      prefix: '',
+      word: selectedText,
+      suffix: '',
+      fullContext: selectedText
+    };
+  }
 }
 
 /**
@@ -147,18 +232,20 @@ function renderCard(data, rect) {
     }
     .card-item {
       margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
     }
     .card-label {
       color: #666;
       font-weight: 500;
-      display: inline-block;
-      width: 60px;
-      vertical-align: top;
+      flex: 0 0 84px;
     }
     .card-content {
-      display: inline-block;
-      width: calc(100% - 70px);
+      flex: 1;
+      min-width: 0;
       color: #333;
+      word-break: break-word;
     }
     .card-footer {
       margin-top: 10px;
@@ -198,25 +285,24 @@ function renderCard(data, rect) {
   `;
   shadowRoot.appendChild(style);
 
-  // 构建卡片HTML
+  // 构建卡片HTML - 英文模式，展示 zh, en, definition, implication, sentiment
   const cardHTML = `
     <div class="card">
       <div class="card-close">✕</div>
-      <div class="card-title">"${data.word || ''}"</div>
+      <div class="card-title">"${data.zh || ''}" → "${data.en || ''}"</div>
       <div class="card-item">
-        <span class="card-label">字面意</span>
-        <span class="card-content">${data.literal || '—'}</span>
+        <span class="card-label">Definition</span>
+        <span class="card-content">${data.definition || '—'}</span>
       </div>
       <div class="card-item">
-        <span class="card-label">潜台词</span>
+        <span class="card-label">Implication</span>
         <span class="card-content">${data.implication || '—'}</span>
       </div>
       <div class="card-item">
-        <span class="card-label">色彩</span>
+        <span class="card-label">Sentiment</span>
         <span class="card-content">${data.sentiment || '—'}</span>
       </div>
       <div class="card-footer">
-        <button class="card-btn card-btn-save">保存</button>
         <button class="card-btn card-btn-copy">复制</button>
       </div>
     </div>
@@ -227,16 +313,13 @@ function renderCard(data, rect) {
   shadowRoot.appendChild(cardDiv);
 
   // 事件绑定
-  shadowRoot.querySelector('.card-close').addEventListener('click', destroyCard);
-  shadowRoot.querySelector('.card-btn-save').addEventListener('click', () => {
-    saveToWordbook(data);
-  });
+  shadowRoot.querySelector('.card-close').addEventListener('click', closeCard);
   shadowRoot.querySelector('.card-btn-copy').addEventListener('click', () => {
     copyToClipboard(data);
   });
 
-  // 外部点击销毁卡片
-  document.addEventListener('click', onOutsideClick);
+  // 外部按下鼠标时销毁卡片（捕获阶段，避免mouseup重入）
+  document.addEventListener('pointerdown', onOutsidePointerDown, true);
 
   // Esc键销毁卡片
   document.addEventListener('keydown', onEscKey);
@@ -286,29 +369,55 @@ function showErrorCard(message, rect) {
   document.body.appendChild(container);
   activeCard = container;
 
+  document.addEventListener('pointerdown', onOutsidePointerDown, true);
+  document.addEventListener('keydown', onEscKey);
+
   // 3秒后自动销毁
-  setTimeout(destroyCard, 3000);
+  setTimeout(() => destroyCard(), 3000);
 }
 
 /**
  * 销毁卡片 - 从DOM树中移除，释放内存
  */
-function destroyCard() {
+function destroyCard(options = {}) {
+  const { cancelPending = false } = options;
+
+  if (cancelPending) {
+    // 递增请求序号，丢弃未返回的旧响应
+    latestRequestId += 1;
+  }
+
   if (activeCard) {
     activeCard.remove();
     activeCard = null;
   }
   // 移除事件监听器
-  document.removeEventListener('click', onOutsideClick);
+  document.removeEventListener('pointerdown', onOutsidePointerDown, true);
   document.removeEventListener('keydown', onEscKey);
+}
+
+/**
+ * 统一关闭入口：关闭后抑制同一选区重复触发
+ */
+function closeCard() {
+  suppressedSelectionSignature = lastSelectionSignature;
+  clearSelection();
+  destroyCard({ cancelPending: true });
+}
+
+function clearSelection() {
+  const selection = window.getSelection();
+  if (selection && selection.rangeCount > 0) {
+    selection.removeAllRanges();
+  }
 }
 
 /**
  * 外部点击事件处理
  */
-function onOutsideClick(event) {
-  if (activeCard && !activeCard.contains(event.target)) {
-    destroyCard();
+function onOutsidePointerDown(event) {
+  if (activeCard && event.target instanceof Node && !activeCard.contains(event.target)) {
+    closeCard();
   }
 }
 
@@ -317,33 +426,8 @@ function onOutsideClick(event) {
  */
 function onEscKey(event) {
   if (event.key === 'Escape') {
-    destroyCard();
+    closeCard();
   }
-}
-
-/**
- * 保存到生词本（示例，可扩展为本地存储或同步云端）
- */
-function saveToWordbook(data) {
-  const wordEntry = {
-    word: data.word,
-    literal: data.literal,
-    implication: data.implication,
-    sentiment: data.sentiment,
-    timestamp: new Date().toISOString()
-  };
-
-  chrome.runtime.sendMessage(
-    {
-      action: 'saveWordbook',
-      entry: wordEntry
-    },
-    (response) => {
-      if (response?.success) {
-        alert('已保存到生词本');
-      }
-    }
-  );
 }
 
 /**
@@ -351,8 +435,8 @@ function saveToWordbook(data) {
  */
 function copyToClipboard(data) {
   const text = `
-"${data.word}"
-字面意: ${data.literal || '—'}
+"${data.zh || data.word || ''}" -> "${data.en || '—'}"
+Definition: ${data.definition || data.literal || '—'}
 潜台词: ${data.implication || '—'}
 情绪色彩: ${data.sentiment || '—'}
   `.trim();

@@ -5,11 +5,11 @@
  * 2. 本地词库O(1)时间复杂度查询
  * 3. 云端API降级请求（2000ms超时控制）
  * 4. 网络容灾与优雅降级
- * 5. 生词本存储管理
  */
 
 // 本地词库缓存（内存级，应用启动时加载）
 let localDB = null;
+let localDBLoadPromise = null;
 
 /**
  * 启动时加载本地词库
@@ -25,31 +25,59 @@ async function loadLocalDB() {
   }
 }
 
-// Service Worker启动时加载词库
-loadLocalDB();
-
-/**
- * 监听来自content script的消息
- */
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === 'queryWord') {
-    handleWordQuery(request, sendResponse);
-  } else if (request.action === 'saveWordbook') {
-    handleSaveWordbook(request, sendResponse);
+function ensureLocalDBReady() {
+  if (localDB !== null) {
+    return Promise.resolve();
   }
-  // 异步响应，保持连接开放
+
+  if (!localDBLoadPromise) {
+    localDBLoadPromise = loadLocalDB().finally(() => {
+      localDBLoadPromise = null;
+    });
+  }
+
+  return localDBLoadPromise;
+}
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log('[Mandrain] received message', request);
+  if (request.action === 'queryWord') {
+    handleWordQuery(request, sendResponse).catch((error) => {
+      console.error('[Mandrain] handleWordQuery failed:', error);
+      sendResponse({
+        success: false,
+        error: error.message
+      });
+    });
+  }
   return true;
 });
+
+// Service Worker启动时加载词库
+ensureLocalDBReady();
 
 /**
  * 主查询逻辑 - 本地优先 + 云端降级
  */
 async function handleWordQuery(request, sendResponse) {
-  const { word, context } = request;
+  const { word } = request;
+  const queryWord = (word || '').trim();
+
+  if (!queryWord) {
+    sendResponse({
+      success: false,
+      error: 'empty_word'
+    });
+    return;
+  }
+
+  await ensureLocalDBReady();
+  console.log('[Mandrain] handleWordQuery for', queryWord);
 
   // 步骤1：本地词库查询 O(1)
-  const localResult = queryLocalDB(word);
+  const localResult = queryLocalDB(queryWord);
   if (localResult) {
+    console.log('[Mandrain] local hit for', queryWord, '(English mode)');
     sendResponse({
       success: true,
       data: localResult,
@@ -58,9 +86,29 @@ async function handleWordQuery(request, sendResponse) {
     return;
   }
 
+  // 测试模式：如果本地未命中，直接返回 Not_Found，无需云端调用
+  const notFoundData = {
+    zh: queryWord,
+    en: 'Not available',
+    definition: 'Not_Found',
+    implication: 'Not_Found',
+    sentiment: 'unknown',
+    degraded: true
+  };
+  console.log('[Mandrain] local miss for', queryWord, ', returning Not_Found placeholder for testing');
+  sendResponse({
+    success: true,
+    data: notFoundData,
+    source: 'notfound'
+  });
+  return;
+
+  /* 原逻辑保留以备将来使用
+  console.log('[Mandrain] local miss, querying cloud');
   // 步骤2：本地未命中，发起云端API请求（带超时控制）
   try {
     const cloudResult = await queryCloudAPI(word, context);
+    console.log('[Mandrain] cloud result', cloudResult);
     sendResponse({
       success: true,
       data: cloudResult,
@@ -77,6 +125,7 @@ async function handleWordQuery(request, sendResponse) {
       error: error.message
     });
   }
+  */
 }
 
 /**
@@ -91,12 +140,6 @@ function queryLocalDB(word) {
   if (localDB[word]) {
     return localDB[word];
   }
-
-  // 可选：模糊匹配（如果严格匹配未命中）
-  // const fuzzyMatch = Object.keys(localDB).find(key => key.includes(word));
-  // if (fuzzyMatch) {
-  //   return localDB[fuzzyMatch];
-  // }
 
   return null;
 }
@@ -161,52 +204,4 @@ function generateFallback(word) {
     degraded: true,
     message: '云端语义解析当前不可用，已为您展示基础字面翻译。'
   };
-}
-
-/**
- * 保存到生词本
- * @param {object} request 包含word entry的请求
- * @param {function} sendResponse 响应回调
- */
-async function handleSaveWordbook(request, sendResponse) {
-  try {
-    const { entry } = request;
-    
-    // 从存储中读取现有词条
-    const result = await chrome.storage.local.get('wordbook');
-    const wordbook = result.wordbook || [];
-    
-    // 检查是否重复
-    const exists = wordbook.some(item => item.word === entry.word);
-    if (exists) {
-      sendResponse({
-        success: false,
-        message: '词条已存在'
-      });
-      return;
-    }
-
-    // 添加新词条
-    wordbook.push(entry);
-    await chrome.storage.local.set({ wordbook });
-
-    sendResponse({
-      success: true,
-      message: '已保存到生词本'
-    });
-  } catch (error) {
-    console.error('[Mandrain] 保存词条失败:', error);
-    sendResponse({
-      success: false,
-      error: error.message
-    });
-  }
-}
-
-/**
- * 获取生词本（可在popup或options页面中使用）
- */
-async function getWordbook() {
-  const result = await chrome.storage.local.get('wordbook');
-  return result.wordbook || [];
 }

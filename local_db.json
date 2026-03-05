@@ -1,499 +1,72 @@
-{
+﻿{
   "赋能": {
-    "word": "赋能",
-    "literal": "给予权力或能力；使具备能力",
-    "implication": "通常用于管理层面，指为员工或下级提供资源和权限，使其能独立工作",
-    "sentiment": "中性偏正面",
-    "examples": ["赋能员工创新能力", "技术赋能业务发展"]
+    "zh": "赋能",
+    "en": "empower",
+    "definition": "To give someone the power, authority, or ability to do something",
+    "implication": "In corporate contexts, often used to delegate responsibility while maintaining control; implies trust but with underlying power dynamics",
+    "sentiment": "positive"
   },
   "破局": {
-    "word": "破局",
-    "literal": "打破僵局；找到解决问题的新方法",
-    "implication": "暗示现状陷入困境，需要创新思维或激进举措才能突破",
-    "sentiment": "正面，带有希望和力量感",
-    "examples": ["寻求破局之路", "破局创新"]
+    "zh": "破局",
+    "en": "break through",
+    "definition": "To break a stalemate or find a new way to solve a problem",
+    "implication": "Suggests the current situation is stuck and requires bold, innovative thinking to overcome barriers",
+    "sentiment": "positive"
   },
   "反思": {
-    "word": "反思",
-    "literal": "思考过去的行为、决策或结果；批判性审视",
-    "implication": "承认存在不足，表现出谦虚和改进意愿",
-    "sentiment": "中性，带有自我认知味道",
-    "examples": ["深刻反思错误", "反思工作成果"]
+    "zh": "反思",
+    "en": "reflect",
+    "definition": "To think critically about past actions, decisions, or outcomes",
+    "implication": "Acknowledges shortcomings and demonstrates humility and willingness to improve",
+    "sentiment": "neutral"
   },
-  "优化": {
-    "word": "优化",
-    "literal": "使现有事物在某方面变得更好、更高效",
-    "implication": "表示进行改进和升级，但幅度可能有限",
-    "sentiment": "中性偏正面",
-    "examples": ["优化流程", "性能优化"]
+  "链路": {
+    "zh": "链路",
+    "en": "path",
+    "definition": "A connected pathway through various stages or nodes",
+    "implication": "Emphasizes process flows and data pipelines",
+    "sentiment": "neutral"
   },
-  "共创": {
-    "word": "共创",
-    "literal": "多方面共同参与创造过程",
-    "implication": "强调合作精神和集体智慧，体现现代团队文化",
-    "sentiment": "正面，强调团队感",
-    "examples": ["共创未来", "与客户共创价值"]
+  "颗粒度": {
+    "zh": "颗粒度",
+    "en": "granularity",
+    "definition": "The level of detail or fineness in dividing units or analysis",
+    "implication": "Fine granularity means more detailed and precise control",
+    "sentiment": "neutral"
   },
-  "生态": {
-    "word": "生态",
-    "literal": "生物与环境互动形成的系统；引申为商业或产业系统",
-    "implication": "在商业语境中，指围绕核心产品形成的上下游产业链和合作伙伴网络",
-    "sentiment": "正面，暗示完整和可持续",
-    "examples": ["阿里生态", "生态链建设"]
-  },
-  "颠覆": {
-    "word": "颠覆",
-    "literal": "推翻或彻底改变现有的事物、观念或秩序",
-    "implication": "通常用于描述创新企业对传统行业的冲击，带有激进色彩",
-    "sentiment": "中性至正面（对创新者），负面（对被冲击者）",
-    "examples": ["颠覆传统", "技术颠覆"]
-  },
-  "场景": {
-    "word": "场景",
-    "literal": "事件发生的具体环境或背景；应用的特定情境",
-    "implication": "在目标驱动的商业分析中，指具体的用户需求或业务场景，强调实际应用",
-    "sentiment": "中性",
-    "examples": ["应用场景", "用户场景分析"]
-  },
-  "赛道": {
-    "word": "赛道",
-    "literal": "竞速的跑道；引申为竞争领域或行业分布",
-    "implication": "指互联网行业的竞争领域或商业机会，暗示这是一个值得投资和竞争的领域",
-    "sentiment": "正面，充满机遇感",
-    "examples": ["社交赛道", "短视频赛道"]
-  },
-  "降维打击": {
-    "word": "降维打击",
-    "literal": "来自更高维度对低维度的压倒性攻击；引申为高能力对低能力的完全碾压",
-    "implication": "用于描述掌握技术优势或资源优势的一方对对手的完全压制，含有轻蔑成分",
-    "sentiment": "中性至贬低",
-    "examples": ["技术降维打击", "资本降维打击"]
-  },
-  "用户导向": {
-    "word": "用户导向",
-    "literal": "以用户需求为中心的安排和决策",
-    "implication": "强调企业应围绕用户价值进行业务设计",
-    "sentiment": "正面",
-    "examples": ["用户导向的产品设计"]
-  },
-  "大数据": {
-    "word": "大数据",
-    "literal": "规模庞大、类型众多、处理快速的数据集合",
-    "implication": "象征现代企业拥有数据资产和分析能力，是竞争力的来源",
-    "sentiment": "正面，充满科技感",
-    "examples": ["大数据分析", "大数据驱动"]
-  },
-  "人工智能": {
-    "word": "人工智能",
-    "literal": "由人制造出来的机器所表现的能力",
-    "implication": "代表前沿科技，被视为未来发展方向和竞争力源泉",
-    "sentiment": "正面，充满前瞻性",
-    "examples": ["AI赋能", "人工智能应用"]
-  },
-  "中台": {
-    "word": "中台",
-    "literal": "组织结构中的中间层次；技术上指共享服务层",
-    "implication": "体现现代组织强调跨部门协作和复用能力的理念",
-    "sentiment": "中性偏正面",
-    "examples": ["业务中台", "数据中台"]
-  },
-  "全流程": {
-    "word": "全流程",
-    "literal": "从开始到结束的完整过程",
-    "implication": "强调覆盖面和完整性",
-    "sentiment": "中性",
-    "examples": ["全流程优化", "全流程监控"]
-  },
-  "闭环": {
-    "word": "闭环",
-    "literal": "形成完整的循环系统",
-    "implication": "体现系统的完整性和自我优化能力，是系统设计的理想状态",
-    "sentiment": "正面",
-    "examples": ["形成闭环", "闭环管理"]
-  },
-  "去中心化": {
-    "word": "去中心化",
-    "literal": "不依赖单一中心节点的分布式架构",
-    "implication": "强调权力分散、灵活性强，在区块链领域特别流行",
-    "sentiment": "正面（在技术社区），中性（在其他领域）",
-    "examples": ["去中心化治理", "区块链去中心化"]
+  "迭代": {
+    "zh": "迭代",
+    "en": "iterate",
+    "definition": "To repeat or cycle through a process for progressive improvement",
+    "implication": "Reflects continuous improvement and feedback loops",
+    "sentiment": "neutral"
   },
   "快速迭代": {
-    "word": "快速迭代",
-    "literal": "在短时间内多次改进和更新产品或流程",
-    "implication": "体现敏捷和学习文化，是互联网企业的核心竞争力",
-    "sentiment": "正面",
-    "examples": ["快速迭代产品", "敏捷迭代"]
+    "zh": "快速迭代",
+    "en": "rapid iteration",
+    "definition": "Multiple improvements or updates to a product made in quick succession",
+    "implication": "Reflects agile culture and learning mindset; core competitive advantage",
+    "sentiment": "positive"
   },
-  "用户体验": {
-    "word": "用户体验",
-    "literal": "用户与产品交互的整个感受过程",
-    "implication": "强调产品设计以用户为中心，是评估产品好坏的重要指标",
-    "sentiment": "中性，充满专业性",
-    "examples": ["优化用户体验", "UX设计"]
-  },
-  "增长黑客": {
-    "word": "增长黑客",
-    "literal": "以创意、分析和技术手段快速实现产品增长的方法",
-    "implication": "强调通过非常规手段快速扩展业务，有时暗示争议性的增长方式",
-    "sentiment": "中性偏正面（对增长者），负面（对被增长对象）",
-    "examples": ["增长黑客策略", "黑客增长"]
-  },
-  "天花板": {
-    "word": "天花板",
-    "literal": "房间的上部分；引申为最高限制或上限",
-    "implication": "用于描述业务或市场的增长上限，暗示可能面临的瓶颈",
-    "sentiment": "偏负面，充满限制感",
-    "examples": ["市场天花板", "增长天花板"]
-  },
-  "风口": {
-    "word": "风口",
-    "literal": "风吹入的口子；引申为刮风的地方",
-    "implication": "比喻商业机会和行业红利期，源自'猪在风口也能飞'的隐喻",
-    "sentiment": "正面，充满机遇感和投资热度",
-    "examples": ["站在风口", "短视频风口"]
-  },
-  "抖动": {
-    "word": "抖动",
-    "literal": "快速抖动或振动",
-    "implication": "在商业语境中，可能指市场波动或暂时的不稳定",
-    "sentiment": "偏负面",
-    "examples": ["市场抖动"]
-  },
-  "双循环": {
-    "word": "双循环",
-    "literal": "两个循环同时进行",
-    "implication": "国家级的宏观经济策略，指国内循环和国际循环的双向流动",
-    "sentiment": "中性，政策导向",
-    "examples": ["国内大循环", "双循环战略"]
-  },
-  "实体经济": {
-    "word": "实体经济",
-    "literal": "生产物质产品和服务的经济部门",
-    "implication": "强调制造业和真实的价值创造，有时用于强调与虚拟经济的对比",
-    "sentiment": "中性至正面",
-    "examples": ["发展实体经济", "实体经济支撑"]
-  },
-  "虚拟经济": {
-    "word": "虚拟经济",
-    "literal": "不涉及物质产品的金融和信息经济",
-    "implication": "通常与金融、互联网、房地产关联，有时被政策导向贬低",
-    "sentiment": "中性至负面（取决于政策导向）",
-    "examples": ["虚拟经济泡沫"]
-  },
-  "内循环": {
-    "word": "内循环",
-    "literal": "在内部进行的循环",
-    "implication": "强调自我依赖和自主能力，政策层面用于强调国内市场的重要性",
-    "sentiment": "正面",
-    "examples": ["国内大循环", "内循环驱动"]
-  },
-  "卡脖子": {
-    "word": "卡脖子",
-    "literal": "掐住脖子；引申为被控制或受限",
-    "implication": "用于描述技术或资源被他国或他企业垄断而受限的状态，充满紧迫感",
-    "sentiment": "负面，充满危机感",
-    "examples": ["芯片卡脖子", "技术卡脖子"]
-  },
-  "国产替代": {
-    "word": "国产替代",
-    "literal": "用国内产品替代进口产品",
-    "implication": "国家和企业层面的战略，体现自主性和安全性考量",
-    "sentiment": "正面",
-    "examples": ["芯片国产替代", "进口替代"]
-  },
-  "产业升级": {
-    "word": "产业升级",
-    "literal": "提升产业的技术水平和附加值",
-    "implication": "从低端制造向高端制造或服务转变，是经济发展的关键过程",
-    "sentiment": "正面",
-    "examples": ["产业升级战略", "经济结构升级"]
-  },
-  "供应链": {
-    "word": "供应链",
-    "literal": "从原材料采购到最终产品交付的整个链条",
-    "implication": "代表现代生产和商业的复杂性，其稳定性直接影响产业",
-    "sentiment": "中性",
-    "examples": ["供应链管理", "供应链安全"]
-  },
-  "价值链": {
-    "word": "价值链",
-    "literal": "企业从原材料到最终产品的各个环节创造的价值集合",
-    "implication": "强调不同环节的价值贡献，用于分析竞争优势",
-    "sentiment": "中性",
-    "examples": ["价值链分析", "向价值链上游延伸"]
-  },
-  "竞争优势": {
-    "word": "竞争优势",
-    "literal": "相比竞争对手更强的能力或资源",
-    "implication": "企业战略分析的核心，强调独特性和难以复制性",
-    "sentiment": "正面",
-    "examples": ["建立竞争优势", "核心竞争力"]
-  },
-  "护城河": {
-    "word": "护城河",
-    "literal": "城堡周围的水道；引申为防御屏障",
-    "implication": "用于描述企业的竞争壁垒和持久优势，强调难以被竞争对手突破",
-    "sentiment": "正面（对发起方），负面（对竞争方）",
-    "examples": ["品牌护城河", "技术护城河"]
-  },
-  "烧钱": {
-    "word": "烧钱",
-    "literal": "大量花费金钱",
-    "implication": "互联网企业早期为获取用户或市场份额而进行的大额投入，通常为亏损状态",
-    "sentiment": "中性至负面",
-    "examples": ["烧钱拓展市场", "融资烧钱"]
-  },
-  "融资": {
-    "word": "融资",
-    "literal": "企业获取资金的活动",
-    "implication": "体现企业发展阶段和融资能力，是企业成长的关键环节",
-    "sentiment": "正面",
-    "examples": ["融资轮次", "A轮融资"]
-  },
-  "估值": {
-    "word": "估值",
-    "literal": "对企业或资产进行价值评估",
-    "implication": "反映市场对企业的认可程度和发展潜力",
-    "sentiment": "中性",
-    "examples": ["企业估值", "独角兽估值"]
-  },
-  "独角兽": {
-    "word": "独角兽",
-    "literal": "神话中的独角马兽；引申为罕见事物",
-    "implication": "指估值10亿美元以上的未上市初创企业，代表商业成功和创新",
-    "sentiment": "正面，充满神秘感和价值感",
-    "examples": ["独角兽企业", "成为独角兽"]
-  },
-  "IPO": {
-    "word": "IPO",
-    "literal": "首次公开募股，企业首次向公众发行股票",
-    "implication": "企业发展的里程碑，标志着走向成熟和获得公众认可",
-    "sentiment": "正面",
-    "examples": ["准备IPO", "上市融资"]
-  },
-  "退出": {
-    "word": "退出",
-    "literal": "从某个位置或活动中离开；在投资语境中指变现",
-    "implication": "投资者通过IPO或并购等方式收回投资和获利",
-    "sentiment": "中性至正面（对投资者），可以是负面（对离职者）",
-    "examples": ["天使投资退出", "创始人退出"]
-  },
-  "亏损": {
-    "word": "亏损",
-    "literal": "支出大于收入，造成的损失",
-    "implication": "在互联网企业中可能是正常状态（为了获取增长），但长期亏损引发关注",
-    "sentiment": "负面",
-    "examples": ["持续亏损", "扭亏为盈"]
-  },
-  "利润": {
-    "word": "利润",
-    "literal": "收入减去成本后的收益",
-    "implication": "企业健康运营的标志，虽然不总是互联网企业的首要目标",
-    "sentiment": "正面",
-    "examples": ["提升利润", "利润率"]
-  },
-  "现金流": {
-    "word": "现金流",
-    "literal": "企业现金的进出流动",
-    "implication": "比利润更能反映企业实际经营状况，是企业生存的关键",
-    "sentiment": "正面（充沛），负面（紧张）",
-    "examples": ["现金流充足", "现金流压力"]
-  },
-  "拐点": {
-    "word": "拐点",
-    "literal": "曲线方向发生改变的点",
-    "implication": "预示业务或行业状态即将发生重大转变，充满不确定性",
-    "sentiment": "中性，充满转折感",
-    "examples": ["行业拐点", "增长拐点"]
-  },
-  "矩阵": {
-    "word": "矩阵",
-    "literal": "行列排列的数据或元素；管理上指多维度的组织",
-    "implication": "在管理中体现复杂的跨部门合作关系",
-    "sentiment": "中性",
-    "examples": ["矩阵式管理", "产品矩阵"]
-  },
-  "试错": {
-    "word": "试错",
-    "literal": "通过尝试不同方案来找到正确答案",
-    "implication": "体现创新文化中接受失败和学习的理念",
-    "sentiment": "正面",
-    "examples": ["通过试错创新", "容错文化"]
-  },
-  "灰度": {
-    "word": "灰度",
-    "literal": "黑白中间的色阶；引申为渐进的、不绝对的状态",
-    "implication": "在互联网产品中指小流量测试，逐步扩大用户范围",
-    "sentiment": "中性",
-    "examples": ["灰度发布", "灰度测试"]
-  },
-  "MVP": {
-    "word": "MVP",
-    "literal": "最小可行产品，包含最核心功能的产品",
-    "implication": "精益创业理念的典型，强调快速验证想法而非完美产品",
-    "sentiment": "正面",
-    "examples": ["MVP发布", "最小化可行产品"]
-  },
-  "拉新": {
-    "word": "拉新",
-    "literal": "获取新用户",
-    "implication": "互联网运营的基础指标，通过多种手段吸引新用户",
-    "sentiment": "正面",
-    "examples": ["拉新活动", "拉新成本"]
-  },
-  "留存": {
-    "word": "留存",
-    "literal": "保住现有用户",
-    "implication": "比拉新更经济的增长方式，反映产品粘性和用户满意度",
-    "sentiment": "正面",
-    "examples": ["提升留存率", "留存分析"]
-  },
-  "转化": {
-    "word": "转化",
-    "literal": "将某物转变为另一种形式；在数据语境中指用户的行为转变",
-    "implication": "从免费用户转变为付费用户，或从某种行为转变为商业价值",
-    "sentiment": "正面",
-    "examples": ["转化率", "提升转化"]
-  },
-  "漏斗": {
-    "word": "漏斗",
-    "literal": "上宽下窄的容器；引申为逐阶段筛选",
-    "implication": "用于分析用户从认知到最终购买的逐级转化过程",
-    "sentiment": "中性",
-    "examples": ["销售漏斗", "转化漏斗"]
-  },
-  "付费": {
-    "word": "付费",
-    "literal": "用金钱交换商品或服务",
-    "implication": "从免费业务模式转向付费模式，代表商业化进程",
-    "sentiment": "正面（对企业），中性（对用户）",
-    "examples": ["付费转化", "付费用户"]
-  },
-  "活跃度": {
-    "word": "活跃度",
-    "literal": "用户在产品上的活动频率和深度",
-    "implication": "衡量产品健康度的关键指标，高活跃度预示用户粘性强",
-    "sentiment": "正面",
-    "examples": ["日活用户", "活跃度下降"]
-  },
-  "体验": {
-    "word": "体验",
-    "literal": "亲身经历和感受",
-    "implication": "在产品设计中为用户中心，强调主观感受",
-    "sentiment": "中性",
-    "examples": ["用户体验", "体验优化"]
-  },
-  "协议": {
-    "word": "协议",
-    "literal": "双方达成的共同约定",
-    "implication": "法律和商业关系的基础",
-    "sentiment": "中性",
-    "examples": ["用户协议", "服务协议"]
-  },
-  "合规": {
-    "word": "合规",
-    "literal": "符合法律法规和规范要求",
-    "implication": "随着监管加强，合规成为企业的基本要求",
-    "sentiment": "正面（对监管方），中性（对企业）",
-    "examples": ["数据合规", "业务合规"]
-  },
-  "风控": {
-    "word": "风控",
-    "literal": "风险控制，识别和管理风险",
-    "implication": "在金融和互联网企业中的重要部门，防止欺诈和损失",
-    "sentiment": "正面",
-    "examples": ["风险控制", "反欺诈"]
-  },
-  "合作": {
-    "word": "合作",
-    "literal": "两个或多个主体共同工作完成目标",
-    "implication": "强调互赢和协同",
-    "sentiment": "正面",
-    "examples": ["战略合作", "开放平台合作"]
-  },
-  "生态链": {
-    "word": "生态链",
-    "literal": "形成完整的产业生态系统",
-    "implication": "强调一个企业或平台能够吸引上下游伙伴共同繁荣",
-    "sentiment": "正面",
-    "examples": ["打造生态链", "生态链建设"]
-  },
-  "中台战略": {
-    "word": "中台战略",
-    "literal": "建立中间平台层提供共享服务的战略",
-    "implication": "体现组织从分散向集约化转变，提高效率和复用",
-    "sentiment": "正面",
-    "examples": ["实施中台战略", "业务中台建设"]
+  "优化": {
+    "zh": "优化",
+    "en": "optimize",
+    "definition": "To make something better, more efficient, or more effective",
+    "implication": "Suggests improvement is incremental rather than transformative",
+    "sentiment": "positive"
   },
   "数字化": {
-    "word": "数字化",
-    "literal": "将模拟或物理过程转换为数字化形式",
-    "implication": "代表业务现代化和智能化的方向",
-    "sentiment": "正面",
-    "examples": ["数字化转型", "业务数字化"]
+    "zh": "数字化",
+    "en": "digitalization",
+    "definition": "Converting analog or physical processes into digital forms",
+    "implication": "Represents modernization and automation of business",
+    "sentiment": "positive"
   },
   "智能化": {
-    "word": "智能化",
-    "literal": "利用人工智能技术使系统具备学习和自动化能力",
-    "implication": "代表技术进步和效率提升",
-    "sentiment": "正面",
-    "examples": ["流程智能化", "服务智能化"]
-  },
-  "自动化": {
-    "word": "自动化",
-    "literal": "使过程自动执行，减少人工干预",
-    "implication": "提高效率和降低成本的关键手段",
-    "sentiment": "正面",
-    "examples": ["工作流自动化", "自动化测试"]
-  },
-  "效率": {
-    "word": "效率",
-    "literal": "单位时间内完成的工作量",
-    "implication": "是企业竞争力的核心评指标",
-    "sentiment": "正面",
-    "examples": ["提升效率", "高效率运营"]
-  },
-  "成本": {
-    "word": "成本",
-    "literal": "生产或提供产品/服务所需的支出",
-    "implication": "企业利润的直接影响因素，降低成本是持续议题",
-    "sentiment": "中性至负面（升高时）",
-    "examples": ["降低成本", "成本控制"]
-  },
-  "边界": {
-    "word": "边界",
-    "literal": "分隔不同区域的界线；引申为权限或责任的分界",
-    "implication": "在组织中用于描述部门或角色的职责范围",
-    "sentiment": "中性",
-    "examples": ["打破部门边界", "明确权限边界"]
-  },
-  "赋予权力": {
-    "word": "赋予权力",
-    "literal": "给予使用权力或权限",
-    "implication": "强调信任和授权，是现代管理的趋势",
-    "sentiment": "正面",
-    "examples": ["赋予团队权力", "权力下沉"]
-  },
-  "闭环管理": {
-    "word": "闭环管理",
-    "literal": "形成从计划到执行到反馈的完整管理循环",
-    "implication": "强调系统性和持续改进的管理理念",
-    "sentiment": "正面",
-    "examples": ["建立闭环管理", "闭环反馈机制"]
-  },
-  "透明度": {
-    "word": "透明度",
-    "literal": "信息的公开和可见程度",
-    "implication": "现代企业和治理的重要价值观",
-    "sentiment": "正面",
-    "examples": ["提升透明度", "信息透明"]
-  },
-  "可持续": {
-    "word": "可持续",
-    "literal": "能够长期维系，不会枯竭或中断",
-    "implication": "指商业模式、环境保护或社会责任的长期可行性",
-    "sentiment": "正面",
-    "examples": ["可持续发展", "可持续增长"]
+    "zh": "智能化",
+    "en": "intelligence",
+    "definition": "Using AI to enable systems to learn and automate capabilities",
+    "implication": "Represents technological progress and efficiency gains",
+    "sentiment": "positive"
   }
 }

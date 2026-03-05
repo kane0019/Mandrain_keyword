@@ -25,8 +25,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html",
-    "default_title": "词汇智能解析 - 点击查看生词本"
+    "default_title": "词汇智能解析"
   },
   "web_accessible_resources": [
     {
