@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "词汇智能解析助手",
+  "version": "1.0.0",
+  "description": "智能划词解析，提供字面意、潜台词、情绪色彩的结构化理解",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content_script.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "词汇智能解析 - 点击查看生词本"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "local_db.json",
+        "styles.css"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "icons": {
+    "16": "images/icon-16.png",
+    "48": "images/icon-48.png",
+    "128": "images/icon-128.png"
+  }
+}

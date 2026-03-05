@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+*.zip
+*.crx
+.DS_Store
+.vscode/
+.idea/
+*.log
+.env
+.env.local
+*.swp
