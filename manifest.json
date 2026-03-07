@@ -5,7 +5,8 @@
   "description": "智能划词解析，提供字面意、潜台词、情绪色彩的结构化理解",
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "storage"
   ],
   "host_permissions": [
     "<all_urls>"
