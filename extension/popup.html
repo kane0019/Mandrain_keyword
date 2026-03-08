@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>词汇智能解析助手</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 320px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      color: #333;
+      padding: 16px;
+      background: #fff;
+    }
+    h1 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #222;
+    }
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 14px;
+      padding: 8px 10px;
+      border-radius: 4px;
+      background: #f5f5f5;
+      font-size: 12px;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .status-dot.ok { background: #52c41a; }
+    .status-dot.warn { background: #faad14; }
+    .status-dot.error { background: #ff4d4f; }
+    .field-label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: #555;
+    }
+    .token-input {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid #d0d0d0;
+      border-radius: 4px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .token-input:focus { border-color: #4096ff; }
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .btn {
+      flex: 1;
+      padding: 7px 0;
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary {
+      background: #4096ff;
+      color: #fff;
+    }
+    .btn-primary:hover { background: #1677ff; }
+    .btn-primary:disabled { background: #a0cfff; cursor: not-allowed; }
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+    .btn-secondary:hover { background: #e0e0e0; }
+    .info {
+      margin-top: 12px;
+      padding: 8px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .info.success { background: #f6ffed; color: #389e0d; }
+    .info.error { background: #fff2f0; color: #cf1322; }
+    .meta {
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px solid #e8e8e8;
+      font-size: 11px;
+      color: #999;
+      display: flex;
+      justify-content: space-between;
+    }
+    a { color: #4096ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .hidden { display: none; }
+    .section-title {
+      font-size: 12px;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 6px;
+    }
+    .blacklist-section {
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px solid #e8e8e8;
+    }
+    .blacklist-empty {
+      font-size: 12px;
+      color: #999;
+    }
+    .blacklist-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      font-size: 12px;
+    }
+    .blacklist-item span {
+      color: #333;
+      word-break: break-all;
+    }
+    .blacklist-remove {
+      color: #ff4d4f;
+      cursor: pointer;
+      font-size: 11px;
+      flex-shrink: 0;
+      margin-left: 8px;
+    }
+    .blacklist-remove:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h1>词汇智能解析助手</h1>
+
+  <div id="statusBar" class="status-bar">
+    <span id="statusDot" class="status-dot warn"></span>
+    <span id="statusText">正在检查…</span>
+  </div>
+
+  <label class="field-label" for="tokenInput">License Token</label>
+  <input id="tokenInput" class="token-input" type="text" placeholder="粘贴你的付费 Token（留空使用免费版）">
+
+  <div class="btn-row">
+    <button id="btnSave" class="btn btn-primary">保存</button>
+    <button id="btnReset" class="btn btn-secondary">恢复免费版</button>
+  </div>
+
+  <div id="feedback" class="info hidden"></div>
+
+  <div class="blacklist-section">
+    <div class="section-title">已停用站点</div>
+    <div id="blacklistContainer">
+      <span class="blacklist-empty">无</span>
+    </div>
+  </div>
+
+  <div class="meta">
+    <span id="planLabel">Free</span>
+    <a id="registerLink" href="#">获取付费 Token →</a>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

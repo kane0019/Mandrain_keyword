@@ -8,11 +8,15 @@
  * 5. 会话初始化（session/init）与鉴权状态管理
  */
 
-const API_BASE_URL = 'https://api.example.com/v1'; // 替换为实际后端地址
+const API_BASE_URL = 'http://localhost:3721/api/v1'; // 开发环境：本地 mock server（生产环境替换为实际地址）
 const SESSION_INIT_ENDPOINT = `${API_BASE_URL}/session/init`;
 const ANALYZE_ENDPOINT = `${API_BASE_URL}/analyze`;
 const SESSION_TIMEOUT_MS = 5000;
 const DEFAULT_FREE_LICENSE_TOKEN = 'free-token-placeholder';
+// 查询词最大长度（字符数）。30字符覆盖99%+合法中文词汇/短语/谚语，
+// 超出则视为整句/整段滥用，拒绝云端调用以控制成本。
+// 注意：翻译精度依赖 prefix/suffix 的400字上下文，与此限制无关。
+const MAX_QUERY_LENGTH = 30;
 
 const STORAGE_KEYS = {
   INSTALL_ID: 'auth.install_id',
@@ -80,6 +84,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
+  if (request.action === 'blacklistAdd') {
+    handleBlacklistAdd(request.hostname, sendResponse);
+    return true;
+  }
+
+  if (request.action === 'blacklistRemove') {
+    handleBlacklistRemove(request.hostname, sendResponse);
+    return true;
+  }
+
+  if (request.action === 'blacklistGet') {
+    handleBlacklistGet(sendResponse);
+    return true;
+  }
+
   sendResponse({
     success: false,
     error: 'unsupported_action'
@@ -89,6 +108,36 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 // Service Worker启动时预热
 ensureLocalDBReady();
+
+// ── 站点黑名单管理 ─────────────────────────────────
+
+async function handleBlacklistAdd(hostname, sendResponse) {
+  if (!hostname) {
+    sendResponse({ success: false, error: 'empty hostname' });
+    return;
+  }
+  const result = await chrome.storage.local.get('blacklist');
+  const blacklist = result.blacklist || [];
+  if (!blacklist.includes(hostname)) {
+    blacklist.push(hostname);
+    await chrome.storage.local.set({ blacklist });
+  }
+  console.log('[Mandrain] blacklist add:', hostname);
+  sendResponse({ success: true, blacklist });
+}
+
+async function handleBlacklistRemove(hostname, sendResponse) {
+  const result = await chrome.storage.local.get('blacklist');
+  const blacklist = (result.blacklist || []).filter(h => h !== hostname);
+  await chrome.storage.local.set({ blacklist });
+  console.log('[Mandrain] blacklist remove:', hostname);
+  sendResponse({ success: true, blacklist });
+}
+
+async function handleBlacklistGet(sendResponse) {
+  const result = await chrome.storage.local.get('blacklist');
+  sendResponse({ success: true, blacklist: result.blacklist || [] });
+}
 bootstrapAuth().catch((error) => {
   console.warn('[Mandrain] bootstrap auth skipped:', error.message);
 });
@@ -108,6 +157,15 @@ async function handleWordQuery(request, sendResponse) {
     return;
   }
 
+  if (queryWord.length > MAX_QUERY_LENGTH) {
+    sendResponse({
+      success: false,
+      code: 'TEXT_TOO_LONG',
+      error: `查询词不能超过${MAX_QUERY_LENGTH}个字符`
+    });
+    return;
+  }
+
   await ensureLocalDBReady();
   console.log('[Mandrain] handleWordQuery for', queryWord);
 
@@ -123,27 +181,10 @@ async function handleWordQuery(request, sendResponse) {
     return;
   }
 
-  // 测试模式：如果本地未命中，直接返回 Not_Found，无需云端调用
-  const notFoundData = {
-    zh: queryWord,
-    en: 'Not available',
-    definition: 'Not_Found',
-    implication: 'Not_Found',
-    sentiment: 'unknown',
-    degraded: true
-  };
-  console.log('[Mandrain] local miss for', queryWord, ', returning Not_Found placeholder for testing');
-  sendResponse({
-    success: true,
-    data: notFoundData,
-    source: 'notfound'
-  });
-  return;
-
-  /* 原逻辑保留以备将来使用
+  // 步骤2：云端API查询
   console.log('[Mandrain] local miss, querying cloud');
   try {
-    const cloudResult = await queryCloudAPI(queryWord, request.context);
+    const cloudResult = await queryCloudAPI(queryWord, request.context, request.pageUrl);
     console.log('[Mandrain] cloud result', cloudResult);
     sendResponse({
       success: true,
@@ -152,6 +193,18 @@ async function handleWordQuery(request, sendResponse) {
     });
   } catch (error) {
     console.warn('[Mandrain] 云端请求失败，进入降级模式:', error.message);
+
+    // 会话/鉴权类错误直接透传错误码，不做降级
+    const authErrors = ['TOKEN_INVALID', 'SUBSCRIPTION_INACTIVE', 'DEVICE_LIMIT_EXCEEDED', 'TOKEN_MISSING'];
+    if (authErrors.includes(error.code)) {
+      sendResponse({
+        success: false,
+        code: error.code,
+        error: error.message
+      });
+      return;
+    }
+
     const fallbackResult = generateFallback(queryWord);
     sendResponse({
       success: true,
@@ -160,7 +213,6 @@ async function handleWordQuery(request, sendResponse) {
       error: error.message
     });
   }
-  */
 }
 
 /**
@@ -179,14 +231,14 @@ function queryLocalDB(word) {
  * @param {object} context 语义上下文
  * @returns {Promise<object>} 云端API响应
  */
-async function queryCloudAPI(word, context) {
+async function queryCloudAPI(word, context, pageUrl) {
   const session = await initSession();
   const payload = {
-    word: word,
-    context: context?.fullContext || '',
+    text: word,
     prefix: context?.prefix || '',
     suffix: context?.suffix || '',
-    timestamp: new Date().toISOString()
+    page_url: pageUrl || '',
+    lang: 'zh'
   };
 
   return postJsonWithTimeout(

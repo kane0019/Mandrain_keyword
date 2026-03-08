@@ -14,11 +14,36 @@ let latestRequestId = 0;
 let lastSelectionSignature = '';
 let suppressedSelectionSignature = '';
 
-/**
- * 事件监听 - 鼠标松开时检测是否有文本选中
- */
-document.addEventListener('mouseup', onDocumentMouseUp);
-document.addEventListener('selectionchange', onSelectionChange);
+const ERROR_MESSAGES = {
+  TOKEN_INVALID: 'Token 无效，请在设置中重新输入',
+  SUBSCRIPTION_INACTIVE: '订阅已过期，请续费后使用',
+  DEVICE_LIMIT_EXCEEDED: '设备数量已达上限（最多3台），请移除旧设备',
+  TOKEN_MISSING: '缺少 Token，请在设置中填写',
+  TEXT_TOO_LONG: '选中文本过长，请选择单个词汇或短语'
+};
+
+function getErrorMessage(code) {
+  return ERROR_MESSAGES[code] || '查询失败';
+}
+
+// 站点黑名单：检查当前域名是否被停用，是则不注册任何事件监听
+let siteDisabled = false;
+
+chrome.storage.local.get('blacklist', (result) => {
+  const blacklist = result.blacklist || [];
+  const hostname = location.hostname;
+  if (blacklist.includes(hostname)) {
+    siteDisabled = true;
+    console.log('[Mandrain] disabled on', hostname);
+    return;
+  }
+  initListeners();
+});
+
+function initListeners() {
+  document.addEventListener('mouseup', onDocumentMouseUp);
+  document.addEventListener('selectionchange', onSelectionChange);
+}
 
 function onDocumentMouseUp(event) {
   if (event.button !== 0) return;
@@ -27,6 +52,7 @@ function onDocumentMouseUp(event) {
     return;
   }
 
+  if (siteDisabled) return;
   handleTextSelection();
 }
 
@@ -77,6 +103,7 @@ function handleTextSelection() {
       action: 'queryWord',
       word: selectedText,
       context: context,
+      pageUrl: window.location.href,
       position: {
         x: rect.left + window.scrollX,
         y: rect.top + window.scrollY
@@ -98,7 +125,8 @@ function handleTextSelection() {
       if (response && response.success) {
         renderCard(response.data, rect);
       } else {
-        showErrorCard('查询失败', rect);
+        const errorMsg = getErrorMessage(response?.code);
+        showErrorCard(errorMsg, rect);
       }
     }
   );
@@ -304,6 +332,7 @@ function renderCard(data, rect) {
       </div>
       <div class="card-footer">
         <button class="card-btn card-btn-copy">复制</button>
+        <button class="card-btn card-btn-disable">在此站点停用</button>
       </div>
     </div>
   `;
@@ -316,6 +345,9 @@ function renderCard(data, rect) {
   shadowRoot.querySelector('.card-close').addEventListener('click', closeCard);
   shadowRoot.querySelector('.card-btn-copy').addEventListener('click', () => {
     copyToClipboard(data);
+  });
+  shadowRoot.querySelector('.card-btn-disable').addEventListener('click', () => {
+    disableOnCurrentSite();
   });
 
   // 外部按下鼠标时销毁卡片（捕获阶段，避免mouseup重入）
@@ -444,4 +476,24 @@ Definition: ${data.definition || data.literal || '—'}
   navigator.clipboard.writeText(text).then(() => {
     alert('已复制到剪贴板');
   });
+}
+
+/**
+ * 在当前站点停用插件
+ */
+function disableOnCurrentSite() {
+  const hostname = location.hostname;
+  chrome.runtime.sendMessage(
+    { action: 'blacklistAdd', hostname: hostname },
+    (response) => {
+      if (chrome.runtime.lastError) return;
+      if (response && response.success) {
+        siteDisabled = true;
+        document.removeEventListener('mouseup', onDocumentMouseUp);
+        document.removeEventListener('selectionchange', onSelectionChange);
+        destroyCard({ cancelPending: true });
+        console.log('[Mandrain] disabled on', hostname);
+      }
+    }
+  );
 }

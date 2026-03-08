@@ -2,15 +2,18 @@
 
 ## 项目概述
 
-这是一个基于 **Chrome Manifest V3** 标准构建的浏览器扩展，核心功能为：**智能划词解析**。通过识别用户划取的词汇，结合本地高频词库和云端大模型推理，为用户展示词汇的"字面意、潜台词、情绪色彩"等多维度理解。
+基于 **Chrome Manifest V3** 的浏览器扩展，核心功能为**智能划词解析**。帮助中文非母语用户理解词汇的"字面意、潜台词、情绪色彩"——这是普通翻译工具无法提供的文化解码能力。
 
 ### 核心特性
-- 🎯 **本地优先** - O(1)内存查询，秒速响应
-- ☁️ **云端兜底** - 本地未命中自动降级至API
-- ⚡ **超时熔断** - 2000ms网络容灾机制
-- 🛡️ **沙盒隔离** - Shadow DOM防CSS污染
-- 💾 **生词本** - 保存感兴趣的词汇
-- 🎨 **极简UI** - KB级体积，企业级简洁设计
+- 🎯 **本地优先** — O(1)哈希查询，秒速响应
+- ☁️ **云端兜底** — 本地未命中自动调用云端 AI 解析
+- 🔐 **会话鉴权** — session/init + JWT access_token，支持免费/付费双模式
+- 📱 **设备管控** — 单账户最多 3 台设备，服务端校验
+- ⚡ **超时熔断** — 2000ms 云端超时 + 优雅降级
+- 🛡️ **沙盒隔离** — Shadow DOM 防 CSS 污染
+- 🚫 **站点黑名单** — 卡片内一键停用当前站点，popup 管理恢复
+- 📋 **复制到剪贴板** — 一键复制解析结果
+- 🎨 **极简UI** — KB级体积，企业级简洁设计
 
 ---
 
@@ -18,171 +21,137 @@
 
 ```
 Mandrain_keyword/
-├── manifest.json           # 扩展配置（V3标准）
-├── content_script.js       # DOM操作层：事件监听、UI注入
-├── background.js           # Service Worker：网络请求、词库查询
-├── local_db.json           # 离线词库（约100+示例词条）
-├── styles.css              # 卡片样式（可选）
-├── README.md               # 本文档
-└── images/                 # 图标目录（16x16, 48x48, 128x128）
+├── extension/                # Chrome 扩展（加载插件时指向此目录）
+│   ├── manifest.json         # MV3 配置
+│   ├── background.js         # Service Worker：鉴权、词库查询、云端API
+│   ├── content_script.js     # DOM层：划词监听、上下文提取、Shadow DOM卡片
+│   ├── popup.html            # 设置页：Token管理、黑名单管理
+│   ├── popup.js              # 设置页交互逻辑
+│   ├── local_db.json         # 离线词库（10条示例词条）
+│   └── images/               # 图标 (16/48/128)
+├── backend/                  # 后端服务
+│   └── ARCHITECTURE.md       # AWS 架构设计文档
+├── test/                     # 测试工具
+│   └── mock_server.ps1       # PowerShell 本地 mock server（零依赖）
+├── README.md
+├── DEVELOPMENT.md
+└── QUICKSTART.html
 ```
-
-### 模块职责
-
-#### 1️⃣ `manifest.json` - 配置中心
-- 声明扩展权限（最小化原则：仅`activeTab`、`scripting`）
-- 注册`content_script`和`service_worker`
-- 配置资源访问权限（`local_db.json`、`styles.css`）
-
-#### 2️⃣ `content_script.js` - DOM操作层
-| 功能 | 实现 |
-|-----|------|
-| 事件监听 | `mouseup` + 快捷键 (Ctrl+/) |
-| 上下文提取 | 前后200字符语义上下文 |
-| UI注入 | 使用Shadow DOM隔离，防止原页面CSS污染 |
-| 交互处理 | 保存、复制、Esc/外部点击销毁 |
-
-#### 3️⃣ `background.js` - Service Worker
-| 功能 | 实现 |
-|-----|------|
-| 本地查询 | O(1)时间复杂度哈希匹配 |
-| 云端请求 | fetch API + 2000ms超时控制 |
-| 降级处理 | 网络失败时展示优雅降级提示 |
-| 生词本管理 | `chrome.storage.local` 本地存储 |
-
-#### 4️⃣ `local_db.json` - 离线词库
-- JSON格式，包含约100+高频商业词汇
-- 结构：`{word} → {字面意, 潜台词, 情绪色彩, 示例}`
-- 随扩展安装，无需网络即可查询
 
 ---
 
-## 工作流程
+## 已实现功能
 
-```
-┌─────────────────┐
-│  用户划词/Ctrl+/  │
-└────────┬────────┘
-         │
-         ▼
-┌──────────────────────┐
-│ content_script.js    │
-│ 1. 捕获选中词汇      │
-│ 2. 提取200字符上下文 │
-└────────┬─────────────┘
-         │
-         ▼
-┌───────────────────────────┐
-│  background.js (本地查询)  │ ◄─── O(1)查询
-│  词库中命中?              │
-└────────┬──────────────────┘
-         │ NO
-         ▼
-┌──────────────────────────┐
-│ background.js (API请求)  │ ◄─── 2000ms超时
-│ 云端推理                │
-│ 成功? ┬─ YES ───┐       │
-│       └─ TIMEOUT┤       │
-└────────┬────────┴─┬──────┘
-         │          │
-         ▼ YES      ▼ NO/超时
-    返回数据    优雅降级提示
-         │          │
-         └────┬─────┘
-              ▼
-         ┌──────────────┐
-         │ content UI   │
-         │ 在鼠标位置   │
-         │ 注入卡片     │
-         └──────┬───────┘
-                │
-         ┌──────+──────────┐
-         │   用户交互       │
-         ├─ 关闭 (Esc)     │
-         ├─ 外部点击销毁   │
-         ├─ 保存到生词本   │
-         └─ 复制到剪贴板   │
-```
+### 插件端
+
+| 功能 | 状态 | 说明 |
+|------|------|------|
+| 划词查询 | ✅ | mouseup 触发，选区去重，前后 200 字上下文提取 |
+| 本地词库 O(1) 查询 | ✅ | 内存级哈希匹配，10 条示例词条 |
+| 云端 API 调用 (analyze) | ✅ | 本地未命中时自动调用，2000ms 超时，优雅降级 |
+| 会话鉴权 (session/init) | ✅ | 免费默认 token + 用户可填付费 token |
+| JWT access_token 管理 | ✅ | 自动刷新过期 token，30s 缓冲 |
+| 设备登记 + 3 台上限 | ✅ | install_id 绑定，DEVICE_LIMIT_EXCEEDED 错误透传 |
+| Shadow DOM 卡片渲染 | ✅ | 样式隔离，展示 Definition / Implication / Sentiment |
+| 差异化错误提示 | ✅ | TOKEN_INVALID / SUBSCRIPTION_INACTIVE / DEVICE_LIMIT_EXCEEDED / TEXT_TOO_LONG |
+| 查询词长度限制 | ✅ | ≤30 字符，防止整句/整段滥用云端 API |
+| 站点黑名单 | ✅ | 卡片内"在此站点停用"按钮，popup 管理恢复 |
+| Popup 设置页 | ✅ | Token 输入/保存/重置 + 会话状态 + 黑名单管理 + 注册链接 |
+| 复制到剪贴板 | ✅ | 卡片底部按钮 |
+| 卡片交互 | ✅ | 关闭按钮、Esc 键、点击外部关闭 |
+
+### API 接口规范（插件端已对接）
+
+#### POST /api/v1/session/init
+- **入参**: `license_token`, `install_id`, `client_version`, `platform`
+- **成功返回**: `access_token`, `expires_in`, `plan`, `device_count`, `max_devices`, `feature_flags`
+- **失败返回**: `TOKEN_INVALID` / `SUBSCRIPTION_INACTIVE` / `DEVICE_LIMIT_EXCEEDED`
+
+#### POST /api/v1/analyze
+- **请求头**: `Authorization: Bearer <access_token>` + `X-Install-Id`
+- **入参**: `text`, `prefix`, `suffix`, `page_url`, `lang`
+- **返回**: `zh`, `en`, `definition`, `implication`, `sentiment`, `source`
+
+### 后端架构（设计完成，待部署）
+
+AWS Serverless 方案，详见 `backend/ARCHITECTURE.md`：
+- API Gateway + Lambda (session-init, analyze)
+- DynamoDB 3 张表 (licenses, devices, word_cache)
+- Bedrock Claude 语义分析
+- JWT 自签鉴权，Secrets Manager 密钥管理
+- 预估 1000 用户月成本 ~$28-53
 
 ---
 
 ## 快速启动
 
-### 1. 加载扩展到Chrome
+### 1. 启动 Mock Server（开发测试用）
+
+```powershell
+cd Mandrain_keyword/test
+powershell -ExecutionPolicy Bypass -File mock_server.ps1
+```
+
+Mock server 运行在 `http://localhost:3721`，无需 Node.js 或 Python。
+
+**测试 Token：**
+
+| Token | 效果 |
+|-------|------|
+| `free-token-placeholder` | Free plan（插件默认） |
+| `paid-token-test` | Pro plan，export 开启 |
+| `invalid-token` | TOKEN_INVALID |
+| `expired-token` | SUBSCRIPTION_INACTIVE |
+| `device-limit-token` | DEVICE_LIMIT_EXCEEDED |
+
+**云端模拟词库：** 内卷、躺平、摆烂（本地词库以外的词走此处）
+
+### 2. 加载插件到 Chrome
 
 1. 打开 `chrome://extensions/`
-2. 启用右上角的 **开发者模式**
+2. 启用 **开发者模式**
 3. 点击 **加载已解压的扩展程序**
-4. 选择项目根目录 `Mandrain_keyword/`
-5. 完成！🎉
+4. 选择 `Mandrain_keyword/extension/` 目录
 
-### 2. 测试功能
+### 3. 测试流程
 
-1. 打开任意网页（如Wikipedia、新闻网站）
-2. 划选一个词汇（如"赋能"、"破局"）
-3. 卡片应在鼠标位置下方出现
-4. 点击"保存"将词条存到生词本（可在 `chrome://extensions` → Mandrain详情 → 存储 查看）
+1. 划词 `赋能`（本地命中）→ 卡片秒出
+2. 划词 `内卷`（云端命中）→ 卡片稍有延迟
+3. 划词任意未知词 → 云端 fallback 响应
+4. 点插件图标 → popup 设置页，填 `invalid-token` 等测试错误路径
+5. 卡片中点"在此站点停用" → 验证黑名单功能
 
-### 3. 调试
+### 4. 调试
 
-- 右键扩展图标 → **检查弹出窗口** - 调试content script
-- `chrome://extensions` → Mandrain → **Errors** - 查看Service Worker错误
-- 浏览器控制台 (F12) - 查看content script的console输出
-
----
-
-## 云端API对接
-
-当前 `background.js` 中的API端点为示例：
-```javascript
-const API_ENDPOINT = 'https://api.example.com/v1/analyze';
-```
-
-### 替换为真实API步骤
-
-1. 修改 `background.js` 中的 `API_ENDPOINT`
-2. 调整请求Payload结构（如需要认证token）
-3. 解析API响应格式（需返回 `{literal, implication, sentiment}` 结构）
-
-### API请求格式
-
-**POST** `/v1/analyze`
-
-**请求体：**
-```json
-{
-  "word": "赋能",
-  "context": "这次改革赋能全体员工更多的创新空间。",
-  "prefix": "...前200字符...",
-  "suffix": "...后200字符...",
-  "timestamp": "2026-03-05T10:30:00Z"
-}
-```
-
-**响应格式：**
-```json
-{
-  "word": "赋能",
-  "literal": "字面意解释",
-  "implication": "潜台词含义",
-  "sentiment": "正面|中性|负面"
-}
-```
+- 浏览器控制台 (F12) — content_script 日志（`[Mandrain]` 前缀）
+- `chrome://extensions` → Mandrain → **Service Worker** — background 日志
+- Mock server 终端 — 查看请求日志
 
 ---
 
-## 网络容灾配置
+## 测试结果（Mock Server 验证通过）
 
-### 超时阈值
+| 测试场景 | 结果 |
+|----------|------|
+| session/init free-token-placeholder | ✅ plan=free, devices=1/3 |
+| session/init paid-token-test | ✅ plan=pro, export=true |
+| session/init invalid-token | ✅ 401 TOKEN_INVALID |
+| session/init expired-token | ✅ 401 SUBSCRIPTION_INACTIVE |
+| session/init device-limit-token | ✅ 403 DEVICE_LIMIT_EXCEEDED |
+| analyze 云端命中（内卷/躺平/摆烂） | ✅ 正确返回解析结果 |
+| analyze 未命中词 | ✅ 返回 mock fallback |
+| analyze 无 auth header | ✅ 401 UNAUTHORIZED |
+| CORS preflight (OPTIONS) | ✅ 204 正确响应 |
 
-修改 `background.js` 中的常量：
+---
+
+## 配置项
+
+修改 `extension/background.js` 中的常量：
 ```javascript
-const TIMEOUT_MS = 2000; // 毫秒
+const API_BASE_URL = 'http://localhost:3721/api/v1'; // 生产环境替换为实际地址
+const MAX_QUERY_LENGTH = 30;  // 查询词最大字符数
 ```
-
-### 降级提示文案
-
-修改 `generateFallback()` 函数返回的 `message` 字段。
 
 ---
 
@@ -198,152 +167,52 @@ const TIMEOUT_MS = 2000; // 毫秒
 
 ---
 
-## 扩展与定制
+## 安全
 
-### 添加新词条到本地词库
-
-编辑 `local_db.json`：
-```json
-{
-  "新词汇": {
-    "word": "新词汇",
-    "literal": "字面意义",
-    "implication": "潜台词",
-    "sentiment": "正面/中性/负面",
-    "examples": ["例句1", "例句2"]
-  }
-}
-```
-
-### 自定义卡片样式
-
-修改 `content_script.js` 中 `renderCard()` 函数内的 `style.textContent`。
-
-### 添加新的快捷键
-
-修改 `content_script.js` 中的快捷键检测：
-```javascript
-if ((event.ctrlKey || event.metaKey) && event.key === '/') {
-  // 改为其他快捷键
-}
-```
+- **Manifest V3 合规** — 无 eval()、无动态脚本、CSP 支持、权限最小化
+- **输入校验** — 查询词 ≤30 字符限制，防止云端 API 滥用
+- **鉴权体系** — JWT access_token + install_id 双重校验
+- **隐私保护** — 仅用户主动划词时发送数据，黑名单/Token 存本地
 
 ---
 
-## 常见问题
+## 🔄 待办事项
 
-### Q: 为什么选择Shadow DOM？
-**A:** Shadow DOM 完全隔离样式，防止原网页CSS（如Bootstrap）对卡片的污染。这是Manifest V3推荐的最佳实践。
+### P2 — 后续迭代
 
-### Q: 为什么是2000ms超时？
-**A:** 在企业网络环境中，2000ms是云端请求的平衡点。太短易误杀；太长影响交互体验。
+1. **基础性能日志** — 命中率、响应延迟统计
+2. **限流配置** — API Gateway Usage Plan，free/pro 不同限额
+3. **手动输入查询** — popup 输入框，支持无上下文词汇查询（优先级低于划词，无上下文时精度下降且竞品替代性高）
 
-### Q: 本地词库为什么随包分发？
-**A:** 确保离线可用和快速响应，不依赖网络。减少云端请求压力。
+### P3 — 远期规划
 
-### Q: 如何保证用户隐私？
-**A:** 
-- 仅在用户主动划词时发送数据
-- 上下文信息仅用于API推理，不存储
-- 生词本存储在本地（`chrome.storage.local`）
+1. **词库扩充与分层** — 核心高频词库随包，长尾词库按需加载（待词库超千条再考虑）
+2. **成本控制看板** — 模型调用预算管理、缓存命中率统计
+3. **快捷键功能** — 手动输入查询或快速打开生词本
+4. **多语言支持** — analyze 接口 lang 参数扩展到 ja/ko/en
 
----
+### 独立项目
 
-## 安全与审查
-
-✅ **Manifest V3 合规**
-- 无`eval()`、动态脚本执行
-- 内容安全策略(CSP)支持
-- 严格权限最小化
-
-✅ **企业安全友好**
-- Shadow DOM隔离，无DOM污染
-- Service Worker不受CSP/CORS限制，穿透复杂网络
-- 超时和降级机制，不影响原网页性能
-
----
-
-## 🔄 待定项与规划
-
-### 快捷键功能（暂时移除）
-
-**当前状态**：REMOVED（为简化初期验证）
-
-**原设计**：Ctrl+/ 或 Cmd+/ 触发划词解析
-
-**为什么移除**：
-- 现有实现与 mouseup 功能重复（都依赖 `window.getSelection()`）
-- 未提供独立的使用价值
-- 增加代码复杂度
-
-**后续规划**：
-1. **手动输入查询** - 快捷键打开输入框，支持自由词汇查询
-2. **快速打开生词本** - Ctrl+/ 直接打开 popup 查看历史
-3. **多语言支持** - 快捷键在中英文解析间切换
-
-**恢复时机**：需求明确后实现差异化功能
-
-### 性能与体验调优（待定）
-
-**目标**：降低首次查询延迟，减少非目标站点干扰，同时保持词汇覆盖率。
-
-1. **站点白名单加载**
-   - 默认仅在启用站点开启划词监听与查询链路
-   - 不在列表的站点不触发插件交互，降低干扰与资源占用
-   - 提供“全站启用”高级开关给重度用户
-
-2. **首次站点授权交互**
-   - 首次在新站点划词时，弹出“是否在本网站启用插件”提示
-   - 选项建议包含：仅本次 / 始终启用 / 不启用
-   - 决策按域名持久化，并可在设置页随时撤销
-
-3. **控制首屏词库体积**
-   - 优先控制首批常驻词库体积（建议 <= 5MB）
-   - 2万词作为当前阶段可用上限参考，继续扩容需分片
-   - 避免 Service Worker 冷启动时整库解析导致首查延迟
-
-4. **词库分层与按需加载**
-   - 核心高频词库随包常驻，保证离线可用
-   - 长尾词库/行业词库按场景或站点懒加载
-   - 基于未命中统计持续回灌高频词到核心库
-
-5. **性能观测指标**
-   - 关注首次查询 P95 延迟、Not_Found 比例、站点打扰率
-   - 目标：本地命中场景首次查询体验接近即时，Not_Found 比例持续下降
-
-### 云端治理能力（后置实现）
-
-**阶段说明**：当前阶段先完成核心功能可用性，以下能力放在后续迭代补齐。
-
-1. **成本控制**
-   - 增加模型调用预算管理、缓存命中优化与调用成本看板
-
-2. **限流策略**
-   - 增加用户级/设备级/IP级限流与异常流量保护
-
-3. **防止划词被当作对话使用**
-   - 增加输入类型校验与策略拦截，仅支持词语/短语解析场景
-
-### 账户与付费授权（后置实现）
-
-1. **官网注册与付费**
-   - 用户在官网注册并完成付费后获取授权 token
-
-2. **插件鉴权接入**
-   - 插件使用 token 调用后端接口，由服务端校验订阅状态与权限
-
-3. **设备数量限制**
-   - 单个付费账户最多允许 3 个设备（安装实例）接入使用
-   - 超过上限时，提示用户在官网设备管理中解绑旧设备后再接入
-
----
+1. **官网注册 + 支付** — 用户注册、Stripe 付费、Token 发放
+2. **设备管理页** — 用户自助解绑旧设备
 
 ---
 
 ## 更新日志
 
+### v1.1.0 (2026-03-08)
+- ✨ 完成双接口对接（session/init + analyze）
+- 🔐 会话鉴权体系（免费默认 token + 付费 token + JWT 刷新）
+- 📱 设备登记 + 3 台上限校验 + 差异化错误提示
+- 🖥️ Popup 设置页（Token 管理 + 会话状态 + 黑名单管理）
+- 🚫 站点黑名单（卡片一键停用 + popup 恢复）
+- 🛡️ 查询词 ≤30 字符限制（防滥用）
+- 🧪 PowerShell Mock Server（零依赖本地测试）
+- 📁 项目重构为 extension/ + backend/ + test/ 分层
+- 📐 AWS 后端架构设计文档
+
 ### v1.0.0 (2026-03-05)
 - ✨ 初始版本发布
 - 支持本地词库 + 云端降级
 - Shadow DOM UI隔离
-- 生词本存储功能
+- 复制到剪贴板

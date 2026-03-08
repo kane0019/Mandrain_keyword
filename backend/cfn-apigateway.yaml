@@ -1,0 +1,229 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Mandrain Keyword - API Gateway Stack
+  REST API with two routes: session/init and analyze.
+  Depends on Lambda stack.
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+    Description: Deployment environment name
+
+  StageName:
+    Type: String
+    Default: v1
+    Description: API Gateway deployment stage name
+
+  ThrottlingRateLimit:
+    Type: Number
+    Default: 100
+    Description: Steady-state requests per second
+
+  ThrottlingBurstLimit:
+    Type: Number
+    Default: 200
+    Description: Burst requests capacity
+
+Resources:
+  # ========== REST API ==========
+  MandrainApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub 'mandrain-api-${EnvironmentName}'
+      Description: Mandrain Keyword Chrome Extension API
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  # ========== /api resource ==========
+  ApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref MandrainApi
+      ParentId: !GetAtt MandrainApi.RootResourceId
+      PathPart: api
+
+  # ========== /api/v1 resource ==========
+  V1Resource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref MandrainApi
+      ParentId: !Ref ApiResource
+      PathPart: v1
+
+  # ========== /api/v1/session resource ==========
+  SessionResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref MandrainApi
+      ParentId: !Ref V1Resource
+      PathPart: session
+
+  # ========== /api/v1/session/init resource ==========
+  SessionInitResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref MandrainApi
+      ParentId: !Ref SessionResource
+      PathPart: init
+
+  # ========== /api/v1/analyze resource ==========
+  AnalyzeResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref MandrainApi
+      ParentId: !Ref V1Resource
+      PathPart: analyze
+
+  # ========== POST /api/v1/session/init ==========
+  SessionInitPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref MandrainApi
+      ResourceId: !Ref SessionInitResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub
+          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FunctionArn}/invocations'
+          - FunctionArn:
+              Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-SessionInitFunctionArn'
+
+  # OPTIONS for CORS — session/init
+  SessionInitOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref MandrainApi
+      ResourceId: !Ref SessionInitResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Install-Id,X-Mandrain-Version'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  # ========== POST /api/v1/analyze ==========
+  AnalyzePostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref MandrainApi
+      ResourceId: !Ref AnalyzeResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub
+          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FunctionArn}/invocations'
+          - FunctionArn:
+              Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-AnalyzeFunctionArn'
+
+  # OPTIONS for CORS — analyze
+  AnalyzeOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref MandrainApi
+      ResourceId: !Ref AnalyzeResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Install-Id,X-Mandrain-Version'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  # ========== Lambda Invoke Permissions ==========
+  SessionInitLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-SessionInitFunctionArn'
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${MandrainApi}/*/POST/api/v1/session/init'
+
+  AnalyzeLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-AnalyzeFunctionArn'
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${MandrainApi}/*/POST/api/v1/analyze'
+
+  # ========== Deployment ==========
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - SessionInitPostMethod
+      - SessionInitOptionsMethod
+      - AnalyzePostMethod
+      - AnalyzeOptionsMethod
+    Properties:
+      RestApiId: !Ref MandrainApi
+
+  ApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId: !Ref MandrainApi
+      DeploymentId: !Ref ApiDeployment
+      StageName: !Ref StageName
+      MethodSettings:
+        - ResourcePath: '/*'
+          HttpMethod: '*'
+          ThrottlingRateLimit: !Ref ThrottlingRateLimit
+          ThrottlingBurstLimit: !Ref ThrottlingBurstLimit
+          LoggingLevel: INFO
+          DataTraceEnabled: false
+          MetricsEnabled: true
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+Outputs:
+  ApiEndpoint:
+    Description: API Gateway endpoint URL
+    Value: !Sub 'https://${MandrainApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}'
+    Export:
+      Name: !Sub 'mandrain-${EnvironmentName}-ApiEndpoint'
+
+  ApiId:
+    Description: API Gateway REST API ID
+    Value: !Ref MandrainApi
+    Export:
+      Name: !Sub 'mandrain-${EnvironmentName}-ApiId'
+
+  SessionInitEndpoint:
+    Description: session/init endpoint
+    Value: !Sub 'https://${MandrainApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/v1/session/init'
+
+  AnalyzeEndpoint:
+    Description: analyze endpoint
+    Value: !Sub 'https://${MandrainApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/v1/analyze'

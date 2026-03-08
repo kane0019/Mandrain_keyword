@@ -1,0 +1,132 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Mandrain Keyword - DynamoDB Stack
+  Three tables: licenses, devices, word_cache.
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+    Description: Deployment environment name
+
+  BillingMode:
+    Type: String
+    Default: PAY_PER_REQUEST
+    AllowedValues: [PAY_PER_REQUEST, PROVISIONED]
+    Description: DynamoDB billing mode
+
+Resources:
+  # ========== licenses 表 — 许可证管理 ==========
+  LicensesTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: !Sub 'mandrain-licenses-${EnvironmentName}'
+      BillingMode: !Ref BillingMode
+      AttributeDefinitions:
+        - AttributeName: license_token
+          AttributeType: S
+      KeySchema:
+        - AttributeName: license_token
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # ========== devices 表 — 设备登记 ==========
+  DevicesTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: !Sub 'mandrain-devices-${EnvironmentName}'
+      BillingMode: !Ref BillingMode
+      AttributeDefinitions:
+        - AttributeName: license_token
+          AttributeType: S
+        - AttributeName: install_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: license_token
+          KeyType: HASH
+        - AttributeName: install_id
+          KeyType: RANGE
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # ========== word_cache 表 — 云端解析缓存 ==========
+  WordCacheTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: !Sub 'mandrain-word-cache-${EnvironmentName}'
+      BillingMode: !Ref BillingMode
+      AttributeDefinitions:
+        - AttributeName: text
+          AttributeType: S
+        - AttributeName: lang
+          AttributeType: S
+      KeySchema:
+        - AttributeName: text
+          KeyType: HASH
+        - AttributeName: lang
+          KeyType: RANGE
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+Outputs:
+  LicensesTableName:
+    Description: Licenses table name
+    Value: !Ref LicensesTable
+    Export:
+      Name: !Sub 'mandrain-${EnvironmentName}-LicensesTable'
+
+  LicensesTableArn:
+    Description: Licenses table ARN
+    Value: !GetAtt LicensesTable.Arn
+    Export:
+      Name: !Sub 'mandrain-${EnvironmentName}-LicensesTableArn'
+
+  DevicesTableName:
+    Description: Devices table name
+    Value: !Ref DevicesTable
+    Export:
+      Name: !Sub 'mandrain-${EnvironmentName}-DevicesTable'
+
+  DevicesTableArn:
+    Description: Devices table ARN
+    Value: !GetAtt DevicesTable.Arn
+    Export:
+      Name: !Sub 'mandrain-${EnvironmentName}-DevicesTableArn'
+
+  WordCacheTableName:
+    Description: Word cache table name
+    Value: !Ref WordCacheTable
+    Export:
+      Name: !Sub 'mandrain-${EnvironmentName}-WordCacheTable'
+
+  WordCacheTableArn:
+    Description: Word cache table ARN
+    Value: !GetAtt WordCacheTable.Arn
+    Export:
+      Name: !Sub 'mandrain-${EnvironmentName}-WordCacheTableArn'

@@ -1,0 +1,193 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Mandrain Keyword - Lambda Stack
+  Two Lambda functions: session-init and analyze.
+  Depends on VPC+S3 stack and DynamoDB stack.
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+    Description: Deployment environment name
+
+  # ===== Lambda Code Placeholders =====
+  SessionInitS3Key:
+    Type: String
+    Default: 'PLACEHOLDER_SESSION_INIT_PACKAGE.zip'
+    Description: S3 key for session-init Lambda deployment package
+
+  AnalyzeS3Key:
+    Type: String
+    Default: 'PLACEHOLDER_ANALYZE_PACKAGE.zip'
+    Description: S3 key for analyze Lambda deployment package
+
+  JwtSecretArn:
+    Type: String
+    Default: 'arn:aws:secretsmanager:us-east-1:000000000000:secret:PLACEHOLDER'
+    Description: ARN of the JWT signing secret in Secrets Manager
+
+Resources:
+  # ========== IAM Role for Lambda ==========
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'mandrain-lambda-role-${EnvironmentName}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+      Policies:
+        - PolicyName: DynamoDBAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:Query
+                Resource:
+                  - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LicensesTableArn'
+                  - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-DevicesTableArn'
+                  - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-WordCacheTableArn'
+
+        - PolicyName: SecretsManagerAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !Ref JwtSecretArn
+
+        - PolicyName: BedrockAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - bedrock:InvokeModel
+                Resource: !Sub 'arn:aws:bedrock:${AWS::Region}::foundation-model/anthropic.claude-3-sonnet-*'
+
+        - PolicyName: CloudWatchLogs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*'
+
+  # ========== session-init Lambda ==========
+  SessionInitFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub 'mandrain-session-init-${EnvironmentName}'
+      Runtime: nodejs20.x
+      Handler: index.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      MemorySize: 256
+      Timeout: 5
+      Code:
+        S3Bucket:
+          Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LambdaCodeBucket'
+        S3Key: !Ref SessionInitS3Key
+      VpcConfig:
+        SecurityGroupIds:
+          - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LambdaSecurityGroupId'
+        SubnetIds:
+          - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-PrivateSubnet1Id'
+          - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-PrivateSubnet2Id'
+      Environment:
+        Variables:
+          ENVIRONMENT: !Ref EnvironmentName
+          LICENSES_TABLE:
+            Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LicensesTable'
+          DEVICES_TABLE:
+            Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-DevicesTable'
+          JWT_SECRET_ARN: !Ref JwtSecretArn
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  SessionInitLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/mandrain-session-init-${EnvironmentName}'
+      RetentionInDays: 30
+
+  # ========== analyze Lambda ==========
+  AnalyzeFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub 'mandrain-analyze-${EnvironmentName}'
+      Runtime: nodejs20.x
+      Handler: index.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      MemorySize: 512
+      Timeout: 10
+      Code:
+        S3Bucket:
+          Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LambdaCodeBucket'
+        S3Key: !Ref AnalyzeS3Key
+      VpcConfig:
+        SecurityGroupIds:
+          - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LambdaSecurityGroupId'
+        SubnetIds:
+          - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-PrivateSubnet1Id'
+          - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-PrivateSubnet2Id'
+      Environment:
+        Variables:
+          ENVIRONMENT: !Ref EnvironmentName
+          WORD_CACHE_TABLE:
+            Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-WordCacheTable'
+          JWT_SECRET_ARN: !Ref JwtSecretArn
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  AnalyzeLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/mandrain-analyze-${EnvironmentName}'
+      RetentionInDays: 30
+
+Outputs:
+  SessionInitFunctionArn:
+    Description: session-init Lambda ARN
+    Value: !GetAtt SessionInitFunction.Arn
+    Export:
+      Name: !Sub 'mandrain-${EnvironmentName}-SessionInitFunctionArn'
+
+  SessionInitFunctionName:
+    Description: session-init Lambda function name
+    Value: !Ref SessionInitFunction
+    Export:
+      Name: !Sub 'mandrain-${EnvironmentName}-SessionInitFunctionName'
+
+  AnalyzeFunctionArn:
+    Description: analyze Lambda ARN
+    Value: !GetAtt AnalyzeFunction.Arn
+    Export:
+      Name: !Sub 'mandrain-${EnvironmentName}-AnalyzeFunctionArn'
+
+  AnalyzeFunctionName:
+    Description: analyze Lambda function name
+    Value: !Ref AnalyzeFunction
+    Export:
+      Name: !Sub 'mandrain-${EnvironmentName}-AnalyzeFunctionName'
+
+  LambdaExecutionRoleArn:
+    Description: Lambda execution role ARN
+    Value: !GetAtt LambdaExecutionRole.Arn
+    Export:
+      Name: !Sub 'mandrain-${EnvironmentName}-LambdaRoleArn'
