@@ -1,0 +1,230 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: [main, dev]
+    paths:
+      - 'backend/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deploy environment'
+        required: true
+        default: dev
+        type: choice
+        options:
+          - dev
+          - prod
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  # ========== Stage 1: Determine environment ==========
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.env.outputs.environment }}
+      bucket_name: ${{ steps.bucket.outputs.name }}
+    steps:
+      - name: Determine environment
+        id: env
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "environment=${{ inputs.environment }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "environment=prod" >> "$GITHUB_OUTPUT"
+          else
+            echo "environment=dev" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set S3 bucket name
+        id: bucket
+        run: |
+          if [ "${{ steps.env.outputs.environment }}" = "prod" ]; then
+            echo "name=${{ vars.LAMBDA_BUCKET_PROD }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=${{ vars.LAMBDA_BUCKET_DEV }}" >> "$GITHUB_OUTPUT"
+          fi
+
+  # ========== Stage 2: Deploy DynamoDB ==========
+  deploy-dynamodb:
+    runs-on: ubuntu-latest
+    needs: prepare
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy DynamoDB stack
+        working-directory: backend
+        run: |
+          ENV="${{ needs.prepare.outputs.environment }}"
+          STACK_NAME="mandrain-dynamodb-${ENV}"
+          echo "Deploying stack: ${STACK_NAME}"
+
+          aws cloudformation deploy \
+            --template-file cfn-dynamodb.yaml \
+            --stack-name "${STACK_NAME}" \
+            --parameter-overrides EnvironmentName="${ENV}" \
+            --no-fail-on-empty-changeset
+
+          echo "### DynamoDB Stack" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Stack: \`${STACK_NAME}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Status: Deployed" >> "$GITHUB_STEP_SUMMARY"
+
+  # ========== Stage 3: Build & Upload Lambda Code ==========
+  build-and-upload:
+    runs-on: ubuntu-latest
+    needs: prepare
+    outputs:
+      s3_prefix: ${{ steps.upload.outputs.s3_prefix }}
+    env:
+      NODE_VERSION: '20'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        working-directory: backend
+        run: npm install
+
+      - name: Build Lambda packages
+        working-directory: backend
+        run: npm run build
+
+      - name: Zip packages
+        working-directory: backend
+        run: |
+          cd dist/session-init && zip -r ../session-init.zip index.mjs && cd ../..
+          cd dist/analyze && zip -r ../analyze.zip index.mjs && cd ../..
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload to S3
+        id: upload
+        working-directory: backend/dist
+        run: |
+          VERSION="${{ github.sha }}"
+          SHORT_SHA="${VERSION:0:7}"
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          S3_PREFIX="${TIMESTAMP}-${SHORT_SHA}"
+          BUCKET="${{ needs.prepare.outputs.bucket_name }}"
+
+          echo "s3_prefix=${S3_PREFIX}" >> "$GITHUB_OUTPUT"
+          echo "Uploading to s3://${BUCKET}/"
+
+          aws s3 cp session-init.zip "s3://${BUCKET}/session-init/${S3_PREFIX}.zip"
+          aws s3 cp analyze.zip "s3://${BUCKET}/analyze/${S3_PREFIX}.zip"
+          aws s3 cp session-init.zip "s3://${BUCKET}/session-init/latest.zip"
+          aws s3 cp analyze.zip "s3://${BUCKET}/analyze/latest.zip"
+
+  # ========== Stage 4: Deploy Lambda (depends on DynamoDB + Upload) ==========
+  deploy-lambda:
+    runs-on: ubuntu-latest
+    needs: [prepare, deploy-dynamodb, build-and-upload]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy Lambda stack
+        working-directory: backend
+        run: |
+          ENV="${{ needs.prepare.outputs.environment }}"
+          STACK_NAME="mandrain-lambda-${ENV}"
+          S3_PREFIX="${{ needs.build-and-upload.outputs.s3_prefix }}"
+
+          echo "Deploying stack: ${STACK_NAME}"
+
+          aws cloudformation deploy \
+            --template-file cfn-lambda.yaml \
+            --stack-name "${STACK_NAME}" \
+            --parameter-overrides \
+              EnvironmentName="${ENV}" \
+              SessionInitS3Key="session-init/${S3_PREFIX}.zip" \
+              AnalyzeS3Key="analyze/${S3_PREFIX}.zip" \
+              JwtSecretArn="${{ secrets.JWT_SECRET_ARN }}" \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --no-fail-on-empty-changeset
+
+          echo "### Lambda Stack" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Stack: \`${STACK_NAME}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- S3 Key: \`${S3_PREFIX}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Status: Deployed" >> "$GITHUB_STEP_SUMMARY"
+
+  # ========== Stage 5: Deploy API Gateway (depends on Lambda) ==========
+  deploy-apigateway:
+    runs-on: ubuntu-latest
+    needs: [prepare, deploy-lambda]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy API Gateway stack
+        working-directory: backend
+        run: |
+          ENV="${{ needs.prepare.outputs.environment }}"
+          STACK_NAME="mandrain-apigateway-${ENV}"
+
+          echo "Deploying stack: ${STACK_NAME}"
+
+          aws cloudformation deploy \
+            --template-file cfn-apigateway.yaml \
+            --stack-name "${STACK_NAME}" \
+            --parameter-overrides EnvironmentName="${ENV}" \
+            --no-fail-on-empty-changeset
+
+          # Get API endpoint
+          API_URL=$(aws cloudformation describe-stacks \
+            --stack-name "${STACK_NAME}" \
+            --query "Stacks[0].Outputs[?OutputKey=='ApiEndpoint'].OutputValue" \
+            --output text 2>/dev/null || echo "N/A")
+
+          echo "### API Gateway Stack" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Stack: \`${STACK_NAME}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Endpoint: \`${API_URL}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Status: Deployed" >> "$GITHUB_STEP_SUMMARY"
+
+  # ========== Summary ==========
+  summary:
+    runs-on: ubuntu-latest
+    needs: [prepare, deploy-dynamodb, build-and-upload, deploy-lambda, deploy-apigateway]
+    if: always()
+    steps:
+      - name: Deploy Summary
+        run: |
+          echo "### Full Deploy Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Stage | Status |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|--------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Environment | ${{ needs.prepare.outputs.environment }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| DynamoDB | ${{ needs.deploy-dynamodb.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Build & Upload | ${{ needs.build-and-upload.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Lambda | ${{ needs.deploy-lambda.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| API Gateway | ${{ needs.deploy-apigateway.result }} |" >> "$GITHUB_STEP_SUMMARY"
