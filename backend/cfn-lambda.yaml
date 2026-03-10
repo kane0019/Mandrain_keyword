@@ -104,9 +104,9 @@ Resources:
       VpcConfig:
         SecurityGroupIds:
           - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LambdaSecurityGroupId'
-        SubnetIds:
-          - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-PrivateSubnet1Id'
-          - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-PrivateSubnet2Id'
+        SubnetIds: !Split
+          - ','
+          - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-PrivateSubnetIds'
       Environment:
         Variables:
           ENVIRONMENT: !Ref EnvironmentName
@@ -142,9 +142,9 @@ Resources:
       VpcConfig:
         SecurityGroupIds:
           - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LambdaSecurityGroupId'
-        SubnetIds:
-          - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-PrivateSubnet1Id'
-          - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-PrivateSubnet2Id'
+        SubnetIds: !Split
+          - ','
+          - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-PrivateSubnetIds'
       Environment:
         Variables:
           ENVIRONMENT: !Ref EnvironmentName
