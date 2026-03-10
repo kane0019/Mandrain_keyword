@@ -1,4 +1,4 @@
-name: Upload Lambda Package
+name: Deploy Lambda
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
     paths:
       - 'backend/src/**'
       - 'backend/package.json'
+      - 'backend/cfn-lambda.yaml'
   workflow_dispatch:
     inputs:
       environment:
@@ -78,6 +79,7 @@ jobs:
           fi
 
       - name: Upload to S3
+        id: upload
         working-directory: backend/dist
         run: |
           VERSION="${{ github.sha }}"
@@ -85,6 +87,7 @@ jobs:
           TIMESTAMP=$(date +%Y%m%d-%H%M%S)
           S3_PREFIX="${TIMESTAMP}-${SHORT_SHA}"
 
+          echo "s3_prefix=${S3_PREFIX}" >> "$GITHUB_OUTPUT"
           echo "Uploading to s3://${{ steps.bucket.outputs.name }}/"
 
           # Upload versioned packages
@@ -95,10 +98,35 @@ jobs:
           aws s3 cp session-init.zip "s3://${{ steps.bucket.outputs.name }}/session-init/latest.zip"
           aws s3 cp analyze.zip "s3://${{ steps.bucket.outputs.name }}/analyze/latest.zip"
 
-          echo "### Upload Summary" >> "$GITHUB_STEP_SUMMARY"
+      - name: Deploy Lambda CloudFormation stack
+        id: deploy
+        working-directory: backend
+        run: |
+          ENV="${{ steps.env.outputs.environment }}"
+          STACK_NAME="mandrain-lambda-${ENV}"
+          S3_PREFIX="${{ steps.upload.outputs.s3_prefix }}"
+
+          echo "Deploying stack: ${STACK_NAME}"
+
+          aws cloudformation deploy \
+            --template-file cfn-lambda.yaml \
+            --stack-name "${STACK_NAME}" \
+            --parameter-overrides \
+              EnvironmentName="${ENV}" \
+              SessionInitS3Key="session-init/${S3_PREFIX}.zip" \
+              AnalyzeS3Key="analyze/${S3_PREFIX}.zip" \
+              JwtSecretArn="${{ secrets.JWT_SECRET_ARN }}" \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --no-fail-on-empty-changeset
+
+      - name: Summary
+        run: |
+          S3_PREFIX="${{ steps.upload.outputs.s3_prefix }}"
+          echo "### Deploy Summary" >> "$GITHUB_STEP_SUMMARY"
           echo "| Item | Value |" >> "$GITHUB_STEP_SUMMARY"
           echo "|------|-------|" >> "$GITHUB_STEP_SUMMARY"
           echo "| Environment | ${{ steps.env.outputs.environment }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Stack | mandrain-lambda-${{ steps.env.outputs.environment }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Bucket | ${{ steps.bucket.outputs.name }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| S3 Key Prefix | ${S3_PREFIX} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| session-init | session-init/${S3_PREFIX}.zip |" >> "$GITHUB_STEP_SUMMARY"
