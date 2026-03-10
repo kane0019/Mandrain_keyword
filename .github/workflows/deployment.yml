@@ -66,7 +66,7 @@ jobs:
         working-directory: backend
         run: |
           ENV="${{ needs.prepare.outputs.environment }}"
-          STACK_NAME="mandrain-dynamodb-${ENV}"
+          STACK_NAME="mandrain-extension-dynamodb-${ENV}"
           echo "Deploying stack: ${STACK_NAME}"
 
           aws cloudformation deploy \
@@ -152,7 +152,7 @@ jobs:
         working-directory: backend
         run: |
           ENV="${{ needs.prepare.outputs.environment }}"
-          STACK_NAME="mandrain-lambda-${ENV}"
+          STACK_NAME="mandrain-extension-lambda-${ENV}"
           S3_PREFIX="${{ needs.build-and-upload.outputs.s3_prefix }}"
 
           echo "Deploying stack: ${STACK_NAME}"
@@ -191,7 +191,7 @@ jobs:
         working-directory: backend
         run: |
           ENV="${{ needs.prepare.outputs.environment }}"
-          STACK_NAME="mandrain-apigateway-${ENV}"
+          STACK_NAME="mandrain-extension-apigateway-${ENV}"
 
           echo "Deploying stack: ${STACK_NAME}"
 
