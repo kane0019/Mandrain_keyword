@@ -1,0 +1,107 @@
+name: Upload Lambda Package
+
+on:
+  push:
+    branches: [main, dev]
+    paths:
+      - 'backend/src/**'
+      - 'backend/package.json'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deploy environment'
+        required: true
+        default: dev
+        type: choice
+        options:
+          - dev
+          - prod
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_VERSION: '20'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Determine environment
+        id: env
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "environment=${{ inputs.environment }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "environment=prod" >> "$GITHUB_OUTPUT"
+          else
+            echo "environment=dev" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Build Lambda packages
+        working-directory: backend
+        run: npm run build
+
+      - name: Zip packages
+        working-directory: backend
+        run: |
+          cd dist/session-init && zip -r ../session-init.zip index.mjs && cd ../..
+          cd dist/analyze && zip -r ../analyze.zip index.mjs && cd ../..
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Set S3 bucket name
+        id: bucket
+        run: |
+          if [ "${{ steps.env.outputs.environment }}" = "prod" ]; then
+            echo "name=${{ vars.LAMBDA_BUCKET_PROD }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=${{ vars.LAMBDA_BUCKET_DEV }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload to S3
+        working-directory: backend/dist
+        run: |
+          VERSION="${{ github.sha }}"
+          SHORT_SHA="${VERSION:0:7}"
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          S3_PREFIX="${TIMESTAMP}-${SHORT_SHA}"
+
+          echo "Uploading to s3://${{ steps.bucket.outputs.name }}/"
+
+          # Upload versioned packages
+          aws s3 cp session-init.zip "s3://${{ steps.bucket.outputs.name }}/session-init/${S3_PREFIX}.zip"
+          aws s3 cp analyze.zip "s3://${{ steps.bucket.outputs.name }}/analyze/${S3_PREFIX}.zip"
+
+          # Upload as latest
+          aws s3 cp session-init.zip "s3://${{ steps.bucket.outputs.name }}/session-init/latest.zip"
+          aws s3 cp analyze.zip "s3://${{ steps.bucket.outputs.name }}/analyze/latest.zip"
+
+          echo "### Upload Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Item | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Environment | ${{ steps.env.outputs.environment }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Bucket | ${{ steps.bucket.outputs.name }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| S3 Key Prefix | ${S3_PREFIX} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| session-init | session-init/${S3_PREFIX}.zip |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| analyze | analyze/${S3_PREFIX}.zip |" >> "$GITHUB_STEP_SUMMARY"

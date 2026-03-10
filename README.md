@@ -30,7 +30,20 @@ Mandrain_keyword/
 │   ├── local_db.json         # 离线词库（10条示例词条）
 │   └── images/               # 图标 (16/48/128)
 ├── backend/                  # 后端服务
-│   └── ARCHITECTURE.md       # AWS 架构设计文档
+│   ├── ARCHITECTURE.md       # AWS 架构设计文档
+│   ├── package.json          # 依赖：jose + @aws-sdk/*
+│   ├── cfn-vpc-s3.yaml       # CloudFormation: VPC + S3
+│   ├── cfn-dynamodb.yaml     # CloudFormation: DynamoDB 3张表
+│   ├── cfn-lambda.yaml       # CloudFormation: Lambda + IAM
+│   ├── cfn-apigateway.yaml   # CloudFormation: API Gateway
+│   └── src/
+│       ├── shared/
+│       │   ├── jwt.mjs       # JWT 签发/验证 + Secrets Manager 缓存
+│       │   └── response.mjs  # CORS 响应 + JSON 解析
+│       ├── session-init/
+│       │   └── index.mjs     # 会话初始化 Lambda
+│       └── analyze/
+│           └── index.mjs     # 词汇分析 Lambda
 ├── test/                     # 测试工具
 │   └── mock_server.ps1       # PowerShell 本地 mock server（零依赖）
 ├── README.md
@@ -72,14 +85,91 @@ Mandrain_keyword/
 - **入参**: `text`, `prefix`, `suffix`, `page_url`, `lang`
 - **返回**: `zh`, `en`, `definition`, `implication`, `sentiment`, `source`
 
-### 后端架构（设计完成，待部署）
+### 后端 Lambda（代码已完成，待部署）
 
-AWS Serverless 方案，详见 `backend/ARCHITECTURE.md`：
-- API Gateway + Lambda (session-init, analyze)
-- DynamoDB 3 张表 (licenses, devices, word_cache)
-- Bedrock Claude 语义分析
-- JWT 自签鉴权，Secrets Manager 密钥管理
-- 预估 1000 用户月成本 ~$28-53
+AWS Serverless 方案，详见 `backend/ARCHITECTURE.md`。
+
+```
+backend/src/
+├── shared/
+│   ├── jwt.mjs          # JWT 签发/验证 + Secrets Manager 密钥缓存
+│   └── response.mjs     # CORS 响应构建 + JSON 解析
+├── session-init/
+│   └── index.mjs        # 会话初始化 Lambda
+└── analyze/
+    └── index.mjs        # 词汇分析 Lambda
+```
+
+#### Lambda 1: session-init 业务流程
+
+```
+入参: license_token, install_id, client_version, platform
+    │
+    ▼
+[入参校验] → 缺 license_token → 400 TOKEN_MISSING
+    │         缺 install_id   → 400 INVALID_REQUEST
+    ▼
+[查 licenses 表] PK=license_token
+    │
+    ├─ 不存在          → 401 TOKEN_INVALID
+    ├─ status≠active   → 401 SUBSCRIPTION_INACTIVE
+    ├─ expires_at 过期  → 401 SUBSCRIPTION_INACTIVE
+    │
+    ▼
+[查 devices 表] Query PK=license_token, Filter is_active=true
+    │
+    ├─ 活跃设备数 ≥ max_devices 且 install_id 未注册
+    │   → 403 DEVICE_LIMIT_EXCEEDED (返回 device_count + max_devices)
+    │
+    ▼
+[写入 devices 表] PutItem (license_token, install_id, platform, ...)
+    │               已存在 → 更新 last_seen
+    │               新设备 → 写入 first_seen + last_seen
+    ▼
+[签发 JWT] HS256, payload: {sub: install_id, plan, license_token}, 有效期 1h
+    │       签名密钥: Secrets Manager (冷启动加载，后续内存缓存)
+    ▼
+返回 200: access_token, expires_in(3600), plan, device_count, max_devices,
+          feature_flags: {cloud_analysis: plan≠free}
+```
+
+#### Lambda 2: analyze 业务流程
+
+```
+请求头: Authorization: Bearer <access_token>
+入参:   text, prefix, suffix, page_url, lang
+    │
+    ▼
+[JWT 验证] → 无 token → 401 TOKEN_MISSING
+    │         无效/过期 → 401 TOKEN_INVALID
+    ▼
+[入参校验] → text 为空     → 400 EMPTY_TEXT
+    │         text > 30字符 → 400 TEXT_TOO_LONG
+    ▼
+[查 word_cache 表] PK=text, SK=lang(默认zh)
+    │
+    ├─ 命中 → 直接返回 (source: "cache")
+    │
+    ▼ 未命中
+[调用 Bedrock Claude Sonnet]
+    │  Prompt: 中文语义分析专家角色
+    │  输入: 词汇 + 前文 + 后文 + 来源页面
+    │  要求: 返回 JSON {zh, en, definition, implication, sentiment}
+    │
+    ├─ AI 调用失败 → 502 AI_SERVICE_ERROR
+    │
+    ▼
+[写入 word_cache 表] TTL = 当前时间 + 24h (DynamoDB TTL 自动清理)
+    │
+    ▼
+返回 200: zh, en, definition, implication, sentiment, source("cloud")
+```
+
+**技术要点**：
+- JWT 库使用 `jose`（轻量，无原生依赖），`@aws-sdk/*` 由 Lambda Node.js 20.x 运行时内置
+- Secrets Manager 密钥在冷启动时加载一次，后续请求复用内存缓存
+- Bedrock 返回内容兼容 markdown code block 包裹，正则提取 JSON
+- CloudFormation 模板已就绪：`cfn-vpc-s3.yaml` → `cfn-dynamodb.yaml` → `cfn-lambda.yaml` → `cfn-apigateway.yaml`
 
 ---
 
@@ -183,6 +273,7 @@ const MAX_QUERY_LENGTH = 30;  // 查询词最大字符数
 1. **基础性能日志** — 命中率、响应延迟统计
 2. **限流配置** — API Gateway Usage Plan，free/pro 不同限额
 3. **手动输入查询** — popup 输入框，支持无上下文词汇查询（优先级低于划词，无上下文时精度下降且竞品替代性高）
+4. **NAT Gateway 冗余** — 当前 dev/prod 均单 NAT Gateway（省成本），生产稳定后在第二个 AZ 增加 NAT + 独立路由表实现高可用
 
 ### P3 — 远期规划
 
