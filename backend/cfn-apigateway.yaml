@@ -200,7 +200,7 @@ Resources:
           HttpMethod: '*'
           ThrottlingRateLimit: !Ref ThrottlingRateLimit
           ThrottlingBurstLimit: !Ref ThrottlingBurstLimit
-          LoggingLevel: INFO
+          LoggingLevel: 'OFF'
           DataTraceEnabled: false
           MetricsEnabled: true
       Tags:
