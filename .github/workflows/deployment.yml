@@ -164,7 +164,6 @@ jobs:
               EnvironmentName="${ENV}" \
               SessionInitS3Key="session-init/${S3_PREFIX}.zip" \
               AnalyzeS3Key="analyze/${S3_PREFIX}.zip" \
-              JwtSecretArn="${{ secrets.JWT_SECRET_ARN }}" \
             --capabilities CAPABILITY_NAMED_IAM \
             --no-fail-on-empty-changeset
 

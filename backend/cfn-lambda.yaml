@@ -22,11 +22,6 @@ Parameters:
     Default: 'PLACEHOLDER_ANALYZE_PACKAGE.zip'
     Description: S3 key for analyze Lambda deployment package
 
-  JwtSecretArn:
-    Type: String
-    Default: 'arn:aws:secretsmanager:us-east-1:000000000000:secret:PLACEHOLDER'
-    Description: ARN of the JWT signing secret in Secrets Manager
-
 Resources:
   # ========== IAM Role for Lambda ==========
   LambdaExecutionRole:
@@ -65,7 +60,8 @@ Resources:
               - Effect: Allow
                 Action:
                   - secretsmanager:GetSecretValue
-                Resource: !Ref JwtSecretArn
+                Resource:
+                  Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-JwtSecretArn'
 
         - PolicyName: BedrockAccess
           PolicyDocument:
@@ -114,7 +110,8 @@ Resources:
             Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LicensesTable'
           DEVICES_TABLE:
             Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-DevicesTable'
-          JWT_SECRET_ARN: !Ref JwtSecretArn
+          JWT_SECRET_ARN:
+            Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-JwtSecretArn'
       Tags:
         - Key: Environment
           Value: !Ref EnvironmentName
@@ -150,7 +147,8 @@ Resources:
           ENVIRONMENT: !Ref EnvironmentName
           WORD_CACHE_TABLE:
             Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-WordCacheTable'
-          JWT_SECRET_ARN: !Ref JwtSecretArn
+          JWT_SECRET_ARN:
+            Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-JwtSecretArn'
       Tags:
         - Key: Environment
           Value: !Ref EnvironmentName
