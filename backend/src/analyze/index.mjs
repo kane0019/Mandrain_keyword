@@ -127,15 +127,15 @@ function buildPrompt(text, prefix, suffix, pageUrl) {
 
 async function invokeBedrockClaude(prompt) {
   try {
-    // DeepSeek 3.2 modelId and request format
-    const modelId = 'deepseek.v3.2'; // DeepSeek 3.2 Bedrock model
+    const modelId = 'deepseek.v3.2';
 
+    // DeepSeek on Bedrock uses OpenAI-compatible request format
     const requestBody = {
-      input: prompt,
-      parameters: {
-        max_new_tokens: 512,
-        temperature: 0.3,
-      },
+      messages: [
+        { role: 'user', content: prompt },
+      ],
+      max_tokens: 512,
+      temperature: 0.3,
     };
 
     const command = new InvokeModelCommand({
@@ -148,8 +148,8 @@ async function invokeBedrockClaude(prompt) {
     const resp = await bedrockClient.send(command);
     const respBody = JSON.parse(new TextDecoder().decode(resp.body));
 
-    // DeepSeek returns output in respBody.results[0].text
-    const text = respBody.results?.[0]?.text || '';
+    // DeepSeek returns output in OpenAI-compatible format
+    const text = respBody.choices?.[0]?.message?.content || '';
 
     // 提取 JSON（兼容 AI 返回带 markdown code block 的情况）
     const jsonMatch = text.match(/\{[\s\S]*\}/);
