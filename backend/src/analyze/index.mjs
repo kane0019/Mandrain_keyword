@@ -103,7 +103,8 @@ export async function handler(event) {
 }
 
 function buildPrompt(text, prefix, suffix, pageUrl) {
-  let prompt = `你是中文语义分析专家。分析以下中文词汇在语境中的含义，严格返回JSON，不含其他文字。
+  const hasContext = prefix || suffix;
+  let prompt = `你是中文语义分析专家。分析以下中文词汇在语境中的含义，严格返回JSON，不含其他文字。每个字段限50字以内，简洁精准。
 
 词汇: ${text}`;
 
@@ -113,7 +114,7 @@ function buildPrompt(text, prefix, suffix, pageUrl) {
 
   prompt += `
 
-{"zh":"原词","en":"最贴切英文等价词(网络语给俚语而非直译)","definition":"字面含义(英文)","implication":"当代中文语境真实含义和文化内涵(英文)","sentiment":"positive或negative或neutral"}`;
+{"zh":"原词","en":"最贴切英文等价词(网络语给俚语而非直译)","definition":"字面含义(英文,简短)","implication":"当代中文语境真实含义(英文,简短)","sentiment":"positive或negative或neutral"}`;
 
   return prompt;
 }

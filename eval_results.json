@@ -1,280 +1,280 @@
 ﻿[
     {
-        "text":  "整顿职场",
-        "category":  "F",
-        "note":  "有主动对抗不合理职场规则的含义",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (504) 网关超时。"
-    },
-    {
-        "text":  "发疯文学",
-        "category":  "F",
-        "note":  "用夸张混乱语气表达不满的网络写作风格",
+        "text":  "水灵灵地",
+        "category":  "J",
+        "note":  "形容人某种行为做得格外顺溜自然，口语化",
         "status":  "PASS",
         "response":  {
-                         "zh":  "åç¯æå­¦",
-                         "en":  "crazy literature / venting literature",
-                         "definition":  "A style of online expression characterized by exaggerated, chaotic, and emotionally intense language, often used to humorously or cathartically describe overwhelming situations or feelings.",
-                         "implication":  "It reflects a coping mechanism among young Chinese netizens to deal with stress, absurdity, or frustration in daily life through performative, over-the-top textual outbursts. It often carries a tone of ironic self-awareness and communal release.",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "班味",
-        "category":  "F",
-        "note":  "上班后身上散发的疲惫/压抑气质，自嘲",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "ç­å³",
-                         "en":  "class/work vibe",
-                         "definition":  "A colloquial term describing the atmosphere, habits, or behavioral traits formed by long-term office work or student life, often implying a rigid, routine, or weary state.",
-                         "implication":  "It implies a sense of being trapped in a monotonous, stressful, or overly formal routine, often with a negative connotation of losing personal vitality or individuality due to institutional or work pressures.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "嘴替",
-        "category":  "F",
-        "note":  "帮别人说出心声的人，应说明语境",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å´æ¿",
-                         "en":  "mouthpiece",
-                         "definition":  "Literally \u0027mouth substitute\u0027; refers to someone who expresses thoughts or opinions on behalf of others.",
-                         "implication":  "A person who voices the unspoken or shared sentiments of a group, often in a public or online context, saving others the effort of expressing themselves.",
+                         "zh":  "æ°´çµçµå°",
+                         "en":  "dewy / fresh and vibrant",
+                         "definition":  "Literally: like water, sparkling and moist",
+                         "implication":  "Describes something (often eyes, skin, fruits, or vegetables) that appears fresh, moist, radiant, and full of vitality. It conveys a sense of youthful purity, natural beauty, and healthy liveliness. Commonly used to compliment someone\u0027s bright, clear eyes or glowing complexion.",
                          "sentiment":  "positive",
                          "source":  "cloud"
                      }
     },
     {
-        "text":  "松弛感",
-        "category":  "F",
-        "note":  "不焦虑、随性自在的状态，与内卷相对",
+        "text":  "原神，启动",
+        "category":  "J",
+        "note":  "源自游戏梗，转义为开始做某事，带戏谑感",
         "status":  "PASS",
         "response":  {
-                         "zh":  "æ¾å¼æ",
-                         "en":  "sense of relaxation / relaxed vibe",
-                         "definition":  "A state or quality of being relaxed, unhurried, and free from tension, often manifested in one\u0027s demeanor, attitude, or atmosphere.",
-                         "implication":  "It implies a desirable, effortless ease and natural composure in facing life\u0027s pressures, contrasting with societal expectations of constant striving and anxiety. It often carries connotations of self-acceptance, emotional stability, and the ability to maintain inner peace without being overly rigid or performative.",
+                         "zh":  "åç¥ï¼å¯å¨",
+                         "en":  "Genshin Impact, boot up!",
+                         "definition":  "Literally: \u0027Genshin Impact, start up!\u0027",
+                         "implication":  "A popular internet meme originating from live-streamers and content creators. It humorously depicts the moment someone decides to stop procrastinating or doing other activities and launches the game Genshin Impact. It has evolved into a broader cultural shorthand for: 1) The act of starting to play Genshin Impact with dedication or obsession. 2) A playful way to announce one\u0027s transition into leisure/gaming mode. 3) Sometimes used self-deprecatingly to imply neglecting responsibilities for the game. The phrase captures the game\u0027s massive popularity and its integration into daily online discourse.",
                          "sentiment":  "positive",
                          "source":  "cloud"
                      }
     },
     {
-        "text":  "哈人",
-        "category":  "F",
-        "note":  "东北/网络用语，表示害怕/吓人",
+        "text":  "尊嘟假嘟",
+        "category":  "J",
+        "note":  "谐音\u0027真的假的\u0027，表示不敢置信，幼稚可爱语气",
         "status":  "PASS",
         "response":  {
-                         "zh":  "åäºº",
-                         "en":  "scary or shocking",
-                         "definition":  "A slang term used to describe something scary or shocking, often used humorously or exaggeratedly.",
-                         "implication":  "It implies that something is so shocking or frightening that it scares people.",
+                         "zh":  "å°ååå",
+                         "en":  "for real or for fake",
+                         "definition":  "Literally \u0027real or fake\u0027, questioning authenticity or truthfulness",
+                         "implication":  "A playful, internet-slang phrase used to question the authenticity or truthfulness of something, often in a humorous or sarcastic tone. Originates from online communities and is used in casual, informal contexts, especially among younger generations.",
                          "sentiment":  "neutral",
                          "source":  "cloud"
                      }
     },
     {
-        "text":  "泼天富贵",
-        "category":  "F",
-        "note":  "突然涌来的巨大机遇或流量，应说明讽刺用法",
+        "text":  "捏",
+        "category":  "J",
+        "note":  "语气词，表撒娇或卖萌，来自网络语",
         "status":  "PASS",
         "response":  {
-                         "zh":  "æ³¼å¤©å¯è´µ",
-                         "en":  "overwhelming wealth and prosperity",
-                         "definition":  "Literal meaning: \u0027sky-splashing\u0027 or \u0027heaven-drenching\u0027 riches and honor; describes an immense, almost unimaginable level of wealth and high status.",
-                         "implication":  "Implies an extreme, extravagant, or even shocking degree of fortune that seems to defy ordinary limits. It often carries a sense of awe, excess, or dramatic exaggeration, and can be used both admiringly and critically depending on context.",
+                         "zh":  "æ",
+                         "en":  "cute / adorable / squishy",
+                         "definition":  "to pinch or knead with fingers",
+                         "implication":  "In contemporary Chinese internet slang, \u0027æ\u0027 is often used as an affectionate suffix or interjection to express cuteness, softness, or endearment, especially in ACG (anime, comics, games) culture and cute online communication. It mimics a gentle, playful pinching gesture toward something soft or adorable.",
                          "sentiment":  "positive",
                          "source":  "cloud"
                      }
     },
     {
-        "text":  "显眼包",
-        "category":  "F",
-        "note":  "爱出风头、特别引人注意的人，褒贬取决于语境",
+        "text":  "出警",
+        "category":  "J",
+        "note":  "网络用语，指有人来纠错/维权，常带讽刺意味",
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (504) 网关超时。"
+    },
+    {
+        "text":  "磕到了",
+        "category":  "J",
+        "note":  "嗑 CP 时被感动，表达对两人关系的沉迷",
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (504) 网关超时。"
+    },
+    {
+        "text":  "夺笋",
+        "category":  "J",
+        "note":  "谐音\u0027多损\u0027，指行为过分，带戏谑批评语气",
         "status":  "PASS",
         "response":  {
-                         "zh":  "æ¾ç¼å\u0085",
-                         "en":  "attention-seeker / spotlight hog",
-                         "definition":  "A person or thing that conspicuously draws attention, often through exaggerated or unconventional behavior or appearance.",
-                         "implication":  "Often implies someone who actively or unintentionally stands out in a crowd, sometimes in an amusing, awkward, or mildly annoying way. It can carry a teasing or affectionate tone among friends, but may also suggest a lack of subtlety or a desire for excessive attention.",
-                         "sentiment":  "neutral (context-dependent, can lean positive or negative)",
+                         "zh":  "å¤ºç¬",
+                         "en":  "too much",
+                         "definition":  "literally \u0027snatching bamboo shoots\u0027",
+                         "implication":  "A pun on the northeastern Chinese dialect pronunciation of \u0027duÃ³ sÇn\u0027 (å¤æ, meaning \u0027how mean/ruthless\u0027), used humorously online to comment on someone\u0027s savage, ruthless, or excessively teasing behavior, often in a playful, mocking context.",
+                         "sentiment":  "neutral (often used jokingly)",
                          "source":  "cloud"
                      }
     },
     {
-        "text":  "对齐颗粒度",
-        "category":  "G",
-        "note":  "职场黑话，表示细化沟通，有时被讽刺为废话",
+        "text":  "yyds",
+        "category":  "J",
+        "note":  "永远的神的缩写，极度赞美，已渐渐被过度使用",
         "status":  "PASS",
         "response":  {
-                         "zh":  "å¯¹é½é¢ç²åº¦",
-                         "en":  "alignment granularity",
-                         "definition":  "The level of detail or precision at which alignment is achieved between different elements, such as data, systems, goals, or processes.",
-                         "implication":  "Often used in technical or business contexts to emphasize the need for precise coordination and consistency, suggesting that higher granularity leads to better integration, efficiency, or accuracy.",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "赋能",
-        "category":  "G",
-        "note":  "商业/职场高频词，已被过度使用至沦为空话",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "èµè½",
-                         "en":  "empowerment",
-                         "definition":  "To give power, ability, or authority to someone or something; to enable.",
-                         "implication":  "Often used in business or organizational contexts to imply enhancing capabilities, fostering innovation, or driving growth through resource allocation, technology, or training. Can carry a buzzword connotation of strategic enablement.",
+                         "zh":  "yyds",
+                         "en":  "GOAT (Greatest of All Time)",
+                         "definition":  "Literal: \u0027Eternal God\u0027 (from Chinese pinyin initials of \u0027æ°¸è¿çç¥\u0027)",
+                         "implication":  "An internet slang term expressing extreme admiration or praise for someone or something, indicating it is the best in its category. Widely used in fan culture, gaming, and social media to hype idols, products, or trends.",
                          "sentiment":  "positive",
                          "source":  "cloud"
                      }
     },
     {
-        "text":  "闭环",
-        "category":  "G",
-        "note":  "职场语，处理完某件事的完整流程，有时是官僚术语",
+        "text":  "懂得都懂",
+        "category":  "K",
+        "note":  "暗示有内情但不明说，测试模型是否能识别隐晦表达",
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (504) 网关超时。"
+    },
+    {
+        "text":  "你真的好勇哦",
+        "category":  "K",
+        "note":  "表面夸勇敢，实际多为反讽对方鲁莽",
         "status":  "PASS",
         "response":  {
-                         "zh":  "é­ç¯",
-                         "en":  "closed loop",
-                         "definition":  "A closed-loop system or process that forms a complete cycle, where the end point connects back to the starting point, forming a self-contained and self-regulating system.",
-                         "implication":  "In business and management, it often refers to a closed-loop management system, emphasizing the closure and traceability of the entire process, ensuring that every step is monitored, results are fed back, and continuous improvement is achieved. It implies a systematic, continuous, and self-optimizing process.",
+                         "zh":  "ä½ ççå¥½åå¦",
+                         "en":  "You\u0027re really ballsy",
+                         "definition":  "Literal: \u0027You\u0027re really brave/courageous\u0027",
+                         "implication":  "In contemporary Chinese internet culture, this phrase is often used sarcastically or ironically to comment on someone\u0027s reckless, impulsive, or socially unaware behavior. It implies the person is acting without considering consequences, social norms, or potential embarrassment. It can also carry a tone of amused disbelief.",
+                         "sentiment":  "negative or neutral (depending heavily on context and tone; can be teasing among friends)",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "建议你好好想想",
+        "category":  "K",
+        "note":  "委婉批评，暗示对方做了不妥的事",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "å»ºè®®ä½ å¥½å¥½æ³æ³",
+                         "en":  "You might want to think twice",
+                         "definition":  "Literally: \u0027I suggest you think carefully\u0027",
+                         "implication":  "Often used to imply criticism, doubt, or disagreement with the listener\u0027s current stance or action. It carries a tone of warning, suggesting that the listener\u0027s current thinking is inadequate or mistaken, and that reconsideration is necessary. In some contexts, it can be a polite or indirect way to express strong disagreement or to hint at potential negative consequences.",
+                         "sentiment":  "negative",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "有被帅到",
+        "category":  "K",
+        "note":  "表达被某人或某事惊艳，可以是真心也可调侃",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "æè¢«å¸\u0085å°",
+                         "en":  "slayed / mind-blown (by someone\u0027s coolness)",
+                         "definition":  "literally: \u0027have been struck by handsomeness/coolness\u0027",
+                         "implication":  "An exclamation of being genuinely impressed or awestruck by someone\u0027s appearance, style, action, or overall charisma. It originates from internet slang, often used among younger generations to express strong, positive surprise. It carries a tone of playful exaggeration and immediacy, implying the impact was sudden and powerful.",
                          "sentiment":  "positive",
                          "source":  "cloud"
                      }
     },
     {
-        "text":  "向上管理",
-        "category":  "G",
-        "note":  "管理上级对自己印象的策略，带职场算计含义",
+        "text":  "遥遥领先",
+        "category":  "K",
+        "note":  "原海外发布会金句，现已异化为嘲讽某品牌过度吹嘘",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "é¥é¥é¢å\u0085",
+                         "en":  "miles ahead / way ahead of the pack",
+                         "definition":  "Far ahead; leading by a large margin",
+                         "implication":  "Originally a neutral term describing a significant lead in competition or development. In contemporary Chinese internet culture, it has become a heavily ironic meme due to its association with Huawei\u0027s product launches and exaggerated marketing. It now often sarcastically implies claims of superiority that may be exaggerated or unsubstantiated, though in formal contexts it retains its original meaning.",
+                         "sentiment":  "context-dependent (neutral/positive in formal use; ironic/negative in meme culture)",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "小镇做题家",
+        "category":  "L",
+        "note":  "来自农村小镇靠做题上名校的学生，带自嘲和社会批评",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "å°éåé¢å®¶",
+                         "en":  "Small-town test machine",
+                         "definition":  "A person from a small town or rural area who achieves academic success primarily through relentless exam preparation and problem-solving.",
+                         "implication":  "A self-deprecating or socially used term referring to individuals who leveraged exceptional test-taking skills to gain entry into elite universities and secure stable jobs (often in the civil service or state-owned enterprises), but who may lack broader social resources, cultural capital, or innovative thinking compared to their urban, more privileged peers. It highlights the systemic inequalities in Chinese education and social mobility, and the perceived limitations of a purely exam-oriented upbringing.",
+                         "sentiment":  "negative (often used self-mockingly or critically to describe perceived narrowness, but can also carry a tone of sympathy for their struggle within an unequal system)",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "985废物",
+        "category":  "L",
+        "note":  "名校毕业却找不到好工作者的自嘲，反映就业焦虑",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "985åºç©",
+                         "en":  "985 loser / elite university burnout",
+                         "definition":  "Literal meaning: \u0027985 trash\u0027 or \u0027985 waste\u0027, referring to graduates from China\u0027s elite Project 985 universities who perceive themselves as underachievers.",
+                         "implication":  "A self-deprecating term used by graduates of China\u0027s top-tier universities (Project 985) to express feelings of inadequacy, anxiety, and failure despite their prestigious educational background. It reflects intense societal pressure, high expectations, and a perceived gap between academic pedigree and real-world success (e.g., in career, income, or social status). The term critiques both hyper-competitive education systems and narrow societal definitions of success.",
+                         "sentiment":  "negative",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "精英感",
+        "category":  "L",
+        "note":  "某类人散发的优越气质，可褒可贬取决于语境",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "ç²¾è±æ",
+                         "en":  "elite vibe / highbrow aura",
+                         "definition":  "The outward appearance, demeanor, or atmosphere associated with being part of an elite group.",
+                         "implication":  "Refers to the perceived or projected qualities of sophistication, exclusivity, high taste, and superior status often associated with educated, wealthy, or powerful individuals. In contemporary Chinese context, it carries nuanced cultural connotations: it can be aspirational (something to emulate) but is often used critically to describe someone or something perceived as pretentiously showcasing their elite status, education, or refined tastes, thus creating a sense of distance or artificial superiority. It comments on the performance of elitism.",
+                         "sentiment":  "neutral (context-dependent, often leans slightly negative or ironic)",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "废柴",
+        "category":  "L",
+        "note":  "自嘲或贬低型词，指能力差/没出息的人",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "åºæ´",
+                         "en":  "loser / deadbeat",
+                         "definition":  "literal: useless firewood; figurative: a worthless person",
+                         "implication":  "A slang term describing someone perceived as incompetent, lazy, or lacking ambition and achievement. It carries a strong connotation of being a burden or having wasted potential. Often used in a self-deprecating or humorous way among friends, but can be highly derogatory when used seriously.",
+                         "sentiment":  "negative",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "普信男",
+        "category":  "L",
+        "note":  "过度自信却无实力的男性，讽刺意味强",
         "status":  "FAIL",
         "response":  "远程服务器返回错误: (504) 网关超时。"
     },
     {
-        "text":  "躺平式干部",
-        "category":  "G",
-        "note":  "不求上进、混日子的官员或员工，贬义",
+        "text":  "这件事你得好好感谢他，要不是他，你早完了",
+        "category":  "M",
+        "note":  "应识别表面感谢背后暗藏的压力和威胁感",
         "status":  "FAIL",
         "response":  "远程服务器返回错误: (504) 网关超时。"
     },
     {
-        "text":  "舔狗",
-        "category":  "H",
-        "note":  "无底线讨好对方的人，自嘲或贬义",
+        "text":  "她那个笑啊，懂的都懂",
+        "category":  "M",
+        "note":  "应识别\u0027懂的都懂\u0027的暗示性含义，不明说但暗有恶意",
         "status":  "PASS",
         "response":  {
-                         "zh":  "èç",
-                         "en":  "Licking Dog",
-                         "definition":  "A person who is overly submissive and obedient to someone they are attracted to, often to the point of self-deprecation, in an attempt to gain their affection, often without reciprocation.",
-                         "implication":  "A person who is willing to sacrifice their dignity and self-respect to please someone they admire, often used to describe unrequited love or unreciprocated affection.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "绿茶",
-        "category":  "H",
-        "note":  "表面清纯实则心机的女性，贬义",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "ç»¿è¶",
-                         "en":  "green tea",
-                         "definition":  "A type of tea made from unoxidized leaves, known for its health benefits and cultural significance in East Asia.",
-                         "implication":  "In modern Chinese internet slang, it is often used metaphorically to describe a person (usually female) who appears innocent, pure, or virtuous on the surface but is actually manipulative, calculating, or hypocritical in relationships.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "海王",
-        "category":  "H",
-        "note":  "同时周旋多个异性的人，贬义",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "æµ·ç",
-                         "en":  "Sea King",
-                         "definition":  "Literal meaning: \u0027Sea King\u0027 or \u0027Neptune\u0027 (the planet).",
-                         "implication":  "In modern Chinese internet slang, it refers to a person (often male) who romantically pursues or maintains relationships with multiple partners simultaneously, akin to a \u0027player\u0027 or \u0027womanizer\u0027. It implies the person is adept at managing multiple romantic connections, much like ruling over a vast \u0027sea\u0027 of admirers.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "拿捏",
-        "category":  "H",
-        "note":  "完全掌控某人/某事，语气可赞赏或嘲讽",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "æ¿æ",
-                         "en":  "handle, grasp, or control with precision",
-                         "definition":  "To hold or grasp something with the fingers; to handle or manage a situation with skill and finesse.",
-                         "implication":  "Often implies a nuanced or skillful control over a situation, person, or detail, suggesting a careful balance or mastery in dealing with something.",
+                         "zh":  "å¥¹é£ä¸ªç¬åï¼æçé½æ",
+                         "en":  "That smile of hers, if you know you know",
+                         "definition":  "Literally: \u0027That laugh/smile of hers, those who understand will understand.\u0027",
+                         "implication":  "A phrase used to imply that a specific smile or expression carries a hidden meaning, inside joke, or shared understanding that only a certain group (or those \u0027in the know\u0027) can fully grasp. It often refers to a subtle, knowing, or suggestive expression, possibly related to gossip, romantic tension, or a private context. It creates a sense of exclusivity and shared secret among the speaker and the intended audience.",
                          "sentiment":  "neutral",
                          "source":  "cloud"
                      }
     },
     {
-        "text":  "恋爱脑",
-        "category":  "H",
-        "note":  "凡事以感情为优先，带贬义",
+        "text":  "他喝了点酒，讲了好多真心话",
+        "category":  "M",
+        "note":  "应识别\u0027酒后吐真言\u0027的潜台词和信息暴露风险",
         "status":  "FAIL",
         "response":  "远程服务器返回错误: (504) 网关超时。"
     },
     {
-        "text":  "我就是个普通打工人，没什么追求",
-        "category":  "I",
-        "note":  "应识别出自嘲背后的无奈/认命感",
+        "text":  "领导说不差你这点加班费",
+        "category":  "M",
+        "note":  "应识别强迫加班的话术，表面大方实则压榨",
         "status":  "PASS",
         "response":  {
-                         "zh":  "æå°±æ¯ä¸ªæ®éæå·¥äººï¼æ²¡ä»ä¹è¿½æ±",
-                         "en":  "I\u0027m just an ordinary worker, with no particular ambitions.",
-                         "definition":  "Literally: I am just an ordinary working person, without any particular pursuits or aspirations.",
-                         "implication":  "The speaker is modestly downplaying their status and ambitions, possibly expressing contentment with a simple life, resignation to their current situation, or a subtle critique of societal pressure to constantly strive for more. It can also imply a desire to avoid high expectations or pressure.",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "他这个人很会来事儿",
-        "category":  "I",
-        "note":  "应说明可能是夸善于处事，也可能是讽刺圆滑",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (504) 网关超时。"
-    },
-    {
-        "text":  "你这波操作我给满分",
-        "category":  "I",
-        "note":  "可以是真心称赞，也可以是反讽，应分析歧义",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (504) 网关超时。"
-    },
-    {
-        "text":  "她不是在哭，她在发疯",
-        "category":  "I",
-        "note":  "应识别发疯为宣泄情绪、而非精神疾病",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å¥¹ä¸æ¯å¨å­ï¼å¥¹å¨åç¯",
-                         "en":  "She is not crying, she is going crazy",
-                         "definition":  "Literally states that the person is not crying but is instead acting in a frenzied or irrational manner.",
-                         "implication":  "Implies that the person\u0027s emotional outburst is extreme, uncontrollable, or irrational, often suggesting a reaction beyond normal sadness or anger.",
+                         "zh":  "é¢å¯¼è¯´ä¸å·®ä½ è¿ç¹å ç­è´¹",
+                         "en":  "Your overtime pay is peanuts to the company",
+                         "definition":  "The boss says the company doesn\u0027t need your meager overtime pay",
+                         "implication":  "A sarcastic or dismissive remark implying that the employee\u0027s overtime contribution is insignificant to the organization, often used to pressure employees into working overtime without pay or to belittle their efforts. Reflects workplace power dynamics and the undervaluing of labor in some corporate cultures.",
                          "sentiment":  "negative",
                          "source":  "cloud"
                      }
     },
     {
-        "text":  "这个项目就是在走形式",
-        "category":  "I",
-        "note":  "应识别批评官僚/表面功夫的含义",
+        "text":  "她说她不开心但没事",
+        "category":  "M",
+        "note":  "应识别中国人/女性表达委屈时的隐晦否定语气",
         "status":  "PASS",
         "response":  {
-                         "zh":  "è¿ä¸ªé¡¹ç®å°±æ¯å¨èµ°å½¢å¼",
-                         "en":  "This project is just a formality.",
-                         "definition":  "Literally: This project is merely going through the motions.",
-                         "implication":  "The project lacks real substance, genuine effort, or meaningful outcomes; it is done only to fulfill a superficial requirement or appearance, suggesting inefficiency, insincerity, or bureaucratic red tape.",
+                         "zh":  "å¥¹è¯´å¥¹ä¸å¼å¿ä½æ²¡äº",
+                         "en":  "She says she\u0027s not happy but it\u0027s fine",
+                         "definition":  "Literal: She says she\u0027s unhappy but (she\u0027s) okay.",
+                         "implication":  "A common expression used to downplay or conceal one\u0027s true negative emotions (like sadness, frustration, or disappointment) in order to avoid worrying others, appearing vulnerable, or escalating a situation. It often implies internal conflict, a desire for privacy, or an attempt to maintain social harmony despite personal distress. The listener is typically expected to read between the lines and offer care or space, depending on context.",
                          "sentiment":  "negative",
                          "source":  "cloud"
                      }
