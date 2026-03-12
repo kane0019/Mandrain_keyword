@@ -127,14 +127,13 @@ function buildPrompt(text, prefix, suffix, pageUrl) {
 
 async function invokeBedrockClaude(prompt) {
   try {
-    const modelId = 'amazon.nova-pro-v1:0';
+    // DeepSeek 3.2 modelId and request format
+    const modelId = 'deepseek-chat-v1.3'; // DeepSeek 3.2 Bedrock model
 
     const requestBody = {
-      messages: [
-        { role: 'user', content: [{ text: prompt }] },
-      ],
-      inferenceConfig: {
-        maxTokens: 512,
+      input: prompt,
+      parameters: {
+        max_new_tokens: 512,
         temperature: 0.3,
       },
     };
@@ -149,7 +148,8 @@ async function invokeBedrockClaude(prompt) {
     const resp = await bedrockClient.send(command);
     const respBody = JSON.parse(new TextDecoder().decode(resp.body));
 
-    const text = respBody.output?.message?.content?.[0]?.text || '';
+    // DeepSeek returns output in respBody.results[0].text
+    const text = respBody.results?.[0]?.text || '';
 
     // 提取 JSON（兼容 AI 返回带 markdown code block 的情况）
     const jsonMatch = text.match(/\{[\s\S]*\}/);
