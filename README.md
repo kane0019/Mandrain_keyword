@@ -274,6 +274,9 @@ const MAX_QUERY_LENGTH = 30;  // 查询词最大字符数
 2. **限流配置** — API Gateway Usage Plan，free/pro 不同限额
 3. **手动输入查询** — popup 输入框，支持无上下文词汇查询（优先级低于划词，无上下文时精度下降且竞品替代性高）
 4. **NAT Gateway 冗余** — 当前 dev/prod 均单 NAT Gateway（省成本），生产稳定后在第二个 AZ 增加 NAT + 独立路由表实现高可用
+5. **冷热分层模型** — 缓存未命中时先尝试 Nova Pro（2-3s），若 implication 字段信息量不足再降级调用 DeepSeek 3.2；预期 80% 查询由 Nova Pro 处理，显著降低 P99 延迟
+6. **异步预热缓存** — 用户选词后立即返回"分析中"，Lambda 后台写入 DynamoDB 缓存；需前端 polling 支持，解决 DeepSeek 首次慢的体验问题
+7. **响应字段扩展** — 新增 `register`（`formal/slang/internet/literary`，判断正式场合能否使用）和 `usage_example`（英文示例句），提升产品信息密度
 
 ### P3 — 远期规划
 

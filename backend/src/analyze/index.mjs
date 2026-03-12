@@ -102,21 +102,14 @@ export async function handler(event) {
   });
 }
 
+const SYSTEM_PROMPT = '你是中文语义分析专家，专注于网络语言、俚语和文化内涵分析。严格按以下JSON格式返回，不含其他文字，每个字段限50字以内：{"zh":"原词","en":"最贴切英文等价词(网络语给俚语而非字面直译)","definition":"字面含义(英文,简短)","implication":"当代中文语境真实含义(英文,简短)","sentiment":"positive或negative或neutral"}';
+
 function buildPrompt(text, prefix, suffix, pageUrl) {
-  const hasContext = prefix || suffix;
-  let prompt = `你是中文语义分析专家。分析以下中文词汇在语境中的含义，严格返回JSON，不含其他文字。每个字段限50字以内，简洁精准。
-
-词汇: ${text}`;
-
-  if (prefix) prompt += `\n前文: ${prefix}`;
-  if (suffix) prompt += `\n后文: ${suffix}`;
-  if (pageUrl) prompt += `\n来源: ${pageUrl}`;
-
-  prompt += `
-
-{"zh":"原词","en":"最贴切英文等价词(网络语给俚语而非直译)","definition":"字面含义(英文,简短)","implication":"当代中文语境真实含义(英文,简短)","sentiment":"positive或negative或neutral"}`;
-
-  return prompt;
+  let userMsg = `词汇: ${text}`;
+  if (prefix) userMsg += `\n前文: ${prefix}`;
+  if (suffix) userMsg += `\n后文: ${suffix}`;
+  if (pageUrl) userMsg += `\n来源: ${pageUrl}`;
+  return userMsg;
 }
 
 async function invokeBedrockClaude(prompt) {
@@ -126,6 +119,7 @@ async function invokeBedrockClaude(prompt) {
     // DeepSeek on Bedrock uses OpenAI-compatible request format
     const requestBody = {
       messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: prompt },
       ],
       max_tokens: 256,
