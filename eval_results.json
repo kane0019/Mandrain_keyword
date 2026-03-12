@@ -1,287 +1,280 @@
 ﻿[
     {
-        "text":  "内卷",
-        "category":  "A",
-        "note":  "应有社会竞争含义",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å\u0085å·",
-                         "en":  "involution",
-                         "definition":  "Literal meaning: \u0027inward curling\u0027 or \u0027internal spiral\u0027. In social science, it describes a process where increased input does not lead to improved output, resulting in internal competition and stagnation.",
-                         "implication":  "Refers to intense, often futile, internal competition within a system (e.g., workplace, education) where individuals must exert more effort just to maintain their status, leading to diminishing returns, increased stress, and a perceived lack of progress or innovation.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "躺平",
-        "category":  "A",
-        "note":  "应有放弃竞争含义",
+        "text":  "整顿职场",
+        "category":  "F",
+        "note":  "有主动对抗不合理职场规则的含义",
         "status":  "FAIL",
-        "response":  "远程服务器返回错误: (502) 错误的网关。"
+        "response":  "远程服务器返回错误: (504) 网关超时。"
     },
     {
-        "text":  "破防",
-        "category":  "A",
-        "note":  "应有情绪崩溃含义",
+        "text":  "发疯文学",
+        "category":  "F",
+        "note":  "用夸张混乱语气表达不满的网络写作风格",
         "status":  "PASS",
         "response":  {
-                         "zh":  "ç ´é²",
-                         "en":  "broken defense",
-                         "definition":  "Literally means \u0027to break through defense\u0027.",
-                         "implication":  "In internet slang, it refers to being emotionally overwhelmed or mentally shaken, often by a touching, shocking, or relatable situation that breaks down one\u0027s emotional guard.",
+                         "zh":  "åç¯æå­¦",
+                         "en":  "crazy literature / venting literature",
+                         "definition":  "A style of online expression characterized by exaggerated, chaotic, and emotionally intense language, often used to humorously or cathartically describe overwhelming situations or feelings.",
+                         "implication":  "It reflects a coping mechanism among young Chinese netizens to deal with stress, absurdity, or frustration in daily life through performative, over-the-top textual outbursts. It often carries a tone of ironic self-awareness and communal release.",
                          "sentiment":  "neutral",
                          "source":  "cloud"
                      }
     },
     {
-        "text":  "凡尔赛",
-        "category":  "A",
-        "note":  "应体现显摆/炫耀含义",
+        "text":  "班味",
+        "category":  "F",
+        "note":  "上班后身上散发的疲惫/压抑气质，自嘲",
         "status":  "PASS",
         "response":  {
-                         "zh":  "å¡å°èµ",
-                         "en":  "Versailles",
-                         "definition":  "Literally refers to the Palace of Versailles in France; in contemporary Chinese internet slang, it describes a manner of speaking that appears to be complaining or humble-bragging while actually showing off one\u0027s luxury, privilege, or success.",
-                         "implication":  "A form of subtle, indirect boasting disguised as self-deprecation or complaint, often used to flaunt wealth, status, or advantages in a seemingly casual or modest way.",
+                         "zh":  "ç­å³",
+                         "en":  "class/work vibe",
+                         "definition":  "A colloquial term describing the atmosphere, habits, or behavioral traits formed by long-term office work or student life, often implying a rigid, routine, or weary state.",
+                         "implication":  "It implies a sense of being trapped in a monotonous, stressful, or overly formal routine, often with a negative connotation of losing personal vitality or individuality due to institutional or work pressures.",
                          "sentiment":  "negative",
                          "source":  "cloud"
                      }
     },
     {
-        "text":  "抽象",
-        "category":  "A",
-        "note":  "当代网络用语，不是传统意义的抽象",
+        "text":  "嘴替",
+        "category":  "F",
+        "note":  "帮别人说出心声的人，应说明语境",
         "status":  "PASS",
         "response":  {
-                         "zh":  "æ½è±¡",
-                         "en":  "abstract",
-                         "definition":  "Pertaining to ideas or concepts separated from concrete instances or physical reality; a mental process of extracting essential qualities.",
-                         "implication":  "Often implies complexity, theoretical nature, or lack of tangible specifics; can suggest intellectual depth or impracticality depending on context.",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "典中典",
-        "category":  "A",
-        "note":  "应表示极具代表性/典型",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å\u0085¸ä¸­å\u0085¸",
-                         "en":  "classic within classic",
-                         "definition":  "A humorous and exaggerated way of saying something is extremely typical, classic, or stereotypical.",
-                         "implication":  "It implies that the situation, behavior, or statement is so quintessentially representative of a certain pattern, clichÃ©, or internet meme that it becomes a meta-exampleâa classic example even among classics. Often used to mock predictable or repetitive online behavior.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "有点东西",
-        "category":  "A",
-        "note":  "应表示厉害/出乎意料",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "æç¹ä¸è¥¿",
-                         "en":  "has something to it / is impressive",
-                         "definition":  "Literally \u0027has a bit of something\u0027; used to indicate that someone or something possesses notable qualities, skills, or substance.",
-                         "implication":  "Implies genuine talent, depth, or unexpected excellence beyond superficial appearance; often suggests admiration or respect.",
+                         "zh":  "å´æ¿",
+                         "en":  "mouthpiece",
+                         "definition":  "Literally \u0027mouth substitute\u0027; refers to someone who expresses thoughts or opinions on behalf of others.",
+                         "implication":  "A person who voices the unspoken or shared sentiments of a group, often in a public or online context, saving others the effort of expressing themselves.",
                          "sentiment":  "positive",
                          "source":  "cloud"
                      }
     },
     {
-        "text":  "这波属于",
-        "category":  "A",
-        "note":  "应表示某次操作/行为值得称道",
+        "text":  "松弛感",
+        "category":  "F",
+        "note":  "不焦虑、随性自在的状态，与内卷相对",
         "status":  "PASS",
         "response":  {
-                         "zh":  "è¿æ³¢å±äº",
-                         "en":  "This wave belongs to / This move is essentially",
-                         "definition":  "Literally \u0027this wave belongs to\u0027; used to categorize or attribute a recent event, trend, or action within a specific context.",
-                         "implication":  "Often implies a humorous, ironic, or analytical judgment about a situation, suggesting that it fits a certain pattern, type, or outcome. Commonly used in internet slang to comment on social trends, gaming plays, or public events.",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "你品，你细品",
-        "category":  "B",
-        "note":  "提示听者回味，通常暗示有隐情",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "ä½ åï¼ä½ ç»å",
-                         "en":  "You savor it, you savor it carefully",
-                         "definition":  "Literally means \u0027You taste it, you taste it carefully\u0027",
-                         "implication":  "Implies that there is a hidden meaning or subtle detail that requires careful consideration or reflection to understand, often used to suggest irony, sarcasm, or a deeper truth that is not immediately obvious",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "真有你的",
-        "category":  "B",
-        "note":  "可以是赞赏，也可以是反讽，应说明语境",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (502) 错误的网关。"
-    },
-    {
-        "text":  "我哭死",
-        "category":  "B",
-        "note":  "夸张表达，不是真在哭，应说明情绪夸张用法",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "æå­æ­»",
-                         "en":  "I\u0027m crying to death",
-                         "definition":  "Literal meaning: \u0027I\u0027m crying so hard I could die\u0027",
-                         "implication":  "An exaggerated expression of strong emotion, often used humorously or sarcastically to convey deep gratitude, excitement, pity, or helplessness in informal online contexts.",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "他真的很努力",
-        "category":  "B",
-        "note":  "字面是夸，但有时是在讽刺",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "ä»ççå¾åªå",
-                         "en":  "He is really working hard",
-                         "definition":  "Literally means \u0027he is truly putting in a lot of effort\u0027",
-                         "implication":  "Often implies that despite the effort, the results may not be satisfactory or sufficient; can carry a tone of sympathy or mild excuse for lack of success",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "上价值",
-        "category":  "C",
-        "note":  "单方面把对话拔高到道德层面，含贬义",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (502) 错误的网关。"
-    },
-    {
-        "text":  "阴阳怪气",
-        "category":  "C",
-        "note":  "用表面正常的话语暗中讽刺，应说清楚",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (502) 错误的网关。"
-    },
-    {
-        "text":  "爹味",
-        "category":  "C",
-        "note":  "说话居高临下、自以为是的男性气质，贬义",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "ç¹å³",
-                         "en":  "fatherly tone / paternalistic condescension",
-                         "definition":  "Literally \u0027father flavor\u0027; describes behavior or speech that mimics a paternalistic, lecturing, or overbearing attitude.",
-                         "implication":  "Implies a patronizing, self-righteous, or authoritarian manner, often used to criticize someone (usually a man) who imposes unsolicited advice, moral judgments, or a sense of superiority in a manner reminiscent of a stereotypical strict father.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "PUA",
-        "category":  "C",
-        "note":  "在中文语境里含义已扩展，应说明与英文原义差异",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "PUA",
-                         "en":  "Pick-up Artist",
-                         "definition":  "Originally refers to techniques and strategies for attracting romantic partners; now commonly used in Chinese internet slang to describe manipulative emotional control and psychological abuse.",
-                         "implication":  "In contemporary Chinese online context, it primarily implies systematic emotional manipulation, gaslighting, and psychological domination, often in relationships or hierarchical settings, rather than just dating advice.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "打工人",
-        "category":  "D",
-        "note":  "应体现既是自嘲也是团结感",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "æå·¥äºº",
-                         "en":  "laborer/office worker",
-                         "definition":  "Literally \u0027person who works for a living\u0027; refers broadly to salaried employees or wage earners.",
-                         "implication":  "A self-mocking or resigned term reflecting the pressures of modern work life, often implying being trapped in repetitive labor, long hours, and economic constraints, despite a surface-level attitude of perseverance.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "韭菜",
-        "category":  "D",
-        "note":  "在金融/商业语境指被割的散户或普通人",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (502) 错误的网关。"
-    },
-    {
-        "text":  "卷王",
-        "category":  "D",
-        "note":  "努力内卷者，带有戏谑语气",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å·ç",
-                         "en":  "king/queen of involution",
-                         "definition":  "Literally \u0027king of rolling\u0027; refers to a person who engages in extreme competition or overwork, often setting a high standard that pressures others to follow.",
-                         "implication":  "Implies someone who relentlessly pushes themselves and others in a competitive environment, often leading to an unhealthy cycle of intensifying effort for diminishing returns. It can carry a tone of both admiration and criticism.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "社恐",
-        "category":  "D",
-        "note":  "不仅是社交恐惧症，在口语里是轻松自嘲用法",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "ç¤¾æ",
-                         "en":  "social anxiety",
-                         "definition":  "Literally \u0027social fear\u0027; a colloquial abbreviation for social anxiety disorder or a self-description of discomfort in social situations.",
-                         "implication":  "Often used informally to describe introversion, shyness, or anxiety in social interactions, implying a desire to avoid or difficulty with social engagement.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "领导说大家辛苦了，周末别休息，再冲一冲",
-        "category":  "E",
-        "note":  "应识别出反话/压榨含义而非真诚感谢",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "é¢å¯¼è¯´å¤§å®¶è¾è¦äºï¼å¨æ«å«ä¼æ¯ï¼åå²ä¸å²",
-                         "en":  "The leader says everyone has worked hard, don\u0027t rest this weekend, let\u0027s push a bit more",
-                         "definition":  "Literal meaning: The leader acknowledges the team\u0027s effort, instructs them not to take the weekend off, and urges them to make an extra push.",
-                         "implication":  "The leader is demanding overtime work during the weekend under the guise of encouragement, implying pressure to prioritize work over personal time, often without explicit compensation or genuine concern for well-being.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "她说你今天挺会穿的",
-        "category":  "E",
-        "note":  "可能是真夸也可能是嘲讽，应分析歧义",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å¥¹è¯´ä½ ä»å¤©æºä¼ç©¿ç",
-                         "en":  "She said you\u0027re quite good at dressing today",
-                         "definition":  "Literal meaning: She said you have dressed well today",
-                         "implication":  "Implies appreciation for the person\u0027s fashion sense, outfit coordination, or overall appearance; often carries a tone of pleasant surprise or genuine compliment. May also subtly acknowledge effort put into personal presentation.",
+                         "zh":  "æ¾å¼æ",
+                         "en":  "sense of relaxation / relaxed vibe",
+                         "definition":  "A state or quality of being relaxed, unhurried, and free from tension, often manifested in one\u0027s demeanor, attitude, or atmosphere.",
+                         "implication":  "It implies a desirable, effortless ease and natural composure in facing life\u0027s pressures, contrasting with societal expectations of constant striving and anxiety. It often carries connotations of self-acceptance, emotional stability, and the ability to maintain inner peace without being overly rigid or performative.",
                          "sentiment":  "positive",
                          "source":  "cloud"
                      }
     },
     {
-        "text":  "他发朋友圈不是分享生活，是在凡尔赛",
-        "category":  "E",
-        "note":  "应解释凡尔赛在此处的用法",
+        "text":  "哈人",
+        "category":  "F",
+        "note":  "东北/网络用语，表示害怕/吓人",
         "status":  "PASS",
         "response":  {
-                         "zh":  "å¡å°èµ",
-                         "en":  "Versailles",
-                         "definition":  "Literally refers to the Palace of Versailles; in internet slang, it means \u0027humblebragging\u0027 or \u0027showing off in a disguised way\u0027.",
-                         "implication":  "The person is not genuinely sharing daily life but subtly boasting about their achievements, wealth, or lifestyle under the guise of casual posts.",
+                         "zh":  "åäºº",
+                         "en":  "scary or shocking",
+                         "definition":  "A slang term used to describe something scary or shocking, often used humorously or exaggeratedly.",
+                         "implication":  "It implies that something is so shocking or frightening that it scares people.",
+                         "sentiment":  "neutral",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "泼天富贵",
+        "category":  "F",
+        "note":  "突然涌来的巨大机遇或流量，应说明讽刺用法",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "æ³¼å¤©å¯è´µ",
+                         "en":  "overwhelming wealth and prosperity",
+                         "definition":  "Literal meaning: \u0027sky-splashing\u0027 or \u0027heaven-drenching\u0027 riches and honor; describes an immense, almost unimaginable level of wealth and high status.",
+                         "implication":  "Implies an extreme, extravagant, or even shocking degree of fortune that seems to defy ordinary limits. It often carries a sense of awe, excess, or dramatic exaggeration, and can be used both admiringly and critically depending on context.",
+                         "sentiment":  "positive",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "显眼包",
+        "category":  "F",
+        "note":  "爱出风头、特别引人注意的人，褒贬取决于语境",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "æ¾ç¼å\u0085",
+                         "en":  "attention-seeker / spotlight hog",
+                         "definition":  "A person or thing that conspicuously draws attention, often through exaggerated or unconventional behavior or appearance.",
+                         "implication":  "Often implies someone who actively or unintentionally stands out in a crowd, sometimes in an amusing, awkward, or mildly annoying way. It can carry a teasing or affectionate tone among friends, but may also suggest a lack of subtlety or a desire for excessive attention.",
+                         "sentiment":  "neutral (context-dependent, can lean positive or negative)",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "对齐颗粒度",
+        "category":  "G",
+        "note":  "职场黑话，表示细化沟通，有时被讽刺为废话",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "å¯¹é½é¢ç²åº¦",
+                         "en":  "alignment granularity",
+                         "definition":  "The level of detail or precision at which alignment is achieved between different elements, such as data, systems, goals, or processes.",
+                         "implication":  "Often used in technical or business contexts to emphasize the need for precise coordination and consistency, suggesting that higher granularity leads to better integration, efficiency, or accuracy.",
+                         "sentiment":  "neutral",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "赋能",
+        "category":  "G",
+        "note":  "商业/职场高频词，已被过度使用至沦为空话",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "èµè½",
+                         "en":  "empowerment",
+                         "definition":  "To give power, ability, or authority to someone or something; to enable.",
+                         "implication":  "Often used in business or organizational contexts to imply enhancing capabilities, fostering innovation, or driving growth through resource allocation, technology, or training. Can carry a buzzword connotation of strategic enablement.",
+                         "sentiment":  "positive",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "闭环",
+        "category":  "G",
+        "note":  "职场语，处理完某件事的完整流程，有时是官僚术语",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "é­ç¯",
+                         "en":  "closed loop",
+                         "definition":  "A closed-loop system or process that forms a complete cycle, where the end point connects back to the starting point, forming a self-contained and self-regulating system.",
+                         "implication":  "In business and management, it often refers to a closed-loop management system, emphasizing the closure and traceability of the entire process, ensuring that every step is monitored, results are fed back, and continuous improvement is achieved. It implies a systematic, continuous, and self-optimizing process.",
+                         "sentiment":  "positive",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "向上管理",
+        "category":  "G",
+        "note":  "管理上级对自己印象的策略，带职场算计含义",
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (504) 网关超时。"
+    },
+    {
+        "text":  "躺平式干部",
+        "category":  "G",
+        "note":  "不求上进、混日子的官员或员工，贬义",
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (504) 网关超时。"
+    },
+    {
+        "text":  "舔狗",
+        "category":  "H",
+        "note":  "无底线讨好对方的人，自嘲或贬义",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "èç",
+                         "en":  "Licking Dog",
+                         "definition":  "A person who is overly submissive and obedient to someone they are attracted to, often to the point of self-deprecation, in an attempt to gain their affection, often without reciprocation.",
+                         "implication":  "A person who is willing to sacrifice their dignity and self-respect to please someone they admire, often used to describe unrequited love or unreciprocated affection.",
+                         "sentiment":  "negative",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "绿茶",
+        "category":  "H",
+        "note":  "表面清纯实则心机的女性，贬义",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "ç»¿è¶",
+                         "en":  "green tea",
+                         "definition":  "A type of tea made from unoxidized leaves, known for its health benefits and cultural significance in East Asia.",
+                         "implication":  "In modern Chinese internet slang, it is often used metaphorically to describe a person (usually female) who appears innocent, pure, or virtuous on the surface but is actually manipulative, calculating, or hypocritical in relationships.",
+                         "sentiment":  "negative",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "海王",
+        "category":  "H",
+        "note":  "同时周旋多个异性的人，贬义",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "æµ·ç",
+                         "en":  "Sea King",
+                         "definition":  "Literal meaning: \u0027Sea King\u0027 or \u0027Neptune\u0027 (the planet).",
+                         "implication":  "In modern Chinese internet slang, it refers to a person (often male) who romantically pursues or maintains relationships with multiple partners simultaneously, akin to a \u0027player\u0027 or \u0027womanizer\u0027. It implies the person is adept at managing multiple romantic connections, much like ruling over a vast \u0027sea\u0027 of admirers.",
+                         "sentiment":  "negative",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "拿捏",
+        "category":  "H",
+        "note":  "完全掌控某人/某事，语气可赞赏或嘲讽",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "æ¿æ",
+                         "en":  "handle, grasp, or control with precision",
+                         "definition":  "To hold or grasp something with the fingers; to handle or manage a situation with skill and finesse.",
+                         "implication":  "Often implies a nuanced or skillful control over a situation, person, or detail, suggesting a careful balance or mastery in dealing with something.",
+                         "sentiment":  "neutral",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "恋爱脑",
+        "category":  "H",
+        "note":  "凡事以感情为优先，带贬义",
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (504) 网关超时。"
+    },
+    {
+        "text":  "我就是个普通打工人，没什么追求",
+        "category":  "I",
+        "note":  "应识别出自嘲背后的无奈/认命感",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "æå°±æ¯ä¸ªæ®éæå·¥äººï¼æ²¡ä»ä¹è¿½æ±",
+                         "en":  "I\u0027m just an ordinary worker, with no particular ambitions.",
+                         "definition":  "Literally: I am just an ordinary working person, without any particular pursuits or aspirations.",
+                         "implication":  "The speaker is modestly downplaying their status and ambitions, possibly expressing contentment with a simple life, resignation to their current situation, or a subtle critique of societal pressure to constantly strive for more. It can also imply a desire to avoid high expectations or pressure.",
+                         "sentiment":  "neutral",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "他这个人很会来事儿",
+        "category":  "I",
+        "note":  "应说明可能是夸善于处事，也可能是讽刺圆滑",
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (504) 网关超时。"
+    },
+    {
+        "text":  "你这波操作我给满分",
+        "category":  "I",
+        "note":  "可以是真心称赞，也可以是反讽，应分析歧义",
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (504) 网关超时。"
+    },
+    {
+        "text":  "她不是在哭，她在发疯",
+        "category":  "I",
+        "note":  "应识别发疯为宣泄情绪、而非精神疾病",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "å¥¹ä¸æ¯å¨å­ï¼å¥¹å¨åç¯",
+                         "en":  "She is not crying, she is going crazy",
+                         "definition":  "Literally states that the person is not crying but is instead acting in a frenzied or irrational manner.",
+                         "implication":  "Implies that the person\u0027s emotional outburst is extreme, uncontrollable, or irrational, often suggesting a reaction beyond normal sadness or anger.",
+                         "sentiment":  "negative",
+                         "source":  "cloud"
+                     }
+    },
+    {
+        "text":  "这个项目就是在走形式",
+        "category":  "I",
+        "note":  "应识别批评官僚/表面功夫的含义",
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "è¿ä¸ªé¡¹ç®å°±æ¯å¨èµ°å½¢å¼",
+                         "en":  "This project is just a formality.",
+                         "definition":  "Literally: This project is merely going through the motions.",
+                         "implication":  "The project lacks real substance, genuine effort, or meaningful outcomes; it is done only to fulfill a superficial requirement or appearance, suggesting inefficiency, insincerity, or bureaucratic red tape.",
                          "sentiment":  "negative",
                          "source":  "cloud"
                      }

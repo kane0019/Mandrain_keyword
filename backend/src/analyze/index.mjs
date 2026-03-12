@@ -103,24 +103,17 @@ export async function handler(event) {
 }
 
 function buildPrompt(text, prefix, suffix, pageUrl) {
-  let prompt = `你是中文语义分析专家。请分析以下词汇在上下文中的含义。
+  let prompt = `你是中文语义分析专家。分析以下中文词汇在语境中的含义，严格返回JSON，不含其他文字。
 
 词汇: ${text}`;
 
   if (prefix) prompt += `\n前文: ${prefix}`;
   if (suffix) prompt += `\n后文: ${suffix}`;
-  if (pageUrl) prompt += `\n来源页面: ${pageUrl}`;
+  if (pageUrl) prompt += `\n来源: ${pageUrl}`;
 
   prompt += `
 
-请严格以 JSON 格式返回（不要包含其他文字）:
-{
-  "zh": "中文原词",
-  "en": "英文翻译",
-  "definition": "字面释义（英文）",
-  "implication": "潜台词/深层含义（英文）",
-  "sentiment": "positive 或 negative 或 neutral"
-}`;
+{"zh":"原词","en":"最贴切英文等价词(网络语给俚语而非直译)","definition":"字面含义(英文)","implication":"当代中文语境真实含义和文化内涵(英文)","sentiment":"positive或negative或neutral"}`;
 
   return prompt;
 }
@@ -134,7 +127,7 @@ async function invokeBedrockClaude(prompt) {
       messages: [
         { role: 'user', content: prompt },
       ],
-      max_tokens: 512,
+      max_tokens: 256,
       temperature: 0.3,
     };
 
