@@ -127,7 +127,7 @@ function buildPrompt(text, prefix, suffix, pageUrl) {
 
 async function invokeBedrockClaude(prompt) {
   try {
-    const modelId = 'amazon.nova-lite-v1:0';
+    const modelId = 'amazon.nova-pro-v1:0';
 
     const requestBody = {
       messages: [
