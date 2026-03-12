@@ -128,7 +128,7 @@ function buildPrompt(text, prefix, suffix, pageUrl) {
 async function invokeBedrockClaude(prompt) {
   try {
     // DeepSeek 3.2 modelId and request format
-    const modelId = 'deepseek-chat-v1.3'; // DeepSeek 3.2 Bedrock model
+    const modelId = 'deepseek.v3.2'; // DeepSeek 3.2 Bedrock model
 
     const requestBody = {
       input: prompt,

@@ -3,322 +3,161 @@
         "text":  "内卷",
         "category":  "A",
         "note":  "应有社会竞争含义",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å\u0085å·",
-                         "en":  "involution",
-                         "definition":  "Originally a term from mathematics referring to a process where a function maps elements to their inverses, it has been adopted in social contexts to describe a situation where individuals or groups engage in intense competition leading to diminishing returns.",
-                         "implication":  "In contemporary usage, \u0027involution\u0027 often carries a negative connotation, referring to a societal phenomenon where people are trapped in a vicious cycle of competition, leading to increased stress, reduced quality of life, and minimal progress.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "躺平",
         "category":  "A",
         "note":  "应有放弃竞争含义",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "èººå¹³",
-                         "en":  "lie flat",
-                         "definition":  "To lie down flat, often used to describe a physical posture.",
-                         "implication":  "In recent years, \u0027lie flat\u0027 has gained a metaphorical meaning in Chinese internet culture, referring to a lifestyle choice where individuals choose to opt out of societal expectations and pressures, such as pursuing career success or conforming to traditional values. It implies a form of passive resistance or resignation.",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "破防",
         "category":  "A",
         "note":  "应有情绪崩溃含义",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "ç ´é²",
-                         "en":  "break the defense",
-                         "definition":  "Literally, it means to break through a defense or barrier. In internet slang, it often refers to the moment when someone\u0027s emotional guard is broken, usually resulting in them expressing strong emotions or revealing something personal.",
-                         "implication":  "In the context of online communication, \u0027ç ´é²\u0027 often implies a moment of vulnerability or a breakthrough in emotional expression. It can signify a significant moment where someone shares something deeply personal or reacts emotionally in a way they usually wouldn\u0027t.",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "凡尔赛",
         "category":  "A",
         "note":  "应体现显摆/炫耀含义",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å¡å°èµ",
-                         "en":  "Versailles",
-                         "definition":  "Versailles is originally the name of a city near Paris, France, famous for the Palace of Versailles. In Chinese internet slang, it has evolved to mean showing off or boasting, particularly in a subtle or indirect manner.",
-                         "implication":  "In the context of Chinese internet culture, \u0027å¡å°èµ\u0027 often refers to a form of subtle boasting or showing off, usually in a self-deprecating or ironic way. It implies a sense of superiority or accomplishment, even though it may be presented in a humble or understated manner.",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "抽象",
         "category":  "A",
         "note":  "当代网络用语，不是传统意义的抽象",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "æ½è±¡",
-                         "en":  "abstract",
-                         "definition":  "Existing in thought or as an idea but not having a physical or concrete existence.",
-                         "implication":  "Often implies a level of complexity or depth that requires intellectual engagement to understand. It can also suggest a departure from the tangible or the real, moving towards the conceptual or theoretical.",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "典中典",
         "category":  "A",
         "note":  "应表示极具代表性/典型",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å\u0085¸ä¸­å\u0085¸",
-                         "en":  "classic within a classic",
-                         "definition":  "Refers to something that is highly representative or quintessential within a classic work or context.",
-                         "implication":  "Implies that the subject is not only a classic itself but also embodies the essence or the most representative part of a classic. It suggests a high level of quality, significance, and recognition.",
-                         "sentiment":  "positive",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "有点东西",
         "category":  "A",
         "note":  "应表示厉害/出乎意料",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "æç¹ä¸è¥¿",
-                         "en":  "something",
-                         "definition":  "Literally,\u0027something\u0027 or \u0027a bit of something.\u0027",
-                         "implication":  "Often used to imply that there is something noteworthy, interesting, or unusual, but it is not explicitly stated what that something is. It can convey a sense of mystery or intrigue.",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "这波属于",
         "category":  "A",
         "note":  "应表示某次操作/行为值得称道",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "è¿æ³¢å±äº",
-                         "en":  "This round belongs to",
-                         "definition":  "Literally means \u0027this wave belongs to\u0027, often used to indicate that a particular event, success, or moment is attributed to someone or something.",
-                         "implication":  "Often used in a celebratory or triumphant context to claim victory or success for a particular person, team, or situation. It can also imply a sense of deservedness or rightful ownership of the success.",
-                         "sentiment":  "positive",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "你品，你细品",
         "category":  "B",
         "note":  "提示听者回味，通常暗示有隐情",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "ä½ åï¼ä½ ç»å",
-                         "en":  "You taste, you savor",
-                         "definition":  "\u0027ä½ å\u0027 means \u0027you taste\u0027, and \u0027ä½ ç»å\u0027 means \u0027you savor\u0027 or \u0027you carefully taste\u0027.",
-                         "implication":  "The phrases imply a suggestion or encouragement for someone to take their time and enjoy the experience of tasting something, often used in contexts related to food, drink, or sensory experiences. It can also convey an appreciation for the subtleties and nuances of the experience.",
-                         "sentiment":  "positive",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "真有你的",
         "category":  "B",
         "note":  "可以是赞赏，也可以是反讽，应说明语境",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "çæä½ ç",
-                         "en":  "You\u0027re something else",
-                         "definition":  "Literally translates to \u0027you really have your own (unique) way\u0027.",
-                         "implication":  "Often used to express surprise or admiration at someone\u0027s behavior or actions, which can be either positive or negative depending on the context.",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "我哭死",
         "category":  "B",
         "note":  "夸张表达，不是真在哭，应说明情绪夸张用法",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "æå­æ­»",
-                         "en":  "I\u0027m crying to death",
-                         "definition":  "Literally, it means \u0027I am crying so much that I might die.\u0027",
-                         "implication":  "Often used hyperbolically to express extreme sadness, frustration, or emotional overwhelm. It conveys a sense of being overwhelmed by emotions to the point of feeling like one might \u0027die\u0027 from crying.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "他真的很努力",
         "category":  "B",
         "note":  "字面是夸，但有时是在讽刺",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "ä»ççå¾åªå",
-                         "en":  "He really works hard",
-                         "definition":  "He puts in a lot of effort",
-                         "implication":  "The speaker is acknowledging and possibly admiring the subject\u0027s dedication and hard work. It may also imply that the effort is noticeable and significant.",
-                         "sentiment":  "positive",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "上价值",
         "category":  "C",
         "note":  "单方面把对话拔高到道德层面，含贬义",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "ä¸ä»·å¼",
-                         "en":  "increase in value",
-                         "definition":  "The literal meaning refers to an increase or enhancement in the value of something.",
-                         "implication":  "It often implies a positive change or improvement in the worth or significance of an asset, product, or concept.",
-                         "sentiment":  "positive",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "阴阳怪气",
         "category":  "C",
         "note":  "用表面正常的话语暗中讽刺，应说清楚",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "é´é³æªæ°",
-                         "en":  "sarcastic or mocking tone",
-                         "definition":  "a manner of speaking that is deliberately ambiguous, often with a mocking or sarcastic undertone",
-                         "implication":  "It implies that the speaker is being insincere, often to mock or belittle someone, and is usually considered rude or disrespectful.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "爹味",
         "category":  "C",
         "note":  "说话居高临下、自以为是的男性气质，贬义",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "ç¹å³",
-                         "en":  "daddy vibes",
-                         "definition":  "The term \u0027ç¹å³\u0027 literally translates to \u0027daddy vibes\u0027, referring to the charm, aura, or appeal that someone, typically a male, exudes which is reminiscent of a caring, protective, or authoritative father figure.",
-                         "implication":  "The term often carries connotations of someone who is mature, reliable, and exudes a sense of security and comfort. It can also imply a certain level of admiration or attraction towards that person due to their \u0027fatherly\u0027 qualities.",
-                         "sentiment":  "positive",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "PUA",
         "category":  "C",
         "note":  "在中文语境里含义已扩展，应说明与英文原义差异",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "PUA",
-                         "en":  "Pick-Up Artist",
-                         "definition":  "A person who practices and often teaches techniques for seducing and attracting romantic or sexual partners.",
-                         "implication":  "Often carries a negative connotation as it can be associated with manipulative or insincere behavior in pursuing romantic interests.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "打工人",
         "category":  "D",
         "note":  "应体现既是自嘲也是团结感",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "æå·¥äºº",
-                         "en":  "blue-collar worker",
-                         "definition":  "Literally, \u0027dagong ren\u0027 means \u0027people who work for wages\u0027. It refers to individuals who engage in manual labor or low-skilled jobs for a living.",
-                         "implication":  "The term \u0027dagong ren\u0027 often carries connotations of hard work, perseverance, and the struggles of everyday life. It can evoke a sense of empathy and respect for those who toil in demanding jobs. In recent years, it has also been used in a more lighthearted or self-deprecating manner to describe anyone working hard, regardless of the nature of their job.",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "韭菜",
         "category":  "D",
         "note":  "在金融/商业语境指被割的散户或普通人",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "é­è",
-                         "en":  "leek",
-                         "definition":  "A type of vegetable with long, flat leaves, often used in cooking.",
-                         "implication":  "In Chinese internet slang, \u0027é­è\u0027 is often used to refer to naive or inexperienced investors who are easily taken advantage of in financial markets.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "卷王",
         "category":  "D",
         "note":  "努力内卷者，带有戏谑语气",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å·ç",
-                         "en":  "King of Overworking",
-                         "definition":  "Literally, \u0027å·ç\u0027 can be broken down into \u0027å·\u0027 (which can mean \u0027to roll\u0027 or colloquially \u0027to study hard\u0027 or \u0027to work hard\u0027) and \u0027ç\u0027 (which means \u0027king\u0027). Thus, it translates to \u0027King of Overworking\u0027.",
-                         "implication":  "The term \u0027å·ç\u0027 is often used to describe someone who is extremely diligent, hardworking, or obsessively dedicated to their studies or work. It can carry a sense of admiration for their dedication but may also imply a critique of their work-life balance or the potential negative impacts of overworking.",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "社恐",
         "category":  "D",
         "note":  "不仅是社交恐惧症，在口语里是轻松自嘲用法",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "ç¤¾æ",
-                         "en":  "social anxiety",
-                         "definition":  "\u0027ç¤¾æ\u0027 is a colloquial term derived from \u0027ç¤¾äº¤ææ§ç\u0027, which literally translates to\u0027social phobia\u0027 or\u0027social anxiety disorder\u0027. It refers to an individual\u0027s intense fear or anxiety in social situations.",
-                         "implication":  "The term often carries a connotation of someone who avoids social interactions due to fear or anxiety. It can also imply a sense of understanding or empathy towards those who experience such feelings.",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "领导说大家辛苦了，周末别休息，再冲一冲",
         "category":  "E",
         "note":  "应识别出反话/压榨含义而非真诚感谢",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "é¢å¯¼è¯´å¤§å®¶è¾è¦äºï¼å¨æ«å«ä¼æ¯ï¼åå²ä¸å²",
-                         "en":  "The leader said everyone has worked hard, don\u0027t rest over the weekend, push a bit more.",
-                         "definition":  "The leader acknowledged the hard work of everyone, instructed not to rest over the weekend, and encouraged an additional effort.",
-                         "implication":  "The leader is recognizing the team\u0027s efforts but is also demanding continued work without a break, indicating a high-pressure work environment.",
-                         "sentiment":  "neutral",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "她说你今天挺会穿的",
         "category":  "E",
         "note":  "可能是真夸也可能是嘲讽，应分析歧义",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å¥¹è¯´ä½ ä»å¤©æºä¼ç©¿ç",
-                         "en":  "She said you dressed well today",
-                         "definition":  "She commented that your choice of clothing today is quite good.",
-                         "implication":  "The statement implies a compliment on the person\u0027s fashion sense or choice of attire for the day. It suggests that the speaker appreciates the effort or taste shown in the person\u0027s dressing.",
-                         "sentiment":  "positive",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     },
     {
         "text":  "他发朋友圈不是分享生活，是在凡尔赛",
         "category":  "E",
         "note":  "应解释凡尔赛在此处的用法",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "ä»åæååä¸æ¯åäº«çæ´»ï¼æ¯å¨å¡å°èµ",
-                         "en":  "He posts on Moments not to share his life, but to show off.",
-                         "definition":  "Literally, it means he posts on Moments (WeChat\u0027s social feed) not to share his life, but to show off.",
-                         "implication":  "The phrase implies that the person is posting on social media to flaunt their wealth, status, or achievements, often in a way that is perceived as arrogant or pretentious. The term \u0027å¡å°èµ\u0027 (Versailles) is used metaphorically to suggest ostentatious display, referencing the opulent and grandiose Palace of Versailles.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (502) 错误的网关。"
     }
 ]
