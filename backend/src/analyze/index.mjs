@@ -86,6 +86,7 @@ export async function handler(event) {
       definition: aiResult.definition || '',
       implication: aiResult.implication || '',
       sentiment: aiResult.sentiment || 'neutral',
+      model: aiResult._model || 'unknown',
       source: 'cloud',
       ttl,
     },
@@ -98,6 +99,7 @@ export async function handler(event) {
     definition: aiResult.definition || '',
     implication: aiResult.implication || '',
     sentiment: aiResult.sentiment || 'neutral',
+    model: aiResult._model || 'unknown',
     source: 'cloud',
   });
 }
@@ -145,7 +147,8 @@ async function invokeDeepSeek(prompt) {
   const respBody = JSON.parse(new TextDecoder().decode(resp.body));
   const text = respBody.choices?.[0]?.message?.content || '';
   console.log('[DeepSeek] raw response:', text);
-  return parseJsonFromText(text);
+  const parsed = parseJsonFromText(text);
+  return parsed ? { ...parsed, _model: 'deepseek.v3.2' } : null;
 }
 
 async function invokeNovaPro(prompt) {
@@ -164,7 +167,8 @@ async function invokeNovaPro(prompt) {
   const respBody = JSON.parse(new TextDecoder().decode(resp.body));
   const text = respBody.output?.message?.content?.[0]?.text || '';
   console.log('[NovaPro] raw response:', text);
-  return parseJsonFromText(text);
+  const parsed = parseJsonFromText(text);
+  return parsed ? { ...parsed, _model: 'amazon.nova-pro-v1:0' } : null;
 }
 
 async function invokeBedrockClaude(prompt) {

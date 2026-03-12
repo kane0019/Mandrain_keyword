@@ -6,9 +6,9 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "æ°´çµçµå°",
-                         "en":  "dewy and fresh",
-                         "definition":  "moist and sparkling",
-                         "implication":  "describes something fresh, vibrant, and full of life",
+                         "en":  "sparklingly fresh",
+                         "definition":  "describes something moist, shiny, and vibrant",
+                         "implication":  "Used to describe someone\u0027s eyes, skin, or appearance as bright, clear, and full of vitality.",
                          "sentiment":  "positive",
                          "source":  "cloud"
                      }
@@ -20,10 +20,10 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "åç¥ï¼å¯å¨",
-                         "en":  "Genshin, launch!",
-                         "definition":  "A phrase used to express the act of starting to play the game Genshin Impact.",
-                         "implication":  "In contemporary Chinese internet culture, this phrase is used to express the action of starting to play the game Genshin Impact, often used humorously or to express excitement about playing the game.",
-                         "sentiment":  "positive",
+                         "en":  "Genshin, boot up",
+                         "definition":  "Launching the game Genshin Impact",
+                         "implication":  "A meme phrase for starting to play Genshin Impact, often humorously",
+                         "sentiment":  "neutral",
                          "source":  "cloud"
                      }
     },
@@ -34,10 +34,10 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "å°ååå",
-                         "en":  "For real or for fake",
-                         "definition":  "Literally \u0027real or fake\u0027",
-                         "implication":  "Expressing doubt or playfully questioning authenticity in a cute, exaggerated tone",
-                         "sentiment":  "neutral",
+                         "en":  "Nonsense or gibberish",
+                         "definition":  "Literally, meaningless sounds or words.",
+                         "implication":  "Refers to something absurd, meaningless, or ridiculous.",
+                         "sentiment":  "negative",
                          "source":  "cloud"
                      }
     },
@@ -45,8 +45,15 @@
         "text":  "捏",
         "category":  "J",
         "note":  "语气词，表撒娇或卖萌，来自网络语",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (504) 网关超时。"
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "æ",
+                         "en":  "nibble",
+                         "definition":  "to pinch or knead",
+                         "implication":  "cute way of saying \u0027yes\u0027 or agreement",
+                         "sentiment":  "positive",
+                         "source":  "cloud"
+                     }
     },
     {
         "text":  "出警",
@@ -55,10 +62,10 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "åºè­¦",
-                         "en":  "to call out",
-                         "definition":  "to dispatch police",
-                         "implication":  "to publicly criticize or mock someone online",
-                         "sentiment":  "negative",
+                         "en":  "respond to an emergency",
+                         "definition":  "to go out on a police call",
+                         "implication":  "police or emergency services responding to an incident",
+                         "sentiment":  "neutral",
                          "source":  "cloud"
                      }
     },
@@ -69,9 +76,9 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "ç£å°äº",
-                         "en":  "ship it",
-                         "definition":  "to ship (a romantic pairing)",
-                         "implication":  "Expressing strong support for a romantic pairing, often in fandom culture.",
+                         "en":  "shipping it",
+                         "definition":  "literally \u0027knocked into\u0027",
+                         "implication":  "feeling excited about a romantic pairing",
                          "sentiment":  "positive",
                          "source":  "cloud"
                      }
@@ -80,8 +87,15 @@
         "text":  "夺笋",
         "category":  "J",
         "note":  "谐音\u0027多损\u0027，指行为过分，带戏谑批评语气",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (504) 网关超时。"
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "å¤ºç¬",
+                         "en":  "Savage",
+                         "definition":  "Taking bamboo shoots",
+                         "implication":  "Merciless teasing or mockery",
+                         "sentiment":  "neutral",
+                         "source":  "cloud"
+                     }
     },
     {
         "text":  "yyds",
@@ -91,8 +105,8 @@
         "response":  {
                          "zh":  "yyds",
                          "en":  "GOAT",
-                         "definition":  "Acronym for \u0027forever god\u0027",
-                         "implication":  "Internet slang for \u0027the greatest of all time\u0027",
+                         "definition":  "Forever God",
+                         "implication":  "Unrivaled excellence",
                          "sentiment":  "positive",
                          "source":  "cloud"
                      }
@@ -101,8 +115,15 @@
         "text":  "懂得都懂",
         "category":  "K",
         "note":  "暗示有内情但不明说，测试模型是否能识别隐晦表达",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (504) 网关超时。"
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "æå¾é½æ",
+                         "en":  "It is what it is",
+                         "definition":  "If you know, you know",
+                         "implication":  "Common knowledge among insiders",
+                         "sentiment":  "neutral",
+                         "source":  "cloud"
+                     }
     },
     {
         "text":  "你真的好勇哦",
@@ -111,9 +132,9 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "ä½ ççå¥½åå¦",
-                         "en":  "You\u0027re so brave (sarcastic)",
-                         "definition":  "You are very brave",
-                         "implication":  "Sarcastic remark for reckless or foolish actions",
+                         "en":  "You\u0027re so brave",
+                         "definition":  "You are really brave",
+                         "implication":  "Sarcastic praise for reckless or foolish boldness",
                          "sentiment":  "negative",
                          "source":  "cloud"
                      }
@@ -125,10 +146,10 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "å»ºè®®ä½ å¥½å¥½æ³æ³",
-                         "en":  "You might want to think twice",
-                         "definition":  "Literally: suggest you think carefully",
-                         "implication":  "A polite but firm warning, implying potential consequences if ignored",
-                         "sentiment":  "neutral",
+                         "en":  "Think twice",
+                         "definition":  "Literally: \u0027suggest you think carefully\u0027",
+                         "implication":  "A polite warning or veiled threat implying reconsideration",
+                         "sentiment":  "negative",
                          "source":  "cloud"
                      }
     },
@@ -139,9 +160,9 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "æè¢«å¸\u0085å°",
-                         "en":  "slayed by the looks",
-                         "definition":  "literally \u0027have been handsome-ed\u0027",
-                         "implication":  "impressed by someone\u0027s stunning appearance",
+                         "en":  "slayed",
+                         "definition":  "to be struck by handsomeness",
+                         "implication":  "Expresses being deeply impressed by someone\u0027s attractiveness",
                          "sentiment":  "positive",
                          "source":  "cloud"
                      }
@@ -153,10 +174,10 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "é¥é¥é¢å\u0085",
-                         "en":  "way ahead of the game",
-                         "definition":  "far ahead in competition",
-                         "implication":  "significantly surpassing competitors, often used mockingly",
-                         "sentiment":  "neutral",
+                         "en":  "Far ahead",
+                         "definition":  "Far ahead in competition",
+                         "implication":  "Significantly outperforming competitors",
+                         "sentiment":  "positive",
                          "source":  "cloud"
                      }
     },
@@ -164,15 +185,29 @@
         "text":  "小镇做题家",
         "category":  "L",
         "note":  "来自农村小镇靠做题上名校的学生，带自嘲和社会批评",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (504) 网关超时。"
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "å°éåé¢å®¶",
+                         "en":  "Small-town test-taker",
+                         "definition":  "Literal: small-town exam-focused student",
+                         "implication":  "Derogatory term for those who rely solely on test scores to advance",
+                         "sentiment":  "negative",
+                         "source":  "cloud"
+                     }
     },
     {
         "text":  "985废物",
         "category":  "L",
         "note":  "名校毕业却找不到好工作者的自嘲，反映就业焦虑",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (504) 网关超时。"
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "985åºç©",
+                         "en":  "985 loser",
+                         "definition":  "Graduate from elite university but underachieving",
+                         "implication":  "Self-deprecating term for underemployed elite graduates",
+                         "sentiment":  "negative",
+                         "source":  "cloud"
+                     }
     },
     {
         "text":  "精英感",
@@ -181,9 +216,9 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "ç²¾è±æ",
-                         "en":  "elite vibe",
+                         "en":  "elite vibes",
                          "definition":  "Feeling of being elite",
-                         "implication":  "A sense of superiority or refined taste",
+                         "implication":  "An aura of sophistication and superiority",
                          "sentiment":  "neutral",
                          "source":  "cloud"
                      }
@@ -196,8 +231,8 @@
         "response":  {
                          "zh":  "åºæ´",
                          "en":  "loser",
-                         "definition":  "literally \u0027useless firewood\u0027",
-                         "implication":  "someone incompetent or worthless",
+                         "definition":  "A person who is a failure or a good-for-nothing.",
+                         "implication":  "A derogatory term for someone seen as a failure or a loser, often used in a self-deprecating or teasing way.",
                          "sentiment":  "negative",
                          "source":  "cloud"
                      }
@@ -206,15 +241,29 @@
         "text":  "普信男",
         "category":  "L",
         "note":  "过度自信却无实力的男性，讽刺意味强",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (504) 网关超时。"
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "æ®ä¿¡ç·",
+                         "en":  "Average Joe",
+                         "definition":  "ordinary male believer",
+                         "implication":  "common man who believes in mainstream ideas",
+                         "sentiment":  "neutral",
+                         "source":  "cloud"
+                     }
     },
     {
         "text":  "这件事你得好好感谢他，要不是他，你早完了",
         "category":  "M",
         "note":  "应识别表面感谢背后暗藏的压力和威胁感",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (504) 网关超时。"
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "ä½ æ©å®äº",
+                         "en":  "you\u0027d be toast",
+                         "definition":  "You\u0027d be finished",
+                         "implication":  "You would have suffered severe consequences",
+                         "sentiment":  "negative",
+                         "source":  "cloud"
+                     }
     },
     {
         "text":  "她那个笑啊，懂的都懂",
@@ -224,8 +273,8 @@
         "response":  {
                          "zh":  "å¥¹é£ä¸ªç¬åï¼æçé½æ",
                          "en":  "That smile of hers, those who know, know",
-                         "definition":  "Her smile, those who understand, understand",
-                         "implication":  "A smile with hidden meaning, understood only by insiders",
+                         "definition":  "Her smile, those who understand will understand",
+                         "implication":  "An insider\u0027s smile with unspoken meaning",
                          "sentiment":  "neutral",
                          "source":  "cloud"
                      }
@@ -237,10 +286,10 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "ä»åäºç¹é\u0085ï¼è®²äºå¥½å¤çå¿è¯",
-                         "en":  "He spilled his guts after a few drinks",
+                         "en":  "He got real after a few drinks",
                          "definition":  "He drank some alcohol and spoke many sincere words",
-                         "implication":  "Alcohol lowered inhibitions, leading to honest, heartfelt confessions",
-                         "sentiment":  "positive",
+                         "implication":  "Alcohol lowered inhibitions, revealing honest thoughts or emotions",
+                         "sentiment":  "neutral",
                          "source":  "cloud"
                      }
     },
@@ -251,9 +300,9 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "é¢å¯¼è¯´ä¸å·®ä½ è¿ç¹å ç­è´¹",
-                         "en":  "Boss says your overtime pay is peanuts",
-                         "definition":  "Boss says not short of your overtime pay",
-                         "implication":  "Implies overtime is expected without extra compensation",
+                         "en":  "The boss says we don\u0027t need your overtime pay",
+                         "definition":  "The boss says we don\u0027t need your overtime pay",
+                         "implication":  "Implies overtime work is expected without extra pay",
                          "sentiment":  "negative",
                          "source":  "cloud"
                      }
@@ -262,7 +311,14 @@
         "text":  "她说她不开心但没事",
         "category":  "M",
         "note":  "应识别中国人/女性表达委屈时的隐晦否定语气",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (504) 网关超时。"
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "å¥¹è¯´å¥¹ä¸å¼å¿ä½æ²¡äº",
+                         "en":  "She says she\u0027s unhappy but it\u0027s fine",
+                         "definition":  "Literal: She says she\u0027s unhappy but it\u0027s okay",
+                         "implication":  "Implies hidden distress masked by surface calm",
+                         "sentiment":  "negative",
+                         "source":  "cloud"
+                     }
     }
 ]
