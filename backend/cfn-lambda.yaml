@@ -92,7 +92,7 @@ Resources:
       Handler: index.handler
       Role: !GetAtt LambdaExecutionRole.Arn
       MemorySize: 256
-      Timeout: 5
+      Timeout: 15
       Code:
         S3Bucket:
           Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LambdaCodeBucket'
