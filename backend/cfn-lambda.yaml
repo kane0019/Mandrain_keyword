@@ -22,6 +22,9 @@ Parameters:
     Default: 'PLACEHOLDER_ANALYZE_PACKAGE.zip'
     Description: S3 key for analyze Lambda deployment package
 
+Conditions:
+  IsDevEnv: !Equals [!Ref EnvironmentName, dev]
+
 Resources:
   # ========== IAM Role for Lambda ==========
   LambdaExecutionRole:
@@ -151,6 +154,7 @@ Resources:
             Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-WordCacheTable'
           JWT_SECRET_ARN:
             Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-JwtSecretArn'
+          CACHE_TTL_SECONDS: !If [IsDevEnv, '300', '86400']
       Tags:
         - Key: Environment
           Value: !Ref EnvironmentName

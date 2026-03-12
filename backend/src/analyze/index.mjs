@@ -8,7 +8,7 @@ const ddbClient = DynamoDBDocumentClient.from(new DynamoDBClient());
 const bedrockClient = new BedrockRuntimeClient();
 const WORD_CACHE_TABLE = process.env.WORD_CACHE_TABLE;
 const MAX_TEXT_LENGTH = 30;
-const CACHE_TTL_HOURS = 24;
+const CACHE_TTL_SECONDS = process.env.CACHE_TTL_SECONDS ? parseInt(process.env.CACHE_TTL_SECONDS) : 86400; // default 24h
 
 export async function handler(event) {
   // CORS preflight
@@ -75,7 +75,7 @@ export async function handler(event) {
   }
 
   // ---------- 5. 写入缓存 ----------
-  const ttl = Math.floor(Date.now() / 1000) + CACHE_TTL_HOURS * 3600;
+  const ttl = Math.floor(Date.now() / 1000) + CACHE_TTL_SECONDS;
   await ddbClient.send(new PutCommand({
     TableName: WORD_CACHE_TABLE,
     Item: {

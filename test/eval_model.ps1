@@ -37,33 +37,33 @@ Write-Host ""
 # ---- 评测用例 ----
 # 格式: @{ text; category; note }
 $CASES = @(
-    # F: 新生代网络词
-    @{ text="整顿职场";     category="F"; note="有主动对抗不合理职场规则的含义" }
-    @{ text="发疯文学";     category="F"; note="用夸张混乱语气表达不满的网络写作风格" }
-    @{ text="班味";         category="F"; note="上班后身上散发的疲惫/压抑气质，自嘲" }
-    @{ text="嘴替";         category="F"; note="帮别人说出心声的人，应说明语境" }
-    @{ text="松弛感";       category="F"; note="不焦虑、随性自在的状态，与内卷相对" }
-    @{ text="哈人";         category="F"; note="东北/网络用语，表示害怕/吓人" }
-    @{ text="泼天富贵";     category="F"; note="突然涌来的巨大机遇或流量，应说明讽刺用法" }
-    @{ text="显眼包";       category="F"; note="爱出风头、特别引人注意的人，褒贬取决于语境" }
-    # G: 职场黑话/隐语
-    @{ text="对齐颗粒度";   category="G"; note="职场黑话，表示细化沟通，有时被讽刺为废话" }
-    @{ text="赋能";         category="G"; note="商业/职场高频词，已被过度使用至沦为空话" }
-    @{ text="闭环";         category="G"; note="职场语，处理完某件事的完整流程，有时是官僚术语" }
-    @{ text="向上管理";     category="G"; note="管理上级对自己印象的策略，带职场算计含义" }
-    @{ text="躺平式干部";   category="G"; note="不求上进、混日子的官员或员工，贬义" }
-    # H: 情感/关系用语
-    @{ text="舔狗";         category="H"; note="无底线讨好对方的人，自嘲或贬义" }
-    @{ text="绿茶";         category="H"; note="表面清纯实则心机的女性，贬义" }
-    @{ text="海王";         category="H"; note="同时周旋多个异性的人，贬义" }
-    @{ text="拿捏";         category="H"; note="完全掌控某人/某事，语气可赞赏或嘲讽" }
-    @{ text="恋爱脑";       category="H"; note="凡事以感情为优先，带贬义" }
-    # I: 带语境的完整句子
-    @{ text="我就是个普通打工人，没什么追求"; category="I"; note="应识别出自嘲背后的无奈/认命感" }
-    @{ text="他这个人很会来事儿";             category="I"; note="应说明可能是夸善于处事，也可能是讽刺圆滑" }
-    @{ text="你这波操作我给满分";             category="I"; note="可以是真心称赞，也可以是反讽，应分析歧义" }
-    @{ text="她不是在哭，她在发疯";           category="I"; note="应识别发疯为宣泄情绪、而非精神疾病" }
-    @{ text="这个项目就是在走形式";           category="I"; note="应识别批评官僚/表面功夫的含义" }
+    # J: 2024-2025 最新网络词
+    @{ text="水灵灵地";     category="J"; note="形容人某种行为做得格外顺溜自然，口语化" }
+    @{ text="原神，启动";   category="J"; note="源自游戏梗，转义为开始做某事，带戏谑感" }
+    @{ text="尊嘟假嘟";     category="J"; note="谐音'真的假的'，表示不敢置信，幼稚可爱语气" }
+    @{ text="捏";           category="J"; note="语气词，表撒娇或卖萌，来自网络语" }
+    @{ text="出警";         category="J"; note="网络用语，指有人来纠错/维权，常带讽刺意味" }
+    @{ text="磕到了";       category="J"; note="嗑 CP 时被感动，表达对两人关系的沉迷" }
+    @{ text="夺笋";         category="J"; note="谐音'多损'，指行为过分，带戏谑批评语气" }
+    @{ text="yyds";         category="J"; note="永远的神的缩写，极度赞美，已渐渐被过度使用" }
+    # K: 反向夸赞 / 双关
+    @{ text="懂得都懂";     category="K"; note="暗示有内情但不明说，测试模型是否能识别隐晦表达" }
+    @{ text="你真的好勇哦"; category="K"; note="表面夸勇敢，实际多为反讽对方鲁莽" }
+    @{ text="建议你好好想想"; category="K"; note="委婉批评，暗示对方做了不妥的事" }
+    @{ text="有被帅到";     category="K"; note="表达被某人或某事惊艳，可以是真心也可调侃" }
+    @{ text="遥遥领先";     category="K"; note="原海外发布会金句，现已异化为嘲讽某品牌过度吹嘘" }
+    # L: 身份/阶层词
+    @{ text="小镇做题家";   category="L"; note="来自农村小镇靠做题上名校的学生，带自嘲和社会批评" }
+    @{ text="985废物";      category="L"; note="名校毕业却找不到好工作者的自嘲，反映就业焦虑" }
+    @{ text="精英感";       category="L"; note="某类人散发的优越气质，可褒可贬取决于语境" }
+    @{ text="废柴";         category="L"; note="自嘲或贬低型词，指能力差/没出息的人" }
+    @{ text="普信男";       category="L"; note="过度自信却无实力的男性，讽刺意味强" }
+    # M: 完整句子测试
+    @{ text="这件事你得好好感谢他，要不是他，你早完了"; category="M"; note="应识别表面感谢背后暗藏的压力和威胁感" }
+    @{ text="她那个笑啊，懂的都懂";                   category="M"; note="应识别'懂的都懂'的暗示性含义，不明说但暗有恶意" }
+    @{ text="他喝了点酒，讲了好多真心话";             category="M"; note="应识别'酒后吐真言'的潜台词和信息暴露风险" }
+    @{ text="领导说不差你这点加班费";                 category="M"; note="应识别强迫加班的话术，表面大方实则压榨" }
+    @{ text="她说她不开心但没事";                     category="M"; note="应识别中国人/女性表达委屈时的隐晦否定语气" }
 )
 
 $total = $CASES.Count
