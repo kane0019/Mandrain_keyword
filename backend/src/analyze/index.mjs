@@ -127,14 +127,16 @@ function buildPrompt(text, prefix, suffix, pageUrl) {
 
 async function invokeBedrockClaude(prompt) {
   try {
-    const modelId = 'anthropic.claude-3-sonnet-20240229-v1:0';
+    const modelId = 'amazon.nova-lite-v1:0';
 
     const requestBody = {
-      anthropic_version: 'bedrock-2023-05-31',
-      max_tokens: 512,
       messages: [
-        { role: 'user', content: prompt },
+        { role: 'user', content: [{ text: prompt }] },
       ],
+      inferenceConfig: {
+        maxTokens: 512,
+        temperature: 0.3,
+      },
     };
 
     const command = new InvokeModelCommand({
@@ -147,7 +149,7 @@ async function invokeBedrockClaude(prompt) {
     const resp = await bedrockClient.send(command);
     const respBody = JSON.parse(new TextDecoder().decode(resp.body));
 
-    const text = respBody.content?.[0]?.text || '';
+    const text = respBody.output?.message?.content?.[0]?.text || '';
 
     // 提取 JSON（兼容 AI 返回带 markdown code block 的情况）
     const jsonMatch = text.match(/\{[\s\S]*\}/);
