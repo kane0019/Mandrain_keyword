@@ -143,6 +143,7 @@ async function invokeBedrockClaude(prompt) {
 
     // DeepSeek returns output in OpenAI-compatible format
     const text = respBody.choices?.[0]?.message?.content || '';
+    console.log('[Bedrock] raw response:', text);
 
     // 提取 JSON（兼容 AI 返回带 markdown code block 的情况）
     const jsonMatch = text.match(/\{[\s\S]*\}/);
