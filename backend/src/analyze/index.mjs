@@ -104,6 +104,10 @@ export async function handler(event) {
 
 const SYSTEM_PROMPT = '你是中文语义分析专家，专注于网络语言、俚语和文化内涵分析。严格按以下JSON格式返回，不含其他文字，每个字段限50字以内：{"zh":"原词","en":"最贴切英文等价词(网络语给俚语而非字面直译)","definition":"字面含义(英文,简短)","implication":"当代中文语境真实含义(英文,简短)","sentiment":"positive或negative或neutral"}';
 
+const DEEPSEEK_TIMEOUT_MS = 20000; // 20s，为 API GW 29s 留出缓冲
+const NOVA_PRO_MODEL_ID = 'amazon.nova-pro-v1:0';
+const DEEPSEEK_MODEL_ID = 'deepseek.v3.2';
+
 function buildPrompt(text, prefix, suffix, pageUrl) {
   let userMsg = `词汇: ${text}`;
   if (prefix) userMsg += `\n前文: ${prefix}`;
@@ -112,41 +116,74 @@ function buildPrompt(text, prefix, suffix, pageUrl) {
   return userMsg;
 }
 
+function parseJsonFromText(text) {
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) return null;
+  try {
+    return JSON.parse(jsonMatch[0]);
+  } catch {
+    return null;
+  }
+}
+
+async function invokeDeepSeek(prompt) {
+  const requestBody = {
+    messages: [
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user', content: prompt },
+    ],
+    max_tokens: 256,
+    temperature: 0.3,
+  };
+  const command = new InvokeModelCommand({
+    modelId: DEEPSEEK_MODEL_ID,
+    contentType: 'application/json',
+    accept: 'application/json',
+    body: JSON.stringify(requestBody),
+  });
+  const resp = await bedrockClient.send(command);
+  const respBody = JSON.parse(new TextDecoder().decode(resp.body));
+  const text = respBody.choices?.[0]?.message?.content || '';
+  console.log('[DeepSeek] raw response:', text);
+  return parseJsonFromText(text);
+}
+
+async function invokeNovaPro(prompt) {
+  const fullPrompt = SYSTEM_PROMPT + '\n\n' + prompt;
+  const requestBody = {
+    messages: [{ role: 'user', content: [{ text: fullPrompt }] }],
+    inferenceConfig: { maxTokens: 256, temperature: 0.3 },
+  };
+  const command = new InvokeModelCommand({
+    modelId: NOVA_PRO_MODEL_ID,
+    contentType: 'application/json',
+    accept: 'application/json',
+    body: JSON.stringify(requestBody),
+  });
+  const resp = await bedrockClient.send(command);
+  const respBody = JSON.parse(new TextDecoder().decode(resp.body));
+  const text = respBody.output?.message?.content?.[0]?.text || '';
+  console.log('[NovaPro] raw response:', text);
+  return parseJsonFromText(text);
+}
+
 async function invokeBedrockClaude(prompt) {
   try {
-    const modelId = 'deepseek.v3.2';
-
-    // DeepSeek on Bedrock uses OpenAI-compatible request format
-    const requestBody = {
-      messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user', content: prompt },
-      ],
-      max_tokens: 256,
-      temperature: 0.3,
-    };
-
-    const command = new InvokeModelCommand({
-      modelId,
-      contentType: 'application/json',
-      accept: 'application/json',
-      body: JSON.stringify(requestBody),
-    });
-
-    const resp = await bedrockClient.send(command);
-    const respBody = JSON.parse(new TextDecoder().decode(resp.body));
-
-    // DeepSeek returns output in OpenAI-compatible format
-    const text = respBody.choices?.[0]?.message?.content || '';
-    console.log('[Bedrock] raw response:', text);
-
-    // 提取 JSON（兼容 AI 返回带 markdown code block 的情况）
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) return null;
-
-    return JSON.parse(jsonMatch[0]);
+    // 尝试 DeepSeek，设 20s 超时熔断
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('DeepSeek timeout')), DEEPSEEK_TIMEOUT_MS)
+    );
+    const result = await Promise.race([invokeDeepSeek(prompt), timeoutPromise]);
+    if (result) return result;
   } catch (err) {
-    console.error('Bedrock invocation failed:', err);
+    console.warn('[Bedrock] DeepSeek failed or timed out, falling back to Nova Pro:', err.message);
+  }
+
+  // Fallback: Nova Pro（通常 2-3s，确保不超 API GW 29s 限制）
+  try {
+    return await invokeNovaPro(prompt);
+  } catch (err) {
+    console.error('[Bedrock] Nova Pro fallback also failed:', err);
     return null;
   }
 }

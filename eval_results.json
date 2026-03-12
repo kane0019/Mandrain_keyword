@@ -6,9 +6,9 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "æ°´çµçµå°",
-                         "en":  "dewy / fresh and vibrant",
-                         "definition":  "Literally: like water, sparkling and moist",
-                         "implication":  "Describes something (often eyes, skin, fruits, or vegetables) that appears fresh, moist, radiant, and full of vitality. It conveys a sense of youthful purity, natural beauty, and healthy liveliness. Commonly used to compliment someone\u0027s bright, clear eyes or glowing complexion.",
+                         "en":  "dewy and fresh",
+                         "definition":  "moist and sparkling",
+                         "implication":  "describes something fresh, vibrant, and full of life",
                          "sentiment":  "positive",
                          "source":  "cloud"
                      }
@@ -20,9 +20,9 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "åç¥ï¼å¯å¨",
-                         "en":  "Genshin Impact, boot up!",
-                         "definition":  "Literally: \u0027Genshin Impact, start up!\u0027",
-                         "implication":  "A popular internet meme originating from live-streamers and content creators. It humorously depicts the moment someone decides to stop procrastinating or doing other activities and launches the game Genshin Impact. It has evolved into a broader cultural shorthand for: 1) The act of starting to play Genshin Impact with dedication or obsession. 2) A playful way to announce one\u0027s transition into leisure/gaming mode. 3) Sometimes used self-deprecatingly to imply neglecting responsibilities for the game. The phrase captures the game\u0027s massive popularity and its integration into daily online discourse.",
+                         "en":  "Genshin, launch!",
+                         "definition":  "A phrase used to express the act of starting to play the game Genshin Impact.",
+                         "implication":  "In contemporary Chinese internet culture, this phrase is used to express the action of starting to play the game Genshin Impact, often used humorously or to express excitement about playing the game.",
                          "sentiment":  "positive",
                          "source":  "cloud"
                      }
@@ -34,9 +34,9 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "å°ååå",
-                         "en":  "for real or for fake",
-                         "definition":  "Literally \u0027real or fake\u0027, questioning authenticity or truthfulness",
-                         "implication":  "A playful, internet-slang phrase used to question the authenticity or truthfulness of something, often in a humorous or sarcastic tone. Originates from online communities and is used in casual, informal contexts, especially among younger generations.",
+                         "en":  "For real or for fake",
+                         "definition":  "Literally \u0027real or fake\u0027",
+                         "implication":  "Expressing doubt or playfully questioning authenticity in a cute, exaggerated tone",
                          "sentiment":  "neutral",
                          "source":  "cloud"
                      }
@@ -45,43 +45,43 @@
         "text":  "捏",
         "category":  "J",
         "note":  "语气词，表撒娇或卖萌，来自网络语",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "æ",
-                         "en":  "cute / adorable / squishy",
-                         "definition":  "to pinch or knead with fingers",
-                         "implication":  "In contemporary Chinese internet slang, \u0027æ\u0027 is often used as an affectionate suffix or interjection to express cuteness, softness, or endearment, especially in ACG (anime, comics, games) culture and cute online communication. It mimics a gentle, playful pinching gesture toward something soft or adorable.",
-                         "sentiment":  "positive",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (504) 网关超时。"
     },
     {
         "text":  "出警",
         "category":  "J",
         "note":  "网络用语，指有人来纠错/维权，常带讽刺意味",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (504) 网关超时。"
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "åºè­¦",
+                         "en":  "to call out",
+                         "definition":  "to dispatch police",
+                         "implication":  "to publicly criticize or mock someone online",
+                         "sentiment":  "negative",
+                         "source":  "cloud"
+                     }
     },
     {
         "text":  "磕到了",
         "category":  "J",
         "note":  "嗑 CP 时被感动，表达对两人关系的沉迷",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (504) 网关超时。"
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "ç£å°äº",
+                         "en":  "ship it",
+                         "definition":  "to ship (a romantic pairing)",
+                         "implication":  "Expressing strong support for a romantic pairing, often in fandom culture.",
+                         "sentiment":  "positive",
+                         "source":  "cloud"
+                     }
     },
     {
         "text":  "夺笋",
         "category":  "J",
         "note":  "谐音\u0027多损\u0027，指行为过分，带戏谑批评语气",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å¤ºç¬",
-                         "en":  "too much",
-                         "definition":  "literally \u0027snatching bamboo shoots\u0027",
-                         "implication":  "A pun on the northeastern Chinese dialect pronunciation of \u0027duÃ³ sÇn\u0027 (å¤æ, meaning \u0027how mean/ruthless\u0027), used humorously online to comment on someone\u0027s savage, ruthless, or excessively teasing behavior, often in a playful, mocking context.",
-                         "sentiment":  "neutral (often used jokingly)",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (504) 网关超时。"
     },
     {
         "text":  "yyds",
@@ -90,9 +90,9 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "yyds",
-                         "en":  "GOAT (Greatest of All Time)",
-                         "definition":  "Literal: \u0027Eternal God\u0027 (from Chinese pinyin initials of \u0027æ°¸è¿çç¥\u0027)",
-                         "implication":  "An internet slang term expressing extreme admiration or praise for someone or something, indicating it is the best in its category. Widely used in fan culture, gaming, and social media to hype idols, products, or trends.",
+                         "en":  "GOAT",
+                         "definition":  "Acronym for \u0027forever god\u0027",
+                         "implication":  "Internet slang for \u0027the greatest of all time\u0027",
                          "sentiment":  "positive",
                          "source":  "cloud"
                      }
@@ -111,10 +111,10 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "ä½ ççå¥½åå¦",
-                         "en":  "You\u0027re really ballsy",
-                         "definition":  "Literal: \u0027You\u0027re really brave/courageous\u0027",
-                         "implication":  "In contemporary Chinese internet culture, this phrase is often used sarcastically or ironically to comment on someone\u0027s reckless, impulsive, or socially unaware behavior. It implies the person is acting without considering consequences, social norms, or potential embarrassment. It can also carry a tone of amused disbelief.",
-                         "sentiment":  "negative or neutral (depending heavily on context and tone; can be teasing among friends)",
+                         "en":  "You\u0027re so brave (sarcastic)",
+                         "definition":  "You are very brave",
+                         "implication":  "Sarcastic remark for reckless or foolish actions",
+                         "sentiment":  "negative",
                          "source":  "cloud"
                      }
     },
@@ -126,9 +126,9 @@
         "response":  {
                          "zh":  "å»ºè®®ä½ å¥½å¥½æ³æ³",
                          "en":  "You might want to think twice",
-                         "definition":  "Literally: \u0027I suggest you think carefully\u0027",
-                         "implication":  "Often used to imply criticism, doubt, or disagreement with the listener\u0027s current stance or action. It carries a tone of warning, suggesting that the listener\u0027s current thinking is inadequate or mistaken, and that reconsideration is necessary. In some contexts, it can be a polite or indirect way to express strong disagreement or to hint at potential negative consequences.",
-                         "sentiment":  "negative",
+                         "definition":  "Literally: suggest you think carefully",
+                         "implication":  "A polite but firm warning, implying potential consequences if ignored",
+                         "sentiment":  "neutral",
                          "source":  "cloud"
                      }
     },
@@ -139,9 +139,9 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "æè¢«å¸\u0085å°",
-                         "en":  "slayed / mind-blown (by someone\u0027s coolness)",
-                         "definition":  "literally: \u0027have been struck by handsomeness/coolness\u0027",
-                         "implication":  "An exclamation of being genuinely impressed or awestruck by someone\u0027s appearance, style, action, or overall charisma. It originates from internet slang, often used among younger generations to express strong, positive surprise. It carries a tone of playful exaggeration and immediacy, implying the impact was sudden and powerful.",
+                         "en":  "slayed by the looks",
+                         "definition":  "literally \u0027have been handsome-ed\u0027",
+                         "implication":  "impressed by someone\u0027s stunning appearance",
                          "sentiment":  "positive",
                          "source":  "cloud"
                      }
@@ -153,10 +153,10 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "é¥é¥é¢å\u0085",
-                         "en":  "miles ahead / way ahead of the pack",
-                         "definition":  "Far ahead; leading by a large margin",
-                         "implication":  "Originally a neutral term describing a significant lead in competition or development. In contemporary Chinese internet culture, it has become a heavily ironic meme due to its association with Huawei\u0027s product launches and exaggerated marketing. It now often sarcastically implies claims of superiority that may be exaggerated or unsubstantiated, though in formal contexts it retains its original meaning.",
-                         "sentiment":  "context-dependent (neutral/positive in formal use; ironic/negative in meme culture)",
+                         "en":  "way ahead of the game",
+                         "definition":  "far ahead in competition",
+                         "implication":  "significantly surpassing competitors, often used mockingly",
+                         "sentiment":  "neutral",
                          "source":  "cloud"
                      }
     },
@@ -164,29 +164,15 @@
         "text":  "小镇做题家",
         "category":  "L",
         "note":  "来自农村小镇靠做题上名校的学生，带自嘲和社会批评",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å°éåé¢å®¶",
-                         "en":  "Small-town test machine",
-                         "definition":  "A person from a small town or rural area who achieves academic success primarily through relentless exam preparation and problem-solving.",
-                         "implication":  "A self-deprecating or socially used term referring to individuals who leveraged exceptional test-taking skills to gain entry into elite universities and secure stable jobs (often in the civil service or state-owned enterprises), but who may lack broader social resources, cultural capital, or innovative thinking compared to their urban, more privileged peers. It highlights the systemic inequalities in Chinese education and social mobility, and the perceived limitations of a purely exam-oriented upbringing.",
-                         "sentiment":  "negative (often used self-mockingly or critically to describe perceived narrowness, but can also carry a tone of sympathy for their struggle within an unequal system)",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (504) 网关超时。"
     },
     {
         "text":  "985废物",
         "category":  "L",
         "note":  "名校毕业却找不到好工作者的自嘲，反映就业焦虑",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "985åºç©",
-                         "en":  "985 loser / elite university burnout",
-                         "definition":  "Literal meaning: \u0027985 trash\u0027 or \u0027985 waste\u0027, referring to graduates from China\u0027s elite Project 985 universities who perceive themselves as underachievers.",
-                         "implication":  "A self-deprecating term used by graduates of China\u0027s top-tier universities (Project 985) to express feelings of inadequacy, anxiety, and failure despite their prestigious educational background. It reflects intense societal pressure, high expectations, and a perceived gap between academic pedigree and real-world success (e.g., in career, income, or social status). The term critiques both hyper-competitive education systems and narrow societal definitions of success.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (504) 网关超时。"
     },
     {
         "text":  "精英感",
@@ -195,10 +181,10 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "ç²¾è±æ",
-                         "en":  "elite vibe / highbrow aura",
-                         "definition":  "The outward appearance, demeanor, or atmosphere associated with being part of an elite group.",
-                         "implication":  "Refers to the perceived or projected qualities of sophistication, exclusivity, high taste, and superior status often associated with educated, wealthy, or powerful individuals. In contemporary Chinese context, it carries nuanced cultural connotations: it can be aspirational (something to emulate) but is often used critically to describe someone or something perceived as pretentiously showcasing their elite status, education, or refined tastes, thus creating a sense of distance or artificial superiority. It comments on the performance of elitism.",
-                         "sentiment":  "neutral (context-dependent, often leans slightly negative or ironic)",
+                         "en":  "elite vibe",
+                         "definition":  "Feeling of being elite",
+                         "implication":  "A sense of superiority or refined taste",
+                         "sentiment":  "neutral",
                          "source":  "cloud"
                      }
     },
@@ -209,9 +195,9 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "åºæ´",
-                         "en":  "loser / deadbeat",
-                         "definition":  "literal: useless firewood; figurative: a worthless person",
-                         "implication":  "A slang term describing someone perceived as incompetent, lazy, or lacking ambition and achievement. It carries a strong connotation of being a burden or having wasted potential. Often used in a self-deprecating or humorous way among friends, but can be highly derogatory when used seriously.",
+                         "en":  "loser",
+                         "definition":  "literally \u0027useless firewood\u0027",
+                         "implication":  "someone incompetent or worthless",
                          "sentiment":  "negative",
                          "source":  "cloud"
                      }
@@ -237,9 +223,9 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "å¥¹é£ä¸ªç¬åï¼æçé½æ",
-                         "en":  "That smile of hers, if you know you know",
-                         "definition":  "Literally: \u0027That laugh/smile of hers, those who understand will understand.\u0027",
-                         "implication":  "A phrase used to imply that a specific smile or expression carries a hidden meaning, inside joke, or shared understanding that only a certain group (or those \u0027in the know\u0027) can fully grasp. It often refers to a subtle, knowing, or suggestive expression, possibly related to gossip, romantic tension, or a private context. It creates a sense of exclusivity and shared secret among the speaker and the intended audience.",
+                         "en":  "That smile of hers, those who know, know",
+                         "definition":  "Her smile, those who understand, understand",
+                         "implication":  "A smile with hidden meaning, understood only by insiders",
                          "sentiment":  "neutral",
                          "source":  "cloud"
                      }
@@ -248,8 +234,15 @@
         "text":  "他喝了点酒，讲了好多真心话",
         "category":  "M",
         "note":  "应识别\u0027酒后吐真言\u0027的潜台词和信息暴露风险",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (504) 网关超时。"
+        "status":  "PASS",
+        "response":  {
+                         "zh":  "ä»åäºç¹é\u0085ï¼è®²äºå¥½å¤çå¿è¯",
+                         "en":  "He spilled his guts after a few drinks",
+                         "definition":  "He drank some alcohol and spoke many sincere words",
+                         "implication":  "Alcohol lowered inhibitions, leading to honest, heartfelt confessions",
+                         "sentiment":  "positive",
+                         "source":  "cloud"
+                     }
     },
     {
         "text":  "领导说不差你这点加班费",
@@ -258,9 +251,9 @@
         "status":  "PASS",
         "response":  {
                          "zh":  "é¢å¯¼è¯´ä¸å·®ä½ è¿ç¹å ç­è´¹",
-                         "en":  "Your overtime pay is peanuts to the company",
-                         "definition":  "The boss says the company doesn\u0027t need your meager overtime pay",
-                         "implication":  "A sarcastic or dismissive remark implying that the employee\u0027s overtime contribution is insignificant to the organization, often used to pressure employees into working overtime without pay or to belittle their efforts. Reflects workplace power dynamics and the undervaluing of labor in some corporate cultures.",
+                         "en":  "Boss says your overtime pay is peanuts",
+                         "definition":  "Boss says not short of your overtime pay",
+                         "implication":  "Implies overtime is expected without extra compensation",
                          "sentiment":  "negative",
                          "source":  "cloud"
                      }
@@ -269,14 +262,7 @@
         "text":  "她说她不开心但没事",
         "category":  "M",
         "note":  "应识别中国人/女性表达委屈时的隐晦否定语气",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å¥¹è¯´å¥¹ä¸å¼å¿ä½æ²¡äº",
-                         "en":  "She says she\u0027s not happy but it\u0027s fine",
-                         "definition":  "Literal: She says she\u0027s unhappy but (she\u0027s) okay.",
-                         "implication":  "A common expression used to downplay or conceal one\u0027s true negative emotions (like sadness, frustration, or disappointment) in order to avoid worrying others, appearing vulnerable, or escalating a situation. It often implies internal conflict, a desire for privacy, or an attempt to maintain social harmony despite personal distress. The listener is typically expected to read between the lines and offer care or space, depending on context.",
-                         "sentiment":  "negative",
-                         "source":  "cloud"
-                     }
+        "status":  "FAIL",
+        "response":  "远程服务器返回错误: (504) 网关超时。"
     }
 ]
