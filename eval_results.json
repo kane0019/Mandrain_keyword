@@ -1,323 +1,800 @@
-﻿[
-    {
-        "text":  "水灵灵地",
-        "category":  "J",
-        "note":  "形容人某种行为做得格外顺溜自然，口语化",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "æ°´çµçµå°",
-                         "en":  "fresh and dewy",
-                         "definition":  "appearing moist and fresh",
-                         "implication":  "describes someone looking vibrant and attractive",
-                         "sentiment":  "positive",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "原神，启动",
-        "category":  "J",
-        "note":  "源自游戏梗，转义为开始做某事，带戏谑感",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "åç¥ï¼å¯å¨",
-                         "en":  "Genshin, boot up",
-                         "definition":  "Launching Genshin Impact",
-                         "implication":  "Starting to play Genshin Impact",
-                         "sentiment":  "positive",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "尊嘟假嘟",
-        "category":  "J",
-        "note":  "谐音\u0027真的假的\u0027，表示不敢置信，幼稚可爱语气",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (504) 网关超时。"
-    },
-    {
-        "text":  "捏",
-        "category":  "J",
-        "note":  "语气词，表撒娇或卖萌，来自网络语",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (504) 网关超时。"
-    },
-    {
-        "text":  "出警",
-        "category":  "J",
-        "note":  "网络用语，指有人来纠错/维权，常带讽刺意味",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "åºè­¦",
-                         "en":  "call out",
-                         "definition":  "to call the police",
-                         "implication":  "to criticize or confront someone online",
-                         "sentiment":  "negative",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "磕到了",
-        "category":  "J",
-        "note":  "嗑 CP 时被感动，表达对两人关系的沉迷",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "ç£å°äº",
-                         "en":  "shipping them hard",
-                         "definition":  "literally \u0027knocked into\u0027",
-                         "implication":  "getting excited about a fictional or real romantic pairing",
-                         "sentiment":  "positive",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "夺笋",
-        "category":  "J",
-        "note":  "谐音\u0027多损\u0027，指行为过分，带戏谑批评语气",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å¤ºç¬",
-                         "en":  "too savage",
-                         "definition":  "literally \u0027stealing bamboo shoots\u0027",
-                         "implication":  "excessively mean or ruthless, often humorously",
-                         "sentiment":  "negative",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "yyds",
-        "category":  "J",
-        "note":  "永远的神的缩写，极度赞美，已渐渐被过度使用",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "yyds",
-                         "en":  "GOAT",
-                         "definition":  "Eternal God of War",
-                         "implication":  "Internet slang for \u0027eternal god of war\u0027, used to praise someone or something as the best in their field",
-                         "sentiment":  "positive",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "懂得都懂",
-        "category":  "K",
-        "note":  "暗示有内情但不明说，测试模型是否能识别隐晦表达",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "æå¾é½æ",
-                         "en":  "If you know, you know",
-                         "definition":  "Those who understand, understand",
-                         "implication":  "Implies insider knowledge or unspoken truth",
-                         "sentiment":  "neutral",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "你真的好勇哦",
-        "category":  "K",
-        "note":  "表面夸勇敢，实际多为反讽对方鲁莽",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "ä½ ççå¥½åå¦",
-                         "en":  "You\u0027re so brave, huh",
-                         "definition":  "You are really brave",
-                         "implication":  "Sarcastic praise for reckless or naive boldness",
-                         "sentiment":  "negative",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "建议你好好想想",
-        "category":  "K",
-        "note":  "委婉批评，暗示对方做了不妥的事",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å»ºè®®ä½ å¥½å¥½æ³æ³",
-                         "en":  "You might wanna think twice",
-                         "definition":  "Suggest you think carefully",
-                         "implication":  "Implies the action is risky or inappropriate",
-                         "sentiment":  "negative",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "有被帅到",
-        "category":  "K",
-        "note":  "表达被某人或某事惊艳，可以是真心也可调侃",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "æè¢«å¸\u0085å°",
-                         "en":  "wow, so handsome",
-                         "definition":  "To be struck by someone\u0027s handsomeness",
-                         "implication":  "Expresses strong admiration for someone\u0027s good looks, often used in a fangirl/fanboy context.",
-                         "sentiment":  "positive",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "遥遥领先",
-        "category":  "K",
-        "note":  "原海外发布会金句，现已异化为嘲讽某品牌过度吹嘘",
-        "status":  "FAIL",
-        "response":  "远程服务器返回错误: (504) 网关超时。"
-    },
-    {
-        "text":  "小镇做题家",
-        "category":  "L",
-        "note":  "来自农村小镇靠做题上名校的学生，带自嘲和社会批评",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å°éåé¢å®¶",
-                         "en":  "small-town exam machine",
-                         "definition":  "A person from a small town who excels at exams",
-                         "implication":  "A person who achieves academic success through rote learning but lacks broader social skills",
-                         "sentiment":  "neutral",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "985废物",
-        "category":  "L",
-        "note":  "名校毕业却找不到好工作者的自嘲，反映就业焦虑",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "985åºç©",
-                         "en":  "985 loser",
-                         "definition":  "Graduate from top-tier university but underachieving",
-                         "implication":  "Self-deprecating term for elite graduates with ordinary careers",
-                         "sentiment":  "negative",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "精英感",
-        "category":  "L",
-        "note":  "某类人散发的优越气质，可褒可贬取决于语境",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "ç²¾è±æ",
-                         "en":  "elitist vibe",
-                         "definition":  "feeling of being elite",
-                         "implication":  "a sense of superiority that creates social distance",
-                         "sentiment":  "negative",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "废柴",
-        "category":  "L",
-        "note":  "自嘲或贬低型词，指能力差/没出息的人",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "åºæ´",
-                         "en":  "loser",
-                         "definition":  "useless wood",
-                         "implication":  "incompetent person",
-                         "sentiment":  "negative",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "普信男",
-        "category":  "L",
-        "note":  "过度自信却无实力的男性，讽刺意味强",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "æ®ä¿¡ç·",
-                         "en":  "average yet arrogant man",
-                         "definition":  "A man who is ordinary yet overly confident",
-                         "implication":  "A man of average or below-average conditions who is inexplicably arrogant and narcissistic.",
-                         "sentiment":  "negative",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "这件事你得好好感谢他，要不是他，你早完了",
-        "category":  "M",
-        "note":  "应识别表面感谢背后暗藏的压力和威胁感",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "è¿ä»¶äºä½ å¾å¥½å¥½æè°¢ä»ï¼è¦ä¸æ¯ä»ï¼ä½ æ©å®äº",
-                         "en":  "You should really thank him for this; if it weren\u0027t for him, you\u0027d be done for.",
-                         "definition":  "You should be grateful to him.",
-                         "implication":  "Expresses gratitude and acknowledges someone\u0027s crucial help.",
-                         "sentiment":  "positive",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "她那个笑啊，懂的都懂",
-        "category":  "M",
-        "note":  "应识别\u0027懂的都懂\u0027的暗示性含义，不明说但暗有恶意",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å¥¹é£ä¸ªç¬åï¼æçé½æ",
-                         "en":  "That smile, if you know you know",
-                         "definition":  "Her smile, those who understand will understand",
-                         "implication":  "Implies a shared insider knowledge or subtext behind the smile",
-                         "sentiment":  "neutral",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "他喝了点酒，讲了好多真心话",
-        "category":  "M",
-        "note":  "应识别\u0027酒后吐真言\u0027的潜台词和信息暴露风险",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "ä»åäºç¹é\u0085ï¼è®²äºå¥½å¤çå¿è¯",
-                         "en":  "He got a bit tipsy and spilled the tea",
-                         "definition":  "He drank some alcohol and spoke many sincere words",
-                         "implication":  "Alcohol lowered inhibitions, leading to honest revelations",
-                         "sentiment":  "neutral",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "领导说不差你这点加班费",
-        "category":  "M",
-        "note":  "应识别强迫加班的话术，表面大方实则压榨",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "é¢å¯¼è¯´ä¸å·®ä½ è¿ç¹å ç­è´¹",
-                         "en":  "Boss says your overtime pay is peanuts",
-                         "definition":  "Boss says not short of your overtime pay",
-                         "implication":  "Implies overtime is expected without proper compensation",
-                         "sentiment":  "negative",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
-    },
-    {
-        "text":  "她说她不开心但没事",
-        "category":  "M",
-        "note":  "应识别中国人/女性表达委屈时的隐晦否定语气",
-        "status":  "PASS",
-        "response":  {
-                         "zh":  "å¥¹è¯´å¥¹ä¸å¼å¿ä½æ²¡äº",
-                         "en":  "She says she\u0027s unhappy but fine",
-                         "definition":  "Literal: She says she\u0027s unhappy but okay",
-                         "implication":  "Implies hidden distress masked by surface calm",
-                         "sentiment":  "negative",
-                         "model":  "deepseek.v3.2",
-                         "source":  "cloud"
-                     }
+[
+  {
+    "text": "内卷",
+    "category": "A",
+    "note": "A-网络流行语，应有社会竞争含义",
+    "status": "PASS",
+    "keywords_expected": "competition,rat race,overwork,compete",
+    "keywords_matched": "competition",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "内卷",
+      "en": "Involution",
+      "definition": "A state of intense, often unproductive competition",
+      "implication": "Intense, zero-sum internal competition within a limited system",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
     }
+  },
+  {
+    "text": "躺平",
+    "category": "A",
+    "note": "A-网络流行语，应有放弃竞争含义",
+    "status": "INCOMPLETE",
+    "keywords_expected": "give up,quit,refuse,opt out,lying flat",
+    "keywords_matched": "",
+    "model": "?",
+    "response": {
+      "message": "Endpoint request timed out"
+    }
+  },
+  {
+    "text": "破防",
+    "category": "A",
+    "note": "A-网络流行语，应有情绪崩溃含义",
+    "status": "PASS",
+    "keywords_expected": "emotional,overwhelm,break down,touched,moved",
+    "keywords_matched": "emotional,overwhelm",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "破防",
+      "en": "emotionally wrecked",
+      "definition": "defense broken",
+      "implication": "overwhelmed by emotions, losing composure",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "凡尔赛",
+    "category": "A",
+    "note": "A-网络流行语，应体现显摆/炫耀含义",
+    "status": "PASS",
+    "keywords_expected": "brag,show off,humble ?brag,flaunt",
+    "keywords_matched": "brag,humble ?brag",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "凡尔赛",
+      "en": "humblebrag",
+      "definition": "Ostentatious modesty",
+      "implication": "Subtle boasting disguised as complaint",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "抽象",
+    "category": "A",
+    "note": "A-当代网络用语，不是传统意义的抽象",
+    "status": "PASS",
+    "keywords_expected": "absurd,ridiculous,bizarre,nonsens",
+    "keywords_matched": "absurd,bizarre,nonsens",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "抽象",
+      "en": "abstract",
+      "definition": "Unconventional, bizarre behavior",
+      "implication": "Describes absurd or nonsensical online content",
+      "sentiment": "neutral",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "典中典",
+    "category": "A",
+    "note": "A-网络用语，应表示极具代表性/典型",
+    "status": "PASS",
+    "keywords_expected": "classic,typical,quintessential,iconic",
+    "keywords_matched": "classic,typical,quintessential",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "典中典",
+      "en": "classic of classics",
+      "definition": "A classic among classics",
+      "implication": "The ultimate classic; used to describe something that is the most typical or quintessential example, often with a sense of irony or sarcasm.",
+      "sentiment": "neutral",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "有点东西",
+    "category": "A",
+    "note": "A-应表示厉害/出乎意料",
+    "status": "PASS",
+    "keywords_expected": "impressive,talent,unexpected,skill",
+    "keywords_matched": "talent,skill",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "有点东西",
+      "en": "got game",
+      "definition": "has something",
+      "implication": "possesses genuine skill or talent",
+      "sentiment": "positive",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "这波属于",
+    "category": "A",
+    "note": "A-应表示某次操作/行为值得称道",
+    "status": "PASS",
+    "keywords_expected": "move,play,operation,maneuver",
+    "keywords_matched": "move",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "这波属于",
+      "en": "This move is",
+      "definition": "This wave belongs to",
+      "implication": "Describes a particular action or situation as characteristic of a trend or style",
+      "sentiment": "positive",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "你品，你细品",
+    "category": "B",
+    "note": "B-提示听者回味，通常暗示有隐情",
+    "status": "PASS",
+    "keywords_expected": "think about,ponder,hint,between the lines,implication",
+    "keywords_matched": "between the lines",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "你品，你细品",
+      "en": "Read between the lines",
+      "definition": "Literally 'you taste, you taste carefully'",
+      "implication": "Implies there's a hidden meaning or irony to be discerned",
+      "sentiment": "neutral",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "真有你的",
+    "category": "B",
+    "note": "B-可以是赞赏，也可以是反讽",
+    "status": "INCOMPLETE",
+    "keywords_expected": "sarcas,ironic,impress,rhetorical",
+    "keywords_matched": "",
+    "model": "?",
+    "response": {
+      "message": "Endpoint request timed out"
+    }
+  },
+  {
+    "text": "我哭死",
+    "category": "B",
+    "note": "B-夸张表达，不是真在哭",
+    "status": "INCOMPLETE",
+    "keywords_expected": "exaggerat,overwhelm,dramatic,not literally",
+    "keywords_matched": "",
+    "model": "?",
+    "response": {
+      "message": "Endpoint request timed out"
+    }
+  },
+  {
+    "text": "他真的很努力",
+    "category": "B",
+    "note": "B-字面是夸，但有时是在讽刺",
+    "status": "PASS",
+    "keywords_expected": "sarcas,ironic,backhand,despite,token praise",
+    "keywords_matched": "despite",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "他真的很努力",
+      "en": "He's really trying his best",
+      "definition": "He is genuinely making great effort",
+      "implication": "Praise for effort despite poor results, often implying lack of talent",
+      "sentiment": "neutral",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "上价值",
+    "category": "C",
+    "note": "C-单方面把对话拔高到道德/意义层面，含贬义",
+    "status": "INCOMPLETE",
+    "keywords_expected": "moral,virtue,lecture,preach,elevat",
+    "keywords_matched": "",
+    "model": "?",
+    "response": {
+      "message": "Endpoint request timed out"
+    }
+  },
+  {
+    "text": "阴阳怪气",
+    "category": "C",
+    "note": "C-用表面正常的话语暗中讽刺",
+    "status": "PASS",
+    "keywords_expected": "passive.aggressive,sarcas,snide,indirect,backhanded",
+    "keywords_matched": "passive.aggressive,sarcas,indirect",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "阴阳怪气",
+      "en": "passive-aggressive",
+      "definition": "speaking with hidden sarcasm or insinuation",
+      "implication": "indirectly expressing negativity in a sly manner",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "爹味",
+    "category": "C",
+    "note": "C-指说话居高临下、自以为是的男性气质，贬义",
+    "status": "PASS",
+    "keywords_expected": "condescend,patroniz,mansplain,preach,authoritarian",
+    "keywords_matched": "condescend",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "爹味",
+      "en": "Dad vibes",
+      "definition": "Paternal demeanor",
+      "implication": "Condescending attitude like a father",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "PUA",
+    "category": "C",
+    "note": "C-在中文语境里含义已扩展",
+    "status": "PASS",
+    "keywords_expected": "manipulat,gaslight,emotional abuse,control",
+    "keywords_matched": "manipulat,gaslight",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "PUA",
+      "en": "gaslighting",
+      "definition": "Pick-up Artist",
+      "implication": "Psychological manipulation in relationships",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "打工人",
+    "category": "D",
+    "note": "D-应体现既是自嘲也是团结感",
+    "status": "PASS",
+    "keywords_expected": "worker,wage,hustle,grind,self-deprecat,solidarity",
+    "keywords_matched": "wage,self-deprecat",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "打工人",
+      "en": "wage slave",
+      "definition": "laborer, employee",
+      "implication": "self-deprecating term for overworked employees",
+      "sentiment": "neutral",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "韭菜",
+    "category": "D",
+    "note": "D-在金融/商业语境指被割的散户",
+    "status": "INCOMPLETE",
+    "keywords_expected": "exploit,harvest,sucker,retail investor,victim,fleece",
+    "keywords_matched": "",
+    "model": "?",
+    "response": {
+      "message": "Endpoint request timed out"
+    }
+  },
+  {
+    "text": "卷王",
+    "category": "D",
+    "note": "D-努力内卷者，带有戏谑语气",
+    "status": "PASS",
+    "keywords_expected": "overachiev,grind,workaholic,competit",
+    "keywords_matched": "overachiev,competit",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "卷王",
+      "en": "tryhard king",
+      "definition": "King of overworking",
+      "implication": "Extreme overachiever in competitive environments",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "社恐",
+    "category": "D",
+    "note": "D-不仅是社交恐惧症，在口语里是轻松自嘲用法",
+    "status": "PASS",
+    "keywords_expected": "social anxiety,introvert,antisocial,awkward",
+    "keywords_matched": "social anxiety",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "社恐",
+      "en": "social anxiety",
+      "definition": "social phobia",
+      "implication": "fear of social situations",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "领导说大家辛苦了，周末别休息，再冲一冲",
+    "category": "E",
+    "note": "E-应识别出反话/压榨含义而非真诚感谢",
+    "status": "PASS",
+    "keywords_expected": "exploit,overwork,mandatory,ironic,forced",
+    "keywords_matched": "ironic",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "领导说大家辛苦了，周末别休息，再冲一冲",
+      "en": "The boss says everyone has worked hard, don't rest this weekend, let's push a bit more",
+      "definition": "Boss says everyone has worked hard, don't rest this weekend, push a bit more",
+      "implication": "A sarcastic or ironic comment on unrealistic work demands",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "她说你今天挺会穿的",
+    "category": "E",
+    "note": "E-可能是真夸也可能是嘲讽，应分析歧义",
+    "status": "PASS",
+    "keywords_expected": "ambiguous,compliment,sarcas,backhanded",
+    "keywords_matched": "compliment",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "她说你今天挺会穿的",
+      "en": "She says you're killing it with the outfit today",
+      "definition": "She says you dress well today",
+      "implication": "Compliment on fashion sense and style",
+      "sentiment": "positive",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "他发朋友圈不是分享生活，是在凡尔赛",
+    "category": "E",
+    "note": "E-应解释凡尔赛在此处的用法",
+    "status": "PASS",
+    "keywords_expected": "brag,show off,humble ?brag,flaunt",
+    "keywords_matched": "brag,show off,humble ?brag",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "凡尔赛",
+      "en": "humblebrag",
+      "definition": "Disguised boasting",
+      "implication": "Subtle show-off in social media",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "内卷",
+    "category": "N",
+    "note": "N-微博嘈杂上下文，应仍能识别网络流行语含义",
+    "status": "PASS",
+    "keywords_expected": "competition,rat race,overwork,compete",
+    "keywords_matched": "competition",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "内卷",
+      "en": "Involution",
+      "definition": "A state of intense, often unproductive competition",
+      "implication": "Intense, zero-sum internal competition within a limited system",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "躺平",
+    "category": "N",
+    "note": "N-含时间戳和设备信息噪声",
+    "status": "PASS",
+    "keywords_expected": "give up,quit,refuse,opt out,lying flat",
+    "keywords_matched": "lying flat",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "躺平",
+      "en": "lying flat",
+      "definition": "Literally lying down flat",
+      "implication": "Rejecting societal pressure to overwork, choosing minimal effort lifestyle",
+      "sentiment": "neutral",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "韭菜",
+    "category": "N",
+    "note": "N-财经号文章嘈杂上下文",
+    "status": "PASS",
+    "keywords_expected": "exploit,harvest,sucker,retail investor,victim,fleece",
+    "keywords_matched": "retail investor",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "韭菜",
+      "en": "bagholder",
+      "definition": "Chinese chives",
+      "implication": "Retail investors repeatedly losing money in financial markets",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  },
+  {
+    "text": "PUA",
+    "category": "N",
+    "note": "N-热搜话题页面噪声",
+    "status": "PASS",
+    "keywords_expected": "manipulat,gaslight,emotional abuse,control",
+    "keywords_matched": "manipulat,gaslight",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "PUA",
+      "en": "gaslighting",
+      "definition": "Pick-up Artist",
+      "implication": "Psychological manipulation in relationships",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "社恐",
+    "category": "N",
+    "note": "N-知乎问答页面",
+    "status": "PASS",
+    "keywords_expected": "social anxiety,introvert,antisocial,awkward",
+    "keywords_matched": "social anxiety",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "社恐",
+      "en": "social anxiety",
+      "definition": "social phobia",
+      "implication": "fear of social situations",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "打工人",
+    "category": "N",
+    "note": "N-知乎热榜文章",
+    "status": "PASS",
+    "keywords_expected": "worker,wage,hustle,grind,self-deprecat,solidarity",
+    "keywords_matched": "wage,self-deprecat",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "打工人",
+      "en": "wage slave",
+      "definition": "laborer, employee",
+      "implication": "self-deprecating term for overworked employees",
+      "sentiment": "neutral",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "内卷",
+    "category": "N",
+    "note": "N-新闻正式语境",
+    "status": "PASS",
+    "keywords_expected": "competition,rat race,overwork,compete,pressure",
+    "keywords_matched": "competition",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "内卷",
+      "en": "Involution",
+      "definition": "A state of intense, often unproductive competition",
+      "implication": "Intense, zero-sum internal competition within a limited system",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "凡尔赛",
+    "category": "N",
+    "note": "N-新闻报道",
+    "status": "PASS",
+    "keywords_expected": "brag,show off,humble ?brag,flaunt,boast",
+    "keywords_matched": "brag,humble ?brag,boast",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "凡尔赛",
+      "en": "humblebrag",
+      "definition": "Ostentatious modesty",
+      "implication": "Subtle boasting disguised as complaint",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "破防",
+    "category": "N",
+    "note": "N-公众号文章",
+    "status": "PASS",
+    "keywords_expected": "emotional,overwhelm,break down,touched,devastat",
+    "keywords_matched": "emotional,overwhelm",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "破防",
+      "en": "emotionally wrecked",
+      "definition": "defense broken",
+      "implication": "overwhelmed by emotions, losing composure",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "内卷",
+    "category": "M",
+    "note": "M-完全无上下文，纯词语",
+    "status": "PASS",
+    "keywords_expected": "competition,rat race,overwork,compete",
+    "keywords_matched": "competition",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "内卷",
+      "en": "Involution",
+      "definition": "A state of intense, often unproductive competition",
+      "implication": "Intense, zero-sum internal competition within a limited system",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "躺平",
+    "category": "M",
+    "note": "M-完全无上下文",
+    "status": "PASS",
+    "keywords_expected": "give up,quit,refuse,opt out,lying flat",
+    "keywords_matched": "lying flat",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "躺平",
+      "en": "lying flat",
+      "definition": "Literally lying down flat",
+      "implication": "Rejecting societal pressure to overwork, choosing minimal effort lifestyle",
+      "sentiment": "neutral",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "PUA",
+    "category": "M",
+    "note": "M-完全无上下文",
+    "status": "PASS",
+    "keywords_expected": "manipulat,gaslight,pick.up artist,emotional",
+    "keywords_matched": "manipulat,gaslight,pick.up artist",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "PUA",
+      "en": "gaslighting",
+      "definition": "Pick-up Artist",
+      "implication": "Psychological manipulation in relationships",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "韭菜",
+    "category": "M",
+    "note": "M-完全无上下文",
+    "status": "PASS",
+    "keywords_expected": "exploit,harvest,chive,sucker,victim,leek",
+    "keywords_matched": "chive",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "韭菜",
+      "en": "bagholder",
+      "definition": "Chinese chives",
+      "implication": "Retail investors repeatedly losing money in financial markets",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "破防",
+    "category": "M",
+    "note": "M-完全无上下文",
+    "status": "PASS",
+    "keywords_expected": "emotional,overwhelm,break down,touched",
+    "keywords_matched": "emotional,overwhelm",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "破防",
+      "en": "emotionally wrecked",
+      "definition": "defense broken",
+      "implication": "overwhelmed by emotions, losing composure",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "阴阳怪气",
+    "category": "M",
+    "note": "M-完全无上下文",
+    "status": "PASS",
+    "keywords_expected": "passive.aggressive,sarcas,snide,indirect",
+    "keywords_matched": "passive.aggressive,sarcas,indirect",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "阴阳怪气",
+      "en": "passive-aggressive",
+      "definition": "speaking with hidden sarcasm or insinuation",
+      "implication": "indirectly expressing negativity in a sly manner",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "凡尔赛",
+    "category": "M",
+    "note": "M-仅一个标签作前缀",
+    "status": "PASS",
+    "keywords_expected": "brag,show off,humble ?brag,flaunt",
+    "keywords_matched": "brag,humble ?brag",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "凡尔赛",
+      "en": "humblebrag",
+      "definition": "Ostentatious modesty",
+      "implication": "Subtle boasting disguised as complaint",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "社恐",
+    "category": "M",
+    "note": "M-极短前缀",
+    "status": "PASS",
+    "keywords_expected": "social anxiety,introvert,antisocial",
+    "keywords_matched": "social anxiety",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "社恐",
+      "en": "social anxiety",
+      "definition": "social phobia",
+      "implication": "fear of social situations",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "躺平",
+    "category": "L",
+    "note": "L-字面义：真的躺在地上，不是网络俚语",
+    "status": "PARTIAL",
+    "keywords_expected": "lie down,lie flat,yoga,relax,physical",
+    "keywords_matched": "",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "躺平",
+      "en": "lying flat",
+      "definition": "Literally lying down flat",
+      "implication": "Rejecting societal pressure to overwork, choosing minimal effort lifestyle",
+      "sentiment": "neutral",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "破防",
+    "category": "L",
+    "note": "L-军事字面义：穿透防御，不是情绪崩溃",
+    "status": "PASS",
+    "keywords_expected": "penetrat,armor,breach,defence,defense,pierce",
+    "keywords_matched": "defense",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "破防",
+      "en": "emotionally wrecked",
+      "definition": "defense broken",
+      "implication": "overwhelmed by emotions, losing composure",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "韭菜",
+    "category": "L",
+    "note": "L-字面义：蔬菜，不是被割的散户",
+    "status": "PASS",
+    "keywords_expected": "chive,vegetable,leek,green,garlic",
+    "keywords_matched": "chive",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "韭菜",
+      "en": "bagholder",
+      "definition": "Chinese chives",
+      "implication": "Retail investors repeatedly losing money in financial markets",
+      "sentiment": "negative",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "抽象",
+    "category": "L",
+    "note": "L-传统义：艺术风格，不是网络用语的荒诞",
+    "status": "PASS",
+    "keywords_expected": "abstract,art,style,painting,non-representational",
+    "keywords_matched": "abstract",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "抽象",
+      "en": "abstract",
+      "definition": "Unconventional, bizarre behavior",
+      "implication": "Describes absurd or nonsensical online content",
+      "sentiment": "neutral",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "打工人",
+    "category": "L",
+    "note": "L-中性/字面义：泛指劳动者，不含自嘲",
+    "status": "PASS",
+    "keywords_expected": "worker,laborer,employee,replace,automat",
+    "keywords_matched": "laborer,employee",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "打工人",
+      "en": "wage slave",
+      "definition": "laborer, employee",
+      "implication": "self-deprecating term for overworked employees",
+      "sentiment": "neutral",
+      "model": "deepseek.v3.2",
+      "source": "cache"
+    }
+  },
+  {
+    "text": "上价值",
+    "category": "L",
+    "note": "L-字面义：价格上涨/增值，不是道德绑架",
+    "status": "PASS",
+    "keywords_expected": "appreciat,value,increase,price,worth",
+    "keywords_matched": "appreciat,value,increase",
+    "model": "deepseek.v3.2",
+    "response": {
+      "zh": "上价值",
+      "en": "value up",
+      "definition": "Increase in value",
+      "implication": "Appreciate in worth, often used in investment contexts",
+      "sentiment": "positive",
+      "model": "deepseek.v3.2",
+      "source": "cloud"
+    }
+  }
 ]

@@ -10,6 +10,23 @@ const WORD_CACHE_TABLE = process.env.WORD_CACHE_TABLE;
 const MAX_TEXT_LENGTH = 30;
 const CACHE_TTL_SECONDS = process.env.CACHE_TTL_SECONDS ? parseInt(process.env.CACHE_TTL_SECONDS) : 86400; // default 24h
 
+/**
+ * Build context-aware cache sort key.
+ * Same word with different prefix/suffix gets a different cache entry.
+ * Format: "zh" (no context) or "zh#<8-char hash>" (with context)
+ */
+function buildCacheSortKey(lang, prefix, suffix) {
+  const ctx = (prefix || '') + '|' + (suffix || '');
+  if (ctx === '|') return lang; // no context — bare lookup
+  // Simple FNV-1a 32-bit hash, hex-encoded to 8 chars
+  let h = 0x811c9dc5;
+  for (let i = 0; i < ctx.length; i++) {
+    h ^= ctx.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return `${lang}#${(h >>> 0).toString(16).padStart(8, '0')}`;
+}
+
 export async function handler(event) {
   // Normalize: Function URL uses requestContext.http.method, API GW uses httpMethod
   const httpMethod = event.httpMethod || event.requestContext?.http?.method || '';
@@ -50,11 +67,12 @@ export async function handler(event) {
 
   const queryText = text.trim();
   const queryLang = lang || 'zh';
+  const cacheSortKey = buildCacheSortKey(queryLang, prefix, suffix);
 
   // ---------- 3. 查 word_cache 表 ----------
   const cacheResult = await ddbClient.send(new GetCommand({
     TableName: WORD_CACHE_TABLE,
-    Key: { text: queryText, lang: queryLang },
+    Key: { text: queryText, lang: cacheSortKey },
   }));
 
   if (cacheResult.Item) {
@@ -95,7 +113,7 @@ export async function handler(event) {
     TableName: WORD_CACHE_TABLE,
     Item: {
       text: queryText,
-      lang: queryLang,
+      lang: cacheSortKey,
       zh: aiResult.zh || queryText,
       en: aiResult.en || '',
       definition: aiResult.definition || '',
@@ -318,13 +336,14 @@ export const streamHandler = awslambda.streamifyResponse(
 
       const queryText = body.text.trim();
       const queryLang = body.lang || 'zh';
+      const cacheSortKey = buildCacheSortKey(queryLang, body.prefix, body.suffix);
 
       write({ type: 'status', stage: 'received' });
 
       // ---------- Cache lookup ----------
       const cacheResult = await ddbClient.send(new GetCommand({
         TableName: WORD_CACHE_TABLE,
-        Key: { text: queryText, lang: queryLang },
+        Key: { text: queryText, lang: cacheSortKey },
       }));
 
       if (cacheResult.Item) {
@@ -378,7 +397,7 @@ export const streamHandler = awslambda.streamifyResponse(
       await ddbClient.send(new PutCommand({
         TableName: WORD_CACHE_TABLE,
         Item: {
-          text: queryText, lang: queryLang,
+          text: queryText, lang: cacheSortKey,
           zh: aiResult.zh || queryText, en: aiResult.en || '',
           definition: aiResult.definition || '', implication: aiResult.implication || '',
           sentiment: aiResult.sentiment || 'neutral', model: aiResult._model || 'unknown',
