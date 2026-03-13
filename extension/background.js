@@ -8,7 +8,7 @@
  * 5. 会话初始化（session/init）与鉴权状态管理
  */
 
-const API_BASE_URL = 'http://localhost:3721/api/v1'; // 开发环境：本地 mock server（生产环境替换为实际地址）
+const API_BASE_URL = 'https://zeesoi54x2.execute-api.us-east-1.amazonaws.com/v1/api/v1'; // AWS 生产环境
 const SESSION_INIT_ENDPOINT = `${API_BASE_URL}/session/init`;
 const ANALYZE_ENDPOINT = `${API_BASE_URL}/analyze`;
 // Streaming Function URL — set to Lambda Function URL in production.

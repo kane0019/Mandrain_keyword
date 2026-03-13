@@ -64,9 +64,659 @@
   },
   "智能化": {
     "zh": "智能化",
-    "en": "intelligence",
+    "en": "intelligentization",
     "definition": "Using AI to enable systems to learn and automate capabilities",
     "implication": "Represents technological progress and efficiency gains",
     "sentiment": "positive"
+  },
+
+  "内卷": {
+    "zh": "内卷",
+    "en": "involution",
+    "definition": "Intensifying competition within a fixed system where everyone works harder but no one gets ahead",
+    "implication": "Describes the rat-race culture in Chinese education and workplaces where relentless effort yields diminishing returns; often used with resignation or bitter humor",
+    "sentiment": "negative"
+  },
+  "躺平": {
+    "zh": "躺平",
+    "en": "lie flat",
+    "definition": "To reject societal pressure by doing the bare minimum — low consumption, low ambition, low effort",
+    "implication": "A generational counter-culture response to 内卷; implies opting out of the competition rather than fighting a rigged game",
+    "sentiment": "neutral"
+  },
+  "破防": {
+    "zh": "破防",
+    "en": "get triggered",
+    "definition": "To have one's emotional defenses broken; to be suddenly moved or upset by something",
+    "implication": "Used when something unexpectedly hits you hard emotionally — can be sadness, nostalgia, or rage; implies you couldn't keep your cool",
+    "sentiment": "negative"
+  },
+  "凡尔赛": {
+    "zh": "凡尔赛",
+    "en": "humble brag (Versailles style)",
+    "definition": "Subtly showing off wealth or status while pretending to complain or be modest",
+    "implication": "Named after the Palace of Versailles; ridicules people who fish for compliments through disguised boasting; carries strong sarcasm",
+    "sentiment": "negative"
+  },
+  "抽象": {
+    "zh": "抽象",
+    "en": "abstract / unhinged",
+    "definition": "Describing behavior or content that is bizarre, surreal, or out-of-left-field",
+    "implication": "Internet slang for content that defies normal logic; often used approvingly for absurdist humor or live-stream chaos",
+    "sentiment": "neutral"
+  },
+  "典中典": {
+    "zh": "典中典",
+    "en": "classic of classics",
+    "definition": "The most representative, textbook example of a particular type of person or situation",
+    "implication": "Ironic admiration — calling something or someone so stereotypically typical that it's almost legendary; often used sarcastically",
+    "sentiment": "neutral"
+  },
+  "有点东西": {
+    "zh": "有点东西",
+    "en": "got something",
+    "definition": "Said of someone or something that shows unexpected skill, depth, or quality",
+    "implication": "A compliment meaning the person or work surpassed expectations; implies pleasant surprise",
+    "sentiment": "positive"
+  },
+  "摆烂": {
+    "zh": "摆烂",
+    "en": "let it rot",
+    "definition": "To stop trying and let things deteriorate, giving up on maintaining standards",
+    "implication": "More extreme than 躺平; implies actively abandoning effort after a breaking point; used both seriously and humorously",
+    "sentiment": "negative"
+  },
+  "绝绝子": {
+    "zh": "绝绝子",
+    "en": "absolutely amazing",
+    "definition": "An emphatic slang term expressing that something is incredible, perfect, or top-tier",
+    "implication": "Enthusiastic Gen-Z praise; the suffix '-子' adds a cute, informal tone; used for food, people, fashion, moments",
+    "sentiment": "positive"
+  },
+  "yyds": {
+    "zh": "yyds",
+    "en": "GOAT / forever the best",
+    "definition": "Abbreviation of 永远的神 (forever a god); the highest form of praise",
+    "implication": "Internet slang equivalent of 'GOAT' (Greatest Of All Time); used for idols, games, food, or anything considered peerless",
+    "sentiment": "positive"
+  },
+  "emo": {
+    "zh": "emo",
+    "en": "emo / emotionally low",
+    "definition": "Feeling melancholic, sad, or emotionally drained without a specific reason",
+    "implication": "Borrowed from English subculture; in Chinese internet use it means a vague sense of sadness or existential gloom, often used casually",
+    "sentiment": "negative"
+  },
+  "佛系": {
+    "zh": "佛系",
+    "en": "Buddhist / chill",
+    "definition": "A laid-back attitude of not striving for outcomes, accepting whatever happens",
+    "implication": "Borrows Buddhist imagery of detachment; can be genuine contentment or quiet resignation; contrasts with the 卷 culture",
+    "sentiment": "neutral"
+  },
+  "鸡娃": {
+    "zh": "鸡娃",
+    "en": "tiger parenting",
+    "definition": "Aggressively pushing children into endless extracurricular activities and academic competitions",
+    "implication": "Reflects intense anxiety among Chinese middle-class parents about education; the child is the 'chicken' being 'injected' with adrenaline",
+    "sentiment": "negative"
+  },
+  "海王": {
+    "zh": "海王",
+    "en": "sea king / player",
+    "definition": "Someone who simultaneously maintains romantic ambiguity with many people, keeping all options open",
+    "implication": "Like Aquaman ruling the sea, this person has everyone on the hook; implies emotional manipulation and lack of commitment",
+    "sentiment": "negative"
+  },
+  "绿茶": {
+    "zh": "绿茶",
+    "en": "green tea (two-faced)",
+    "definition": "A woman who appears innocent, gentle, and harmless but is scheming and manipulative underneath",
+    "implication": "Green tea is pure and clean on the surface; the term exposes the gap between appearance and intent; similar to 'two-faced'",
+    "sentiment": "negative"
+  },
+  "白莲花": {
+    "zh": "白莲花",
+    "en": "white lotus",
+    "definition": "Someone who projects an image of purity and innocence while secretly being calculating or malicious",
+    "implication": "The lotus grows from mud but appears pristine; used to call out people who play victim or act saintly for social gain",
+    "sentiment": "negative"
+  },
+  "舔狗": {
+    "zh": "舔狗",
+    "en": "simp",
+    "definition": "Someone who fawns excessively over a romantic interest, accepting mistreatment with no self-respect",
+    "implication": "Literally 'licking dog'; implies total submission and loss of dignity; used to mock or self-deprecate about unrequited infatuation",
+    "sentiment": "negative"
+  },
+  "渣男": {
+    "zh": "渣男",
+    "en": "scumbag (male)",
+    "definition": "A man who plays with multiple women's feelings, cheats, or behaves dishonestly in relationships",
+    "implication": "Carries strong moral condemnation; implies the person knowingly exploits emotional vulnerability",
+    "sentiment": "negative"
+  },
+  "渣女": {
+    "zh": "渣女",
+    "en": "scumbag (female)",
+    "definition": "A woman who manipulates or cheats in relationships without regard for others' feelings",
+    "implication": "Female counterpart to 渣男; equally condemning; used when a woman strings people along or plays emotional games",
+    "sentiment": "negative"
+  },
+  "杠精": {
+    "zh": "杠精",
+    "en": "contrarian troll",
+    "definition": "Someone who reflexively argues against any statement, regardless of its merit",
+    "implication": "Not just disagreeing but being combative for its own sake; implies the person has no real point, just loves to argue",
+    "sentiment": "negative"
+  },
+  "键盘侠": {
+    "zh": "键盘侠",
+    "en": "keyboard warrior",
+    "definition": "Someone who acts brave, righteous, or aggressive online but is passive in real life",
+    "implication": "Mockingly highlights the cowardice behind online bravado; implies the person would never say or do these things face-to-face",
+    "sentiment": "negative"
+  },
+  "喷子": {
+    "zh": "喷子",
+    "en": "hater / troll",
+    "definition": "Someone who aggressively insults or attacks others online with little provocation",
+    "implication": "More hostile than 键盘侠; implies someone who exists primarily to spray negativity; contributes nothing constructive",
+    "sentiment": "negative"
+  },
+  "网暴": {
+    "zh": "网暴",
+    "en": "cyberbullying",
+    "definition": "Coordinated online harassment targeting an individual, often causing serious psychological harm",
+    "implication": "A serious social issue in China; mob mentality fueled by algorithms; victims have faced mental breakdown or worse",
+    "sentiment": "negative"
+  },
+  "吃瓜": {
+    "zh": "吃瓜",
+    "en": "watch the drama",
+    "definition": "To be an entertained bystander watching a juicy conflict or scandal unfold",
+    "implication": "Like eating a slice of watermelon while watching a show; implies detached amusement rather than involvement; internet culture spectator sport",
+    "sentiment": "neutral"
+  },
+  "瓜": {
+    "zh": "瓜",
+    "en": "gossip / drama",
+    "definition": "A piece of juicy gossip, scandal, or dramatic news",
+    "implication": "Short for 吃瓜; calling news '瓜' signals it's entertaining drama worth spreading, not serious journalism",
+    "sentiment": "neutral"
+  },
+  "带节奏": {
+    "zh": "带节奏",
+    "en": "steer the narrative",
+    "definition": "To manipulate public opinion by strategically framing information to provoke emotional reactions",
+    "implication": "Used to accuse someone of astroturfing or agitation; implies the person is not sharing facts but engineering outrage",
+    "sentiment": "negative"
+  },
+  "水军": {
+    "zh": "水军",
+    "en": "paid shills / bot army",
+    "definition": "Accounts paid to flood online platforms with specific comments, reviews, or propaganda",
+    "implication": "Undermines authentic public opinion; a major issue in Chinese social media; implies the 'ocean' of fake voices drowning real ones",
+    "sentiment": "negative"
+  },
+  "刷屏": {
+    "zh": "刷屏",
+    "en": "flood the feed",
+    "definition": "When a single topic, meme, or event dominates all of social media at once",
+    "implication": "Could be positive virality (a hit song) or negative (a disaster); the scale implies the topic is impossible to avoid",
+    "sentiment": "neutral"
+  },
+  "出圈": {
+    "zh": "出圈",
+    "en": "go mainstream",
+    "definition": "When something from a niche fandom or subculture breaks into the general public consciousness",
+    "implication": "A milestone achievement for content creators or idols; implies crossing the boundary from insider culture to mass appeal",
+    "sentiment": "positive"
+  },
+  "塌房": {
+    "zh": "塌房",
+    "en": "idol collapse",
+    "definition": "When a celebrity or public figure is exposed for a scandal that destroys their image",
+    "implication": "The 'house' of a fan's idol 'collapses'; implies complete loss of idol status; fans must reckon with being deceived",
+    "sentiment": "negative"
+  },
+  "脱粉": {
+    "zh": "脱粉",
+    "en": "defan / unfollow",
+    "definition": "To stop being a fan of someone, usually after disappointment or a scandal",
+    "implication": "A deliberate act of withdrawal; often public; implies a breaking point has been reached after which admiration is no longer possible",
+    "sentiment": "negative"
+  },
+  "回踩": {
+    "zh": "回踩",
+    "en": "kick back at an ex",
+    "definition": "After breaking up or falling out, publicly saying negative things about the other party",
+    "implication": "Implies pettiness and inability to move on gracefully; viewers often judge the person doing it more harshly",
+    "sentiment": "negative"
+  },
+  "拉踩": {
+    "zh": "拉踩",
+    "en": "pit against each other",
+    "definition": "Promoting one person or thing by deliberately putting down a rival",
+    "implication": "A toxic fan behavior; instead of praising your favorite, you drag the competition; seen as bad faith and divisive",
+    "sentiment": "negative"
+  },
+
+  "你品，你细品": {
+    "zh": "你品，你细品",
+    "en": "think about it carefully",
+    "definition": "Telling someone to slow down and really think about what was just said or done",
+    "implication": "Used to hint that something has a hidden meaning or irony the listener may have missed; invites the audience to draw their own conclusions",
+    "sentiment": "neutral"
+  },
+  "真有你的": {
+    "zh": "真有你的",
+    "en": "you're something else",
+    "definition": "An expression of disbelief or exasperation at someone's audacious action",
+    "implication": "Can be admiration or reproach depending on tone; often sarcastic — praising someone for doing something they shouldn't have",
+    "sentiment": "neutral"
+  },
+  "我哭死": {
+    "zh": "我哭死",
+    "en": "I'm crying / this is too much",
+    "definition": "An exaggerated emotional reaction expressing being overwhelmed — by cuteness, absurdity, or good news",
+    "implication": "Hyperbolic internet expression; rarely means actual crying; signals strong emotional resonance, especially delight or secondhand embarrassment",
+    "sentiment": "positive"
+  },
+  "离谱": {
+    "zh": "离谱",
+    "en": "outrageous / ridiculous",
+    "definition": "Far beyond what is acceptable, reasonable, or predictable",
+    "implication": "One of the most versatile internet complaint words; the gap between expectation and reality is so wide it's almost funny",
+    "sentiment": "negative"
+  },
+  "无语": {
+    "zh": "无语",
+    "en": "speechless",
+    "definition": "Left with nothing to say due to shock, disbelief, or exasperation",
+    "implication": "The situation is so absurd or disappointing that words fail; a mild form of passive disdain",
+    "sentiment": "negative"
+  },
+  "服了": {
+    "zh": "服了",
+    "en": "I give up / I'm floored",
+    "definition": "Conceding defeat or expressing stunned disbelief at someone's actions",
+    "implication": "Ambiguous tone: can be genuine admiration ('you're incredible') or sarcasm ('I can't believe you did that'); context determines which",
+    "sentiment": "neutral"
+  },
+  "我谢谢你": {
+    "zh": "我谢谢你",
+    "en": "thanks for nothing",
+    "definition": "Sarcastic 'thank you' for something useless, annoying, or counterproductive",
+    "implication": "The politeness of 谢谢 is weaponized to express the opposite — frustration or contempt; classic Chinese internet sarcasm",
+    "sentiment": "negative"
+  },
+  "好家伙": {
+    "zh": "好家伙",
+    "en": "well well well / goodness",
+    "definition": "An exclamation of surprise, admiration, or disbelief at something impressive or audacious",
+    "implication": "Versatile reaction: can express genuine awe or irony; similar to 'dang' or 'wow' but with a comedic edge",
+    "sentiment": "neutral"
+  },
+  "芜湖": {
+    "zh": "芜湖",
+    "en": "woohoo! / let's go!",
+    "definition": "An enthusiastic cheer expressing excitement or celebration",
+    "implication": "Homophone used as a battle cry or victory cheer; borrowed from the city name as a sound effect; signals hype and energy",
+    "sentiment": "positive"
+  },
+  "笑死": {
+    "zh": "笑死",
+    "en": "dying of laughter",
+    "definition": "Something is so funny the speaker is metaphorically dying",
+    "implication": "Hyperbolic laughter reaction; equivalent to 'lmao' or 'I'm dead'; signals genuine amusement rather than polite chuckling",
+    "sentiment": "positive"
+  },
+  "裂开": {
+    "zh": "裂开",
+    "en": "cracking up / splitting",
+    "definition": "Feeling shattered with laughter, shock, or despair; can't hold it together anymore",
+    "implication": "Dual meaning: sometimes used for extreme amusement (I'm cracking up) and sometimes for devastation (I'm falling apart); tone decides which",
+    "sentiment": "negative"
+  },
+  "麻了": {
+    "zh": "麻了",
+    "en": "numb / my brain is fried",
+    "definition": "Having reached a state of emotional or cognitive numbness from too much stimulation or disappointment",
+    "implication": "Expresses overwhelming saturation — from bad news, long waits, or absurdity; a step beyond 无语; you're past caring",
+    "sentiment": "negative"
+  },
+
+  "上价值": {
+    "zh": "上价值",
+    "en": "oversell the significance",
+    "definition": "To artificially elevate the moral or philosophical meaning of something trivial",
+    "implication": "Mocks people who turn mundane choices (eating, shopping) into grand statements about identity or society; performative depth",
+    "sentiment": "negative"
+  },
+  "阴阳怪气": {
+    "zh": "阴阳怪气",
+    "en": "passive-aggressive",
+    "definition": "Indirect, two-faced communication that says one thing while implying hostility or mockery",
+    "implication": "Common complaint about online communication; the person won't directly confront but laces every word with venom; deeply annoying",
+    "sentiment": "negative"
+  },
+  "爹味": {
+    "zh": "爹味",
+    "en": "paternalistic vibe",
+    "definition": "An overbearing, condescending attitude where someone acts like a father lecturing a child",
+    "implication": "Often used to call out men (or institutions) who give unsolicited life advice with unearned authority; Chinese equivalent of mansplaining with extra patriarchal flavor",
+    "sentiment": "negative"
+  },
+  "PUA": {
+    "zh": "PUA",
+    "en": "manipulation / gaslighting",
+    "definition": "Systematic psychological manipulation that erodes self-confidence to maintain control over someone",
+    "implication": "Originally pick-up artist tactics, now used broadly for any toxic relationship dynamic where one party is made to feel worthless and dependent",
+    "sentiment": "negative"
+  },
+  "窒息": {
+    "zh": "窒息",
+    "en": "suffocating",
+    "definition": "A situation or relationship so oppressive and controlling it feels like it is cutting off air",
+    "implication": "Strong emotional vocabulary; signals a toxic environment where one has no freedom or breathing room",
+    "sentiment": "negative"
+  },
+  "上头": {
+    "zh": "上头",
+    "en": "hooked / obsessed",
+    "definition": "When something is so good it goes straight to your head and you can't stop thinking about it",
+    "implication": "Used for music, shows, people, food; implies loss of control in a pleasurable way; the 'high' metaphor is intentional",
+    "sentiment": "positive"
+  },
+  "下头": {
+    "zh": "下头",
+    "en": "turn off / put off",
+    "definition": "When someone or something causes you to suddenly lose interest or respect",
+    "implication": "Opposite of 上头; often one specific action or statement that kills attraction or enthusiasm; used in dating and fan contexts",
+    "sentiment": "negative"
+  },
+  "心动": {
+    "zh": "心动",
+    "en": "heart flutter",
+    "definition": "The feeling of one's heart stirring with romantic interest or excitement",
+    "implication": "A poetic, tender expression for the earliest stage of falling for someone; implies vulnerability and surprise",
+    "sentiment": "positive"
+  },
+  "意难平": {
+    "zh": "意难平",
+    "en": "lingering regret",
+    "definition": "A feeling of unresolved sadness or unfairness that refuses to fade — the heart cannot make peace with a certain outcome",
+    "implication": "Used for storylines with unsatisfying endings, lost relationships, or missed opportunities; implies the wound remains open",
+    "sentiment": "negative"
+  },
+  "破大防": {
+    "zh": "破大防",
+    "en": "deeply triggered / truly moved",
+    "definition": "An intensified version of 破防; one's emotional walls are completely demolished",
+    "implication": "Stronger than 破防; suggests the emotional impact was overwhelming and the person had no defense left; used for both tears and rage",
+    "sentiment": "neutral"
+  },
+
+  "打工人": {
+    "zh": "打工人",
+    "en": "wage worker / grinder",
+    "definition": "A self-deprecating term for an ordinary working person grinding through daily labor",
+    "implication": "Solidarity expression among young workers; acknowledges the exhaustion and powerlessness of modern employment with dark humor",
+    "sentiment": "neutral"
+  },
+  "韭菜": {
+    "zh": "韭菜",
+    "en": "leek / harvest victim",
+    "definition": "An unsophisticated investor or consumer who is repeatedly exploited and 'harvested' by those with more power",
+    "implication": "Leeks regrow after cutting — implying victims are harvested again and again; a cynical metaphor for retail investors, housing buyers, or naive consumers",
+    "sentiment": "negative"
+  },
+  "卷王": {
+    "zh": "卷王",
+    "en": "grind king",
+    "definition": "Someone who takes 内卷 to extreme levels, working insanely hard and setting an exhausting benchmark for everyone around",
+    "implication": "Admired and resented simultaneously; their extreme effort raises the bar for the whole group; a kind of toxic productivity idol",
+    "sentiment": "negative"
+  },
+  "社恐": {
+    "zh": "社恐",
+    "en": "social anxiety",
+    "definition": "Short for 社交恐惧症; discomfort or anxiety in social situations",
+    "implication": "Self-diagnosis culture; widely used as identity label by introverts; carries humor and solidarity among those who find socializing draining",
+    "sentiment": "neutral"
+  },
+  "社牛": {
+    "zh": "社牛",
+    "en": "social butterfly",
+    "definition": "Short for 社交牛逼症; someone who is fearlessly outgoing and thrives in any social situation",
+    "implication": "The opposite of 社恐; used admiringly for people who can strike up conversation anywhere and make everyone comfortable",
+    "sentiment": "positive"
+  },
+  "老六": {
+    "zh": "老六",
+    "en": "sneaky player",
+    "definition": "Someone who wins through cunning, backstabbing, or underhanded tactics rather than fair play",
+    "implication": "Gaming origin; in Among Us style games, the 'old six' is the sly betrayer; now used broadly for anyone who outsmarts through deception",
+    "sentiment": "negative"
+  },
+  "显眼包": {
+    "zh": "显眼包",
+    "en": "attention magnet",
+    "definition": "Someone who always stands out and draws eyes — through loud fashion, behavior, or personality",
+    "implication": "Usually affectionate; implies the person is charismatic or unapologetically themselves; can occasionally be mild criticism of attention-seeking",
+    "sentiment": "neutral"
+  },
+  "i人": {
+    "zh": "i人",
+    "en": "introvert (MBTI)",
+    "definition": "An introvert, based on MBTI personality type starting with 'I'",
+    "implication": "Widely used self-identification in Gen-Z Chinese culture; legitimizes needing alone time; often used humorously to excuse avoiding social events",
+    "sentiment": "neutral"
+  },
+  "e人": {
+    "zh": "e人",
+    "en": "extrovert (MBTI)",
+    "definition": "An extrovert, based on MBTI personality type starting with 'E'",
+    "implication": "The counterpart to i人; admired for social ease; used to explain why someone thrives in group settings",
+    "sentiment": "positive"
+  },
+  "搭子": {
+    "zh": "搭子",
+    "en": "activity partner",
+    "definition": "A companion specifically for one shared activity — a meal partner, gym partner, travel partner",
+    "implication": "A new social model among young Chinese; lighter than friendship, more specific; reflects a culture of functional companionship without deep emotional commitment",
+    "sentiment": "positive"
+  },
+  "牛马": {
+    "zh": "牛马",
+    "en": "beast of burden",
+    "definition": "Working like an ox or horse — an exhausted laborer with no autonomy, grinding endlessly",
+    "implication": "Darker than 打工人; implies complete dehumanization; used to describe the most brutal work conditions with bitter self-mockery",
+    "sentiment": "negative"
+  },
+  "特种兵旅游": {
+    "zh": "特种兵旅游",
+    "en": "special forces travel",
+    "definition": "Cramming as many tourist attractions as possible into the shortest possible trip, military-style",
+    "implication": "A trend among students who travel during short holidays; values quantity over experience; exhausting but bragged about; subverts the idea of relaxing travel",
+    "sentiment": "neutral"
+  },
+  "精神内耗": {
+    "zh": "精神内耗",
+    "en": "mental drain",
+    "definition": "Consuming internal energy through overthinking, rumination, or anxiety without any productive action",
+    "implication": "All effort goes inward and is wasted; leaves you exhausted without doing anything; resonates with anxiety culture among younger generations",
+    "sentiment": "negative"
+  },
+  "信息茧房": {
+    "zh": "信息茧房",
+    "en": "information cocoon",
+    "definition": "The filter bubble created by algorithms that only show content confirming existing beliefs",
+    "implication": "Coined academically but widely used online; implies people are trapped in self-reinforcing echo chambers, unaware of how narrowed their worldview has become",
+    "sentiment": "negative"
+  },
+  "数字游民": {
+    "zh": "数字游民",
+    "en": "digital nomad",
+    "definition": "Someone who works remotely online while traveling, with no fixed office or home base",
+    "implication": "A lifestyle aspiration for many young professionals; represents freedom from traditional office culture; carries both envy and skepticism",
+    "sentiment": "positive"
+  },
+  "脑暴": {
+    "zh": "脑暴",
+    "en": "brainstorm",
+    "definition": "Short for 头脑风暴 (brainstorm); an open ideation session to generate ideas",
+    "implication": "Corporate buzzword for collaborative thinking; using 脑暴 rather than 头脑风暴 signals a faster, startup-culture communication style",
+    "sentiment": "positive"
+  },
+  "对齐": {
+    "zh": "对齐",
+    "en": "align / sync",
+    "definition": "To synchronize understanding, expectations, or plans between parties",
+    "implication": "Tech and startup jargon; implies different people have been working with different assumptions and need to get on the same page",
+    "sentiment": "neutral"
+  },
+  "拉通": {
+    "zh": "拉通",
+    "en": "coordinate across / pull together",
+    "definition": "To connect all relevant stakeholders or departments to ensure full-chain alignment",
+    "implication": "Corporate speak for cross-functional coordination; often used when a project spans multiple teams and someone needs to force alignment",
+    "sentiment": "neutral"
+  },
+
+  "抓手": {
+    "zh": "抓手",
+    "en": "actionable lever",
+    "definition": "A concrete, tangible mechanism or approach that can be grabbed and used to drive progress",
+    "implication": "Overused corporate jargon; asking 'where's the 抓手?' means 'how do we actually make this happen?'; implies strategy without execution details is worthless",
+    "sentiment": "neutral"
+  },
+  "赛道": {
+    "zh": "赛道",
+    "en": "market track / lane",
+    "definition": "A specific market segment, industry vertical, or competitive domain",
+    "implication": "Racing metaphor for business competition; 'entering a 赛道' means choosing a market to compete in; hot 赛道 implies intense competition",
+    "sentiment": "neutral"
+  },
+  "闭环": {
+    "zh": "闭环",
+    "en": "closed loop",
+    "definition": "A complete, self-contained process where feedback flows back to the beginning to enable continuous improvement",
+    "implication": "Business process jargon; 'forming a 闭环' means ensuring no steps are missing and outcomes are tracked; implies systematic thoroughness",
+    "sentiment": "neutral"
+  },
+  "打法": {
+    "zh": "打法",
+    "en": "strategy / game plan",
+    "definition": "The specific tactical approach or method used to compete in a market or solve a problem",
+    "implication": "Military/sports framing of business decisions; choosing a 打法 implies you've analyzed the terrain and picked the optimal attack angle",
+    "sentiment": "neutral"
+  },
+  "沉淀": {
+    "zh": "沉淀",
+    "en": "accumulate / sediment",
+    "definition": "To build up knowledge, assets, relationships, or data over time through sustained effort",
+    "implication": "Like sediment settling at the bottom of water; implies slow but permanent value accumulation; used to justify long-term investment over quick wins",
+    "sentiment": "positive"
+  },
+  "复盘": {
+    "zh": "复盘",
+    "en": "post-mortem review",
+    "definition": "A structured review of a completed project or decision to extract lessons learned",
+    "implication": "From Go (围棋) — replaying a game to understand mistakes; now standard corporate ritual; implies continuous learning culture",
+    "sentiment": "neutral"
+  },
+
+  "整活": {
+    "zh": "整活",
+    "en": "do something wild / pull a stunt",
+    "definition": "To do something entertaining, outrageous, or creative for laughs or attention",
+    "implication": "Internet culture term for comedic or absurdist content creation; 'he's at it again' energy; can be genuine creativity or chaotic behavior",
+    "sentiment": "positive"
+  },
+  "整花活": {
+    "zh": "整花活",
+    "en": "pull off something fancy",
+    "definition": "To do something unusually creative, elaborate, or showy",
+    "implication": "Similar to 整活 but with more flair and skill implied; 花活 means flashy moves; used admiringly for impressive creative work",
+    "sentiment": "positive"
+  },
+  "拿捏": {
+    "zh": "拿捏",
+    "en": "nail it / have it dialed in",
+    "definition": "To have something perfectly under control — execution, style, or understanding is flawless",
+    "implication": "Can describe mastery ('she nailed that look') or manipulation ('he has her wrapped around his finger'); context distinguishes admiration from warning",
+    "sentiment": "positive"
+  },
+  "心态崩了": {
+    "zh": "心态崩了",
+    "en": "mental state collapsed",
+    "definition": "One's composure and emotional equilibrium have completely broken down",
+    "implication": "Often used humorously after a string of bad luck; the exaggeration normalizes emotional struggle; implies the situation has become too much to bear with grace",
+    "sentiment": "negative"
+  },
+  "天花板": {
+    "zh": "天花板",
+    "en": "ceiling / the absolute best",
+    "definition": "The highest possible standard in a category; the peak or pinnacle that defines the limit",
+    "implication": "Used to crown someone as the best in their field: 'she is the beauty ceiling'; implies no one else comes close",
+    "sentiment": "positive"
+  },
+  "刺客": {
+    "zh": "刺客",
+    "en": "price assassin",
+    "definition": "A product that looks ordinary but has a shockingly high price tag revealed only at checkout",
+    "implication": "The 'assassin' stabbing your wallet; originated from expensive supermarket items; now used for any unexpectedly costly purchase",
+    "sentiment": "negative"
+  },
+  "雪糕刺客": {
+    "zh": "雪糕刺客",
+    "en": "ice cream assassin",
+    "definition": "An ice cream bar with a premium price disguised in an ordinary-looking freezer, revealed only at the register",
+    "implication": "The original and most famous 刺客; spawned a whole category of 'price assassin' discourse; symbolizes creeping luxury inflation in everyday goods",
+    "sentiment": "negative"
+  },
+  "夺笋": {
+    "zh": "夺笋",
+    "en": "outrageous / that takes nerve",
+    "definition": "A euphemism for 多损 (how vicious / how rude); used when someone's action or statement is shockingly bold or rough",
+    "implication": "Homophones used to soften a blunt assessment; softer than a direct insult but still conveys 'I can't believe you just did that'",
+    "sentiment": "neutral"
+  },
+  "种草": {
+    "zh": "种草",
+    "en": "plant a seed of desire",
+    "definition": "To recommend something so enthusiastically that it plants a desire to try or buy it in the listener",
+    "implication": "Social commerce vocabulary; influencers 'plant grass' in followers; implies the recommendation was convincing enough to get into someone's head",
+    "sentiment": "positive"
+  },
+  "拔草": {
+    "zh": "拔草",
+    "en": "scratch the itch",
+    "definition": "To finally try or buy something that had been on your wishlist, removing the desire",
+    "implication": "The completion of 种草; the grass of desire has been pulled out; often a let-down when the reality doesn't match the hype",
+    "sentiment": "neutral"
+  },
+  "安利": {
+    "zh": "安利",
+    "en": "evangelize / pitch",
+    "definition": "To enthusiastically recommend something to others, trying to convert them into fans or users",
+    "implication": "Named after Amway's famous word-of-mouth sales model; implies passionate, sometimes pushy recommendation; used affectionately among friends",
+    "sentiment": "positive"
+  },
+  "恰饭": {
+    "zh": "恰饭",
+    "en": "sponsored content",
+    "definition": "When a content creator promotes a product or brand in exchange for payment",
+    "implication": "Literally 'eating rice'; acknowledges that creators need income but signals potential bias; viewers assess 恰饭 content with more skepticism",
+    "sentiment": "neutral"
+  },
+  "摸鱼": {
+    "zh": "摸鱼",
+    "en": "slack off / goof off",
+    "definition": "Secretly doing personal activities during work hours instead of actual work",
+    "implication": "From the saying 'fish in muddy water'; a universal workplace behavior treated with humor; implies passive resistance to overwork culture",
+    "sentiment": "negative"
   }
 }
