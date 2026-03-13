@@ -14,7 +14,7 @@ const ANALYZE_ENDPOINT = `${API_BASE_URL}/analyze`;
 // Streaming Function URL — set to Lambda Function URL in production.
 // When set, analyze requests use NDJSON streaming for real-time progress.
 // Leave empty to fall back to non-streaming ANALYZE_ENDPOINT.
-const ANALYZE_STREAM_URL = '';
+const ANALYZE_STREAM_URL = 'https://zxdddkk6qjh6zdf2afxhijnrem0wegyi.lambda-url.us-east-1.on.aws/';
 const SESSION_TIMEOUT_MS = 5000;
 const STREAM_TIMEOUT_MS = 90000; // 90s for streaming (DeepSeek can take 50s+)
 const DEFAULT_FREE_LICENSE_TOKEN = 'free-token-placeholder';
