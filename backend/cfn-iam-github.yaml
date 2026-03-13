@@ -11,26 +11,20 @@ Parameters:
   GitHubRepo:
     Type: String
     Description: GitHub repository name (e.g. "Mandrain_keyword")
-  LambdaBucketDev:
+  LambdaBucket:
     Type: String
-    Description: S3 bucket for dev Lambda packages
-  LambdaBucketProd:
+    Description: S3 bucket for Lambda packages
+  GitHubOIDCProviderArn:
     Type: String
-    Description: S3 bucket for prod Lambda packages
+    Description: >-
+      ARN of the existing GitHub OIDC provider in this account.
+      Find it at IAM → Identity providers → token.actions.githubusercontent.com.
+      Format: arn:aws:iam::<account-id>:oidc-provider/token.actions.githubusercontent.com
+    Default: ''
 
 Resources:
 
-  # ========== OIDC Provider (safe to re-run — uses existing if present) ==========
-  GitHubOIDCProvider:
-    Type: AWS::IAM::OIDCProvider
-    Properties:
-      Url: https://token.actions.githubusercontent.com
-      ClientIdList:
-        - sts.amazonaws.com
-      ThumbprintList:
-        - 6938fd4d98bab03faadb97b34396831e3780aea1
-
-  # ========== Deployment Role ==========
+  # ========== Deployment Role ==========#
   GitHubActionsDeployRole:
     Type: AWS::IAM::Role
     Properties:
@@ -41,7 +35,7 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Federated: !Ref GitHubOIDCProvider
+              Federated: !Ref GitHubOIDCProviderArn
             Action: sts:AssumeRoleWithWebIdentity
             Condition:
               StringEquals:
@@ -84,7 +78,7 @@ Resources:
               - cloudformation:ExecuteChangeSet
             Resource: !Sub 'arn:aws:cloudformation:*:${AWS::AccountId}:stack/mandrain-*'
 
-          # S3 — Lambda code packages (scoped to project buckets)
+          # S3 — Lambda code packages (scoped to project bucket)
           - Sid: S3LambdaPackages
             Effect: Allow
             Action:
@@ -94,10 +88,8 @@ Resources:
               - s3:ListBucket
               - s3:GetBucketLocation
             Resource:
-              - !Sub 'arn:aws:s3:::${LambdaBucketDev}'
-              - !Sub 'arn:aws:s3:::${LambdaBucketDev}/*'
-              - !Sub 'arn:aws:s3:::${LambdaBucketProd}'
-              - !Sub 'arn:aws:s3:::${LambdaBucketProd}/*'
+              - !Sub 'arn:aws:s3:::${LambdaBucket}'
+              - !Sub 'arn:aws:s3:::${LambdaBucket}/*'
 
           # Lambda — functions + Function URLs (scoped to project functions)
           - Sid: Lambda

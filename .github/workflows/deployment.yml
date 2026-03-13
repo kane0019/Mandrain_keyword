@@ -42,11 +42,7 @@ jobs:
       - name: Set S3 bucket name
         id: bucket
         run: |
-          if [ "${{ steps.env.outputs.environment }}" = "prod" ]; then
-            echo "name=${{ vars.LAMBDA_BUCKET_PROD }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "name=${{ vars.LAMBDA_BUCKET_DEV }}" >> "$GITHUB_OUTPUT"
-          fi
+          echo "name=${{ vars.LAMBDA_BUCKET }}" >> "$GITHUB_OUTPUT"
 
   # ========== Stage 2: Deploy DynamoDB ==========
   deploy-dynamodb:
