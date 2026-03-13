@@ -11,7 +11,12 @@
 const API_BASE_URL = 'http://localhost:3721/api/v1'; // 开发环境：本地 mock server（生产环境替换为实际地址）
 const SESSION_INIT_ENDPOINT = `${API_BASE_URL}/session/init`;
 const ANALYZE_ENDPOINT = `${API_BASE_URL}/analyze`;
+// Streaming Function URL — set to Lambda Function URL in production.
+// When set, analyze requests use NDJSON streaming for real-time progress.
+// Leave empty to fall back to non-streaming ANALYZE_ENDPOINT.
+const ANALYZE_STREAM_URL = '';
 const SESSION_TIMEOUT_MS = 5000;
+const STREAM_TIMEOUT_MS = 90000; // 90s for streaming (DeepSeek can take 50s+)
 const DEFAULT_FREE_LICENSE_TOKEN = 'free-token-placeholder';
 // 查询词最大长度（字符数）。30字符覆盖99%+合法中文词汇/短语/谚语，
 // 超出则视为整句/整段滥用，拒绝云端调用以控制成本。
@@ -59,7 +64,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log('[Mandrain] received message', request);
 
   if (request.action === 'queryWord') {
-    handleWordQuery(request, sendResponse).catch((error) => {
+    handleWordQuery(request, sendResponse, sender).catch((error) => {
       console.error('[Mandrain] handleWordQuery failed:', error);
       sendResponse({
         success: false,
@@ -145,7 +150,7 @@ bootstrapAuth().catch((error) => {
 /**
  * 主查询逻辑 - 本地优先 + 云端降级
  */
-async function handleWordQuery(request, sendResponse) {
+async function handleWordQuery(request, sendResponse, sender) {
   const { word } = request;
   const queryWord = (word || '').trim();
 
@@ -181,8 +186,26 @@ async function handleWordQuery(request, sendResponse) {
     return;
   }
 
-  // 步骤2：云端API查询
-  console.log('[Mandrain] local miss, querying cloud');
+  // 步骤2：云端API查询 — 优先使用 streaming
+  console.log('[Mandarin] local miss, querying cloud');
+
+  if (ANALYZE_STREAM_URL && sender?.tab?.id) {
+    // Streaming path: respond immediately, push updates via tab messaging
+    const tabId = sender.tab.id;
+    const requestId = request.requestId || Date.now();
+
+    sendResponse({
+      success: true,
+      streaming: true,
+      requestId: requestId
+    });
+
+    // Fire-and-forget streaming (errors sent as stream events)
+    queryCloudAPIStreaming(queryWord, request.context, request.pageUrl, tabId, requestId);
+    return;
+  }
+
+  // Non-streaming fallback
   try {
     const cloudResult = await queryCloudAPI(queryWord, request.context, request.pageUrl);
     console.log('[Mandrain] cloud result', cloudResult);
@@ -200,6 +223,16 @@ async function handleWordQuery(request, sendResponse) {
       sendResponse({
         success: false,
         code: error.code,
+        error: error.message
+      });
+      return;
+    }
+
+    // Free plan: cache miss → upsell, not a generic error
+    if (error.code === 'UPGRADE_REQUIRED') {
+      sendResponse({
+        success: false,
+        code: 'UPGRADE_REQUIRED',
         error: error.message
       });
       return;
@@ -251,6 +284,99 @@ async function queryCloudAPI(word, context, pageUrl) {
       'X-Mandrain-Version': chrome.runtime.getManifest().version
     }
   );
+}
+
+/**
+ * 云端 Streaming 查询 — 通过 Lambda Function URL 接收 NDJSON 事件流
+ * 将实时进度推送到 content script 的标签页
+ */
+async function queryCloudAPIStreaming(word, context, pageUrl, tabId, requestId) {
+  try {
+    const session = await initSession();
+    const payload = {
+      text: word,
+      prefix: context?.prefix || '',
+      suffix: context?.suffix || '',
+      page_url: pageUrl || '',
+      lang: 'zh'
+    };
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), STREAM_TIMEOUT_MS);
+
+    const resp = await fetch(ANALYZE_STREAM_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.accessToken}`,
+        'X-Install-Id': session.installId,
+        'X-Mandrain-Version': chrome.runtime.getManifest().version,
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+
+    if (!resp.ok) {
+      clearTimeout(timer);
+      sendStreamEvent(tabId, requestId, { type: 'error', error: 'HTTP_ERROR', message: `HTTP ${resp.status}` });
+      return;
+    }
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+
+      // Process complete NDJSON lines
+      const lines = buffer.split('\n');
+      buffer = lines.pop(); // keep incomplete last line
+
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        try {
+          const event = JSON.parse(line);
+          sendStreamEvent(tabId, requestId, event);
+        } catch {
+          console.warn('[Mandrain] Unparseable stream line:', line);
+        }
+      }
+    }
+
+    // Process any remaining buffer
+    if (buffer.trim()) {
+      try {
+        sendStreamEvent(tabId, requestId, JSON.parse(buffer));
+      } catch { /* ignore */ }
+    }
+
+    clearTimeout(timer);
+  } catch (error) {
+    console.error('[Mandrain] Streaming query failed:', error.message);
+
+    if (error.name === 'AbortError') {
+      sendStreamEvent(tabId, requestId, { type: 'error', error: 'STREAM_TIMEOUT', message: 'Streaming request timed out' });
+    } else {
+      sendStreamEvent(tabId, requestId, { type: 'error', error: 'STREAM_FAILED', message: error.message });
+    }
+  }
+}
+
+/**
+ * Push a stream event to a content script tab
+ */
+function sendStreamEvent(tabId, requestId, event) {
+  chrome.tabs.sendMessage(tabId, {
+    action: 'streamUpdate',
+    requestId: requestId,
+    event: event,
+  }).catch(() => {
+    // Tab may have been closed; ignore
+  });
 }
 
 /**

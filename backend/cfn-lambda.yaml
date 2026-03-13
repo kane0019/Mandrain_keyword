@@ -137,7 +137,7 @@ Resources:
       Handler: index.handler
       Role: !GetAtt LambdaExecutionRole.Arn
       MemorySize: 512
-      Timeout: 29
+      Timeout: 60
       Code:
         S3Bucket:
           Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LambdaCodeBucket'
@@ -166,6 +166,75 @@ Resources:
       LogGroupName: !Sub '/aws/lambda/mandrain-analyze-${EnvironmentName}'
       RetentionInDays: 30
 
+  # ========== analyze-stream Lambda (streaming handler) ==========
+  # Same code package as analyze, but uses streamHandler entry point.
+  # Paired with Function URL in RESPONSE_STREAM mode to bypass
+  # API Gateway 29s limit and send real-time progress to clients.
+  AnalyzeStreamFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub 'mandrain-analyze-stream-${EnvironmentName}'
+      Runtime: nodejs20.x
+      Handler: index.streamHandler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      MemorySize: 512
+      Timeout: 120
+      Code:
+        S3Bucket:
+          Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LambdaCodeBucket'
+        S3Key: !Ref AnalyzeS3Key
+      VpcConfig:
+        SecurityGroupIds:
+          - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LambdaSecurityGroupId'
+        SubnetIds: !Split
+          - ','
+          - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-PrivateSubnetIds'
+      Environment:
+        Variables:
+          ENVIRONMENT: !Ref EnvironmentName
+          WORD_CACHE_TABLE:
+            Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-WordCacheTable'
+          JWT_SECRET_ARN:
+            Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-JwtSecretArn'
+          CACHE_TTL_SECONDS: !If [IsDevEnv, '300', '86400']
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  AnalyzeStreamLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/mandrain-analyze-stream-${EnvironmentName}'
+      RetentionInDays: 30
+
+  # ========== Streaming Function URL ==========
+  # InvokeMode RESPONSE_STREAM enables real-time NDJSON events.
+  # Auth handled by JWT in Lambda code, not IAM.
+  AnalyzeStreamFunctionUrl:
+    Type: AWS::Lambda::Url
+    Properties:
+      AuthType: NONE
+      InvokeMode: RESPONSE_STREAM
+      TargetFunctionArn: !GetAtt AnalyzeStreamFunction.Arn
+      Cors:
+        AllowOrigins:
+          - '*'
+        AllowMethods:
+          - 'POST'
+        AllowHeaders:
+          - 'Content-Type'
+          - 'Authorization'
+          - 'X-Install-Id'
+          - 'X-Mandrain-Version'
+
+  AnalyzeStreamFunctionUrlPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref AnalyzeStreamFunction
+      Action: lambda:InvokeFunctionUrl
+      Principal: '*'
+      FunctionUrlAuthType: NONE
+
 Outputs:
   SessionInitFunctionArn:
     Description: session-init Lambda ARN
@@ -190,6 +259,18 @@ Outputs:
     Value: !Ref AnalyzeFunction
     Export:
       Name: !Sub 'mandrain-${EnvironmentName}-AnalyzeFunctionName'
+
+  AnalyzeFunctionUrlEndpoint:
+    Description: analyze-stream Lambda Function URL (streaming, no timeout limit)
+    Value: !GetAtt AnalyzeStreamFunctionUrl.FunctionUrl
+    Export:
+      Name: !Sub 'mandrain-${EnvironmentName}-AnalyzeStreamFunctionUrl'
+
+  AnalyzeStreamFunctionArn:
+    Description: analyze-stream Lambda ARN
+    Value: !GetAtt AnalyzeStreamFunction.Arn
+    Export:
+      Name: !Sub 'mandrain-${EnvironmentName}-AnalyzeStreamFunctionArn'
 
   LambdaExecutionRoleArn:
     Description: Lambda execution role ARN

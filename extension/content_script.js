@@ -13,6 +13,7 @@ let activeCard = null;
 let latestRequestId = 0;
 let lastSelectionSignature = '';
 let suppressedSelectionSignature = '';
+let lastCardRect = null; // stored for stream updates
 
 const ERROR_MESSAGES = {
   TOKEN_INVALID: 'Token 无效，请在设置中重新输入',
@@ -23,6 +24,7 @@ const ERROR_MESSAGES = {
 };
 
 function getErrorMessage(code) {
+  if (code === 'UPGRADE_REQUIRED') return null; // handled by showUpgradeCard
   return ERROR_MESSAGES[code] || '查询失败';
 }
 
@@ -96,6 +98,7 @@ function handleTextSelection() {
 
   const context = extractContext(range, selectedText);
   const requestId = ++latestRequestId;
+  lastCardRect = rect;
 
   // 向background发送查询请求
   chrome.runtime.sendMessage(
@@ -104,6 +107,7 @@ function handleTextSelection() {
       word: selectedText,
       context: context,
       pageUrl: window.location.href,
+      requestId: requestId,
       position: {
         x: rect.left + window.scrollX,
         y: rect.top + window.scrollY
@@ -122,8 +126,17 @@ function handleTextSelection() {
       }
 
       console.log('[Mandrain] received response', response);
+
+      // Streaming mode: show loading card, updates come via streamUpdate messages
+      if (response && response.streaming) {
+        showLoadingCard(rect, selectedText);
+        return;
+      }
+
       if (response && response.success) {
         renderCard(response.data, rect);
+      } else if (response?.code === 'UPGRADE_REQUIRED') {
+        showUpgradeCard(rect, selectedText);
       } else {
         const errorMsg = getErrorMessage(response?.code);
         showErrorCard(errorMsg, rect);
@@ -210,6 +223,236 @@ function extractContext(range, selectedText) {
       fullContext: selectedText
     };
   }
+}
+
+/**
+ * Listen for streaming updates from background.js
+ */
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.action === 'streamUpdate') {
+    handleStreamUpdate(message.requestId, message.event);
+  }
+});
+
+function handleStreamUpdate(requestId, event) {
+  // Ignore stale requests
+  if (requestId !== latestRequestId) return;
+
+  if (event.type === 'status') {
+    updateLoadingStatus(event.stage, event.model);
+  } else if (event.type === 'result') {
+    renderCard(event.data, lastCardRect);
+  } else if (event.type === 'error' && event.error === 'UPGRADE_REQUIRED') {
+    showUpgradeCard(lastCardRect, event.text || '');
+  } else if (event.type === 'error') {
+    const msg = event.message || getErrorMessage(event.error);
+    showErrorCard(msg, lastCardRect);
+  }
+}
+
+function updateLoadingStatus(stage, model) {
+  if (!activeCard) return;
+  const shadow = activeCard.shadowRoot;
+  if (!shadow) return;
+  const statusEl = shadow.querySelector('.loading-status');
+  if (!statusEl) return;
+
+  const messages = {
+    'received': 'Connecting...',
+    'analyzing': model ? `Analyzing with ${model.split('.')[0]}...` : 'Analyzing...',
+    'thinking': 'Model is thinking...',
+    'fallback': model ? `Switching to ${model.split('.')[0]}...` : 'Trying backup model...',
+  };
+  statusEl.textContent = messages[stage] || 'Processing...';
+}
+
+/**
+ * Loading card — shown immediately during streaming, before results arrive
+ */
+function showLoadingCard(rect, selectedText) {
+  destroyCard();
+
+  const container = document.createElement('div');
+  container.id = 'mandrain-card-container';
+  container.style.cssText = `
+    position: fixed;
+    left: ${rect.left}px;
+    top: ${rect.bottom + 10}px;
+    z-index: 2147483647;
+  `;
+
+  const shadowRoot = container.attachShadow({ mode: 'open' });
+
+  const style = document.createElement('style');
+  style.textContent = `
+    :host { all: initial; }
+    .card {
+      width: 320px;
+      background: #fff;
+      border: 1px solid #d0d0d0;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      padding: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      color: #333;
+      text-align: center;
+    }
+    .loading-word {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 10px;
+      color: #222;
+    }
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #e0e0e0;
+      border-top-color: #666;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-status {
+      color: #888;
+      font-size: 12px;
+    }
+    .card-close {
+      width: 24px;
+      height: 24px;
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      cursor: pointer;
+      color: #999;
+      font-size: 16px;
+      line-height: 1;
+    }
+    .card-close:hover { color: #333; }
+  `;
+  shadowRoot.appendChild(style);
+
+  const cardDiv = document.createElement('div');
+  cardDiv.innerHTML = `
+    <div class="card">
+      <div class="card-close">✕</div>
+      <div class="loading-word">"${selectedText}"</div>
+      <div class="loading-spinner"></div>
+      <div class="loading-status">Analyzing...</div>
+    </div>
+  `;
+  shadowRoot.appendChild(cardDiv);
+
+  shadowRoot.querySelector('.card-close').addEventListener('click', closeCard);
+
+  document.addEventListener('pointerdown', onOutsidePointerDown, true);
+  document.addEventListener('keydown', onEscKey);
+
+  document.body.appendChild(container);
+  activeCard = container;
+}
+
+/**
+ * Upgrade upsell card — shown when free user hits a term not in local dict or cache
+ */
+function showUpgradeCard(rect, selectedText) {
+  destroyCard();
+
+  const container = document.createElement('div');
+  container.id = 'mandrain-card-container';
+  container.style.cssText = `
+    position: fixed;
+    left: ${rect.left}px;
+    top: ${rect.bottom + 10}px;
+    z-index: 2147483647;
+  `;
+
+  const shadowRoot = container.attachShadow({ mode: 'open' });
+
+  const style = document.createElement('style');
+  style.textContent = `
+    :host { all: initial; }
+    .card {
+      width: 320px;
+      background: #fff;
+      border: 1px solid #4a90d9;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      padding: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      color: #333;
+      text-align: center;
+    }
+    .card-word {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #222;
+    }
+    .card-msg {
+      color: #666;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .card-upgrade-btn {
+      display: inline-block;
+      padding: 8px 20px;
+      background: #4a90d9;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    .card-upgrade-btn:hover {
+      background: #357abd;
+    }
+    .card-close {
+      width: 24px;
+      height: 24px;
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      cursor: pointer;
+      color: #999;
+      font-size: 16px;
+      line-height: 1;
+    }
+    .card-close:hover { color: #333; }
+  `;
+  shadowRoot.appendChild(style);
+
+  const displayText = selectedText ? `"${selectedText}"` : 'This term';
+  const cardDiv = document.createElement('div');
+  cardDiv.innerHTML = `
+    <div class="card">
+      <div class="card-close">✕</div>
+      <div class="card-word">${displayText}</div>
+      <div class="card-msg">
+        Full AI analysis is available with Pro.<br>
+        Unlock deeper insights, slang detection, and cultural context.
+      </div>
+      <button class="card-upgrade-btn">Upgrade to Pro</button>
+    </div>
+  `;
+  shadowRoot.appendChild(cardDiv);
+
+  shadowRoot.querySelector('.card-close').addEventListener('click', closeCard);
+  shadowRoot.querySelector('.card-upgrade-btn').addEventListener('click', () => {
+    chrome.runtime.sendMessage({ action: 'openUpgradePage' });
+    closeCard();
+  });
+
+  document.addEventListener('pointerdown', onOutsidePointerDown, true);
+  document.addEventListener('keydown', onEscKey);
+
+  document.body.appendChild(container);
+  activeCard = container;
 }
 
 /**

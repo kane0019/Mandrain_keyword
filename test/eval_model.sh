@@ -32,6 +32,11 @@ INSTALL_ID="eval-device-001"
 RESULTS_FILE="eval_results.json"
 SLEEP_SEC=1   # 每次请求间隔，防止限流
 
+# Lambda Function URL — 绕过 API Gateway 29s 超时限制
+# 部署后从 CloudFormation 输出获取，格式: https://xxxxxx.lambda-url.us-east-1.on.aws/
+# 留空则走 API Gateway（受 29s 限制）
+FUNCTION_URL="${MANDRAIN_FUNCTION_URL:-}"
+
 # ---- Step 0: 获取 JWT ----
 echo ">>> 获取 access_token ..."
 INIT_RESP=$(curl -s -X POST "$API/api/v1/session/init" \
@@ -45,6 +50,16 @@ if [ -z "$TOKEN" ]; then
   exit 1
 fi
 echo "    token 已获取 (${TOKEN:0:20}...)"
+
+# 确定 analyze 端点
+if [ -n "$FUNCTION_URL" ]; then
+  ANALYZE_URL="$FUNCTION_URL"
+  echo ">>> 使用 Lambda Function URL (无 29s 限制): ${ANALYZE_URL:0:50}..."
+else
+  ANALYZE_URL="$API/api/v1/analyze"
+  echo ">>> 使用 API Gateway (29s 超时限制): $ANALYZE_URL"
+  echo "    提示: 设置 MANDRAIN_FUNCTION_URL 环境变量可绕过 29s 限制"
+fi
 
 # ---- 评测用例 ----
 # 格式 (pipe-delimited, 5 fields):
@@ -176,11 +191,43 @@ print(json.dumps(d, ensure_ascii=False))
     JSON_BODY="{\"text\":\"$TEXT\",\"lang\":\"zh\"}"
   fi
 
-  # 发请求
-  RESP=$(curl -s -X POST "$API/api/v1/analyze" \
-    -H "Content-Type: application/json" \
-    -H "Authorization: Bearer $TOKEN" \
-    -d "$JSON_BODY")
+  # 发请求 (Function URL streaming 或 API Gateway)
+  if [ -n "$FUNCTION_URL" ]; then
+    # Streaming: read NDJSON events, extract the final "result" event
+    RAW_RESP=$(curl -s -m 120 -X POST "$ANALYZE_URL" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer $TOKEN" \
+      -d "$JSON_BODY")
+
+    # Extract the last line with type:"result" — that's the final answer
+    RESP=$(python3 -c "
+import json, sys
+lines = '''$RAW_RESP'''.strip().split('\n')
+for line in reversed(lines):
+    line = line.strip()
+    if not line: continue
+    try:
+        obj = json.loads(line)
+        if obj.get('type') == 'result':
+            print(json.dumps(obj.get('data', {}), ensure_ascii=False))
+            sys.exit(0)
+        elif obj.get('type') == 'error':
+            print(json.dumps({'error': obj.get('error','?'), 'message': obj.get('message','')}, ensure_ascii=False))
+            sys.exit(0)
+    except: pass
+print(json.dumps({'error': 'NO_RESULT', 'message': 'No result event in stream'}, ensure_ascii=False))
+" 2>/dev/null)
+
+    if [ -z "$RESP" ]; then
+      RESP="{\"error\":\"STREAM_PARSE_ERROR\",\"message\":\"Failed to parse stream\"}"
+    fi
+  else
+    # Non-streaming: standard JSON response
+    RESP=$(curl -s -m 90 -X POST "$ANALYZE_URL" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer $TOKEN" \
+      -d "$JSON_BODY")
+  fi
 
   # 结构检查
   HAS_ZH=$(echo "$RESP" | grep -c '"zh"' || true)
