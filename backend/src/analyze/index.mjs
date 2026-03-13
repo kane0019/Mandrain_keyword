@@ -1,6 +1,6 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
-import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';
+import { BedrockRuntimeClient, InvokeModelCommand, InvokeModelWithResponseStreamCommand } from '@aws-sdk/client-bedrock-runtime';
 import { verifyJwt } from '../shared/jwt.mjs';
 import { response, parseBody } from '../shared/response.mjs';
 
@@ -106,7 +106,8 @@ export async function handler(event) {
 
 const SYSTEM_PROMPT = '你是中文语义分析专家，专注于网络语言、俚语和文化内涵分析。严格按以下JSON格式返回，不含其他文字，每个字段限50字以内：{"zh":"原词","en":"最贴切英文等价词(网络语给俚语而非字面直译)","definition":"字面含义(英文,简短)","implication":"当代中文语境真实含义(英文,简短)","sentiment":"positive或negative或neutral"}';
 
-const DEEPSEEK_TIMEOUT_MS = 20000; // 20s，为 API GW 29s 留出缓冲
+const DEEPSEEK_IDLE_TIMEOUT_MS = 8000;  // 8s 无新 chunk 才判定超时
+const DEEPSEEK_TOTAL_TIMEOUT_MS = 25000; // 25s 绝对上限，为 API GW 29s 留缓冲
 const NOVA_PRO_MODEL_ID = 'amazon.nova-pro-v1:0';
 const DEEPSEEK_MODEL_ID = 'deepseek.v3.2';
 
@@ -137,17 +138,57 @@ async function invokeDeepSeek(prompt) {
     max_tokens: 256,
     temperature: 0.3,
   };
-  const command = new InvokeModelCommand({
+  const command = new InvokeModelWithResponseStreamCommand({
     modelId: DEEPSEEK_MODEL_ID,
     contentType: 'application/json',
     accept: 'application/json',
     body: JSON.stringify(requestBody),
   });
+
   const resp = await bedrockClient.send(command);
-  const respBody = JSON.parse(new TextDecoder().decode(resp.body));
-  const text = respBody.choices?.[0]?.message?.content || '';
-  console.log('[DeepSeek] raw response:', text);
-  const parsed = parseJsonFromText(text);
+  const stream = resp.body;
+  let fullText = '';
+
+  // Collect streamed chunks with inactivity + total timeout
+  const result = await new Promise((resolve, reject) => {
+    let idleTimer = null;
+    const totalTimer = setTimeout(() => {
+      clearTimeout(idleTimer);
+      reject(new Error(`DeepSeek total timeout (${DEEPSEEK_TOTAL_TIMEOUT_MS}ms)`));
+    }, DEEPSEEK_TOTAL_TIMEOUT_MS);
+
+    const resetIdleTimer = () => {
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        clearTimeout(totalTimer);
+        reject(new Error(`DeepSeek idle timeout (${DEEPSEEK_IDLE_TIMEOUT_MS}ms, no new chunk)`));
+      }, DEEPSEEK_IDLE_TIMEOUT_MS);
+    };
+    resetIdleTimer();
+
+    (async () => {
+      try {
+        for await (const event of stream) {
+          resetIdleTimer();
+          if (event.chunk?.bytes) {
+            const chunk = JSON.parse(new TextDecoder().decode(event.chunk.bytes));
+            const delta = chunk.choices?.[0]?.delta?.content || '';
+            fullText += delta;
+          }
+        }
+        clearTimeout(idleTimer);
+        clearTimeout(totalTimer);
+        resolve(fullText);
+      } catch (err) {
+        clearTimeout(idleTimer);
+        clearTimeout(totalTimer);
+        reject(err);
+      }
+    })();
+  });
+
+  console.log('[DeepSeek-stream] raw response:', result);
+  const parsed = parseJsonFromText(result);
   return parsed ? { ...parsed, _model: 'deepseek.v3.2' } : null;
 }
 
@@ -173,11 +214,8 @@ async function invokeNovaPro(prompt) {
 
 async function invokeBedrockClaude(prompt) {
   try {
-    // 尝试 DeepSeek，设 20s 超时熔断
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('DeepSeek timeout')), DEEPSEEK_TIMEOUT_MS)
-    );
-    const result = await Promise.race([invokeDeepSeek(prompt), timeoutPromise]);
+    // 尝试 DeepSeek streaming（内置 idle + total 超时）
+    const result = await invokeDeepSeek(prompt);
     if (result) return result;
   } catch (err) {
     console.warn('[Bedrock] DeepSeek failed or timed out, falling back to Nova Pro:', err.message);

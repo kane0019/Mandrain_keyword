@@ -73,6 +73,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - bedrock:InvokeModel
+                  - bedrock:InvokeModelWithResponseStream
                 Resource:
                   - !Sub 'arn:aws:bedrock:${AWS::Region}::foundation-model/amazon.nova-*'
                   - !Sub 'arn:aws:bedrock:${AWS::Region}::foundation-model/deepseek.v3.2'
