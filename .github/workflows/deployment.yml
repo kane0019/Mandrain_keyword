@@ -42,7 +42,7 @@ jobs:
       - name: Set S3 bucket name
         id: bucket
         run: |
-          echo "name=${{ vars.LAMBDA_BUCKET }}" >> "$GITHUB_OUTPUT"
+          echo "name=${{ vars.LAMBDA_BUCKET_DEV }}" >> "$GITHUB_OUTPUT"
 
   # ========== Stage 2: Deploy DynamoDB ==========
   deploy-dynamodb:

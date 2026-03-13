@@ -11,7 +11,7 @@ Parameters:
   GitHubRepo:
     Type: String
     Description: GitHub repository name (e.g. "Mandrain_keyword")
-  LambdaBucket:
+  LambdaBucketDev:
     Type: String
     Description: S3 bucket for Lambda packages
   GitHubOIDCProviderArn:
@@ -88,8 +88,8 @@ Resources:
               - s3:ListBucket
               - s3:GetBucketLocation
             Resource:
-              - !Sub 'arn:aws:s3:::${LambdaBucket}'
-              - !Sub 'arn:aws:s3:::${LambdaBucket}/*'
+              - !Sub 'arn:aws:s3:::${LambdaBucketDev}'
+              - !Sub 'arn:aws:s3:::${LambdaBucketDev}/*'
 
           # Lambda — functions + Function URLs (scoped to project functions)
           - Sid: Lambda
