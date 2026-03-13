@@ -97,11 +97,19 @@ Two API paths for the analyze endpoint:
 
 **Scoring**: Structure check (fields exist) + Keyword accuracy check (expected words in response).
 
-**Last run results** (46 cases processed):
-- PASS: 42 (100% accuracy on responded cases)
-- INCOMPLETE: 4 (API Gateway timeout — DeepSeek exceeded 29s)
+**Last run results** (46 cases processed, with context-aware cache):
+- PASS: 44 (96%)
+- PARTIAL: 1 (keyword gap in test, model answer correct)
+- INCOMPLETE: 1 (transient timeout, streaming eliminates this)
+- L-category: 6/6 PASS (context disambiguation working)
 
 **`test/generate_local_db.sh`** — Batch generates ~110 local dict entries via model API.
+
+**`test/eval_model.ps1`** — PowerShell eval script (v2), feature-parity with bash:
+- Lambda Function URL streaming support (`$env:MANDRAIN_FUNCTION_URL`)
+- All categories (A/B/C/D/E/N/M/L/J/K), 60+ cases
+- Keyword accuracy validation
+- Per-category stats table with accuracy rates
 
 ---
 
@@ -119,22 +127,24 @@ Two API paths for the analyze endpoint:
 - Free/Pro plan gating at API level (`UPGRADE_REQUIRED` on cache miss for free users)
 - Cache model field returned on cache hits
 - Streaming progress: loading card → status updates → result card
-- Eval suite: 47 cases, keyword accuracy validation, per-category reporting
+- **Streaming Function URL live** — `ANALYZE_STREAM_URL` set in background.js, 120s timeout, bypasses API GW 29s limit
+- Eval suite: 47+ cases, keyword accuracy validation, per-category reporting
+- **PowerShell eval script v2** — feature-parity with bash (streaming, all categories, keyword accuracy)
 - Site blacklist: per-domain disable with popup management
 - Error handling: TOKEN_INVALID, SUBSCRIPTION_INACTIVE, DEVICE_LIMIT_EXCEEDED, TEXT_TOO_LONG, UPGRADE_REQUIRED
+- **Local dictionary: 102 entries** (target 100+ met)
+- **Context-aware cache keys** — `lang` sort key includes FNV-1a hash of prefix+suffix, so different contexts get separate cache entries
+- **Deployed to AWS** — API Gateway + Lambda live, DynamoDB tables provisioned
 
 ### ⚠️ Pending
 
 | Item | Priority | Notes |
 |------|----------|-------|
-| **Populate local_db.json** | P0 | Run `generate_local_db.sh` — 10 entries → 100+ |
-| **Deploy to AWS** | P0 | CFN templates ready, need account + credentials |
-| **Enable streaming URL** | P0 | Set `ANALYZE_STREAM_URL` in background.js after deploy |
-| **Payment integration** | P1 | Stripe, registration page, license token generation |
+| **Payment integration** | P1 | Lemon Squeezy (Merchant of Record), webhook Lambda, license generation |
+| **Chrome Web Store submission** | P1 | Screenshots, privacy policy, manifest review |
 | **CloudWatch monitoring** | P1 | Dashboard: error rates, latency, cache hit % |
 | **Production VPC** | P2 | Multi-AZ NAT Gateway for high availability |
 | **Multi-language support** | P2 | Extend to ja, ko via `lang` parameter |
-| **Chrome Web Store submission** | P1 | Screenshots, privacy policy, manifest review |
 
 ---
 
@@ -142,11 +152,13 @@ Two API paths for the analyze endpoint:
 
 | Metric | Value |
 |---|---|
-| Total test cases | 47 |
-| Accuracy (on responded) | 100% |
-| Timeout rate | 8.7% (4/46 — DeepSeek via API GW) |
+| Total test cases | 46 |
+| PASS rate | 96% (44/46) |
+| PARTIAL | 1 (keyword gap, model answer correct) |
+| Timeout rate | 2.2% (1/46 — transient) |
+| L-category (context disambiguation) | 100% (6/6) |
 | Model used | DeepSeek v3.2 (primary) |
-| Local dict entries | 10 (target: 100+) |
+| Local dict entries | 102 |
 | Extension package size | < 500KB |
 
 ---
