@@ -47,6 +47,15 @@ function initListeners() {
   document.addEventListener('selectionchange', onSelectionChange);
 }
 
+// Re-enable when user removes this site from blacklist (no refresh needed)
+chrome.runtime.onMessage.addListener((msg) => {
+  if (msg.action === 'blacklistRemoved' && siteDisabled) {
+    siteDisabled = false;
+    initListeners();
+    console.log('[Mandrain] re-enabled on', location.hostname);
+  }
+});
+
 function onDocumentMouseUp(event) {
   if (event.button !== 0) return;
 

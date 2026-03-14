@@ -134,6 +134,11 @@ async function handleBlacklistRemove(hostname, sendResponse) {
   const blacklist = (result.blacklist || []).filter(h => h !== hostname);
   await chrome.storage.local.set({ blacklist });
   console.log('[Mandrain] blacklist remove:', hostname);
+  // Notify matching tabs so content script re-enables without a page refresh
+  const tabs = await chrome.tabs.query({ url: `*://${hostname}/*` });
+  for (const tab of tabs) {
+    chrome.tabs.sendMessage(tab.id, { action: 'blacklistRemoved', hostname }).catch(() => {});
+  }
   sendResponse({ success: true, blacklist });
 }
 
