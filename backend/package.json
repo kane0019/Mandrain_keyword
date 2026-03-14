@@ -6,10 +6,10 @@
   "scripts": {
     "build": "npm run build:session-init && npm run build:analyze",
     "build:session-init": "esbuild src/session-init/index.mjs --bundle --platform=node --target=node20 --format=esm --outfile=dist/session-init/index.mjs --external:@aws-sdk/*",
-    "build:analyze": "esbuild src/analyze/index.mjs --bundle --platform=node --target=node20 --format=esm --outfile=dist/analyze/index.mjs --external:@aws-sdk/*",
+    "build:analyze": "esbuild src/analyze/index.mjs --bundle --platform=node --target=node20 --format=cjs --outfile=dist/analyze/index.js --external:@aws-sdk/*",
     "package": "npm run build && npm run zip:session-init && npm run zip:analyze",
     "zip:session-init": "cd dist/session-init && zip -r ../session-init.zip index.mjs",
-    "zip:analyze": "cd dist/analyze && zip -r ../analyze.zip index.mjs"
+    "zip:analyze": "cd dist/analyze && zip -r ../analyze.zip index.js"
   },
   "dependencies": {
     "jose": "^5.x"
