@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Smart Word Analyzer",
+  "name": "Chinese Slang Translator",
   "version": "1.0.0",
   "description": "Intelligent word analysis providing structured insights into literal meaning, subtext, and emotional tone.",
   "permissions": [
@@ -26,7 +26,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "Smart Word Analyzer",
+    "default_title": "Chinese Slang Translator",
     "default_popup": "popup.html"
   },
   "web_accessible_resources": [
