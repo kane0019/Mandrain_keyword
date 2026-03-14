@@ -237,6 +237,13 @@ Resources:
       Principal: '*'
       FunctionUrlAuthType: NONE
 
+  AnalyzeStreamInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt AnalyzeStreamFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: '*'
+
 Outputs:
   SessionInitFunctionArn:
     Description: session-init Lambda ARN
