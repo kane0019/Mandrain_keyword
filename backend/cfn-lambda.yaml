@@ -94,7 +94,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: !Sub 'mandrain-session-init-${EnvironmentName}'
-      Runtime: nodejs20.x
+      Runtime: nodejs22.x
       Handler: index.handler
       Role: !GetAtt LambdaExecutionRole.Arn
       MemorySize: 256
@@ -134,7 +134,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: !Sub 'mandrain-analyze-${EnvironmentName}'
-      Runtime: nodejs20.x
+      Runtime: nodejs22.x
       Handler: index.handler
       Role: !GetAtt LambdaExecutionRole.Arn
       MemorySize: 512
@@ -175,7 +175,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: !Sub 'mandrain-analyze-stream-${EnvironmentName}'
-      Runtime: nodejs20.x
+      Runtime: nodejs22.x
       Handler: index.streamHandler
       Role: !GetAtt LambdaExecutionRole.Arn
       MemorySize: 512
