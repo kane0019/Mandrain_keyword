@@ -226,6 +226,14 @@ async function handleWordQuery(request, sendResponse, sender) {
   } catch (error) {
     console.warn('[Mandrain] 云端请求失败，进入降级模式:', error.message);
 
+    // JWT 过期时自动刷新 session 并重试一次
+    if (error.code === 'TOKEN_INVALID' && !request._retried) {
+      console.warn('[Mandrain] Token invalid (non-stream), refreshing session and retrying...');
+      await chrome.storage.local.remove('auth.session');
+      request._retried = true;
+      return handleWordQuery(request, sendResponse, sender);
+    }
+
     // 会话/鉴权类错误直接透传错误码，不做降级
     const authErrors = ['TOKEN_INVALID', 'SUBSCRIPTION_INACTIVE', 'DEVICE_LIMIT_EXCEEDED', 'TOKEN_MISSING'];
     if (authErrors.includes(error.code)) {
@@ -299,7 +307,7 @@ async function queryCloudAPI(word, context, pageUrl) {
  * 云端 Streaming 查询 — 通过 Lambda Function URL 接收 NDJSON 事件流
  * 将实时进度推送到 content script 的标签页
  */
-async function queryCloudAPIStreaming(word, context, pageUrl, tabId, requestId, streamUrl) {
+async function queryCloudAPIStreaming(word, context, pageUrl, tabId, requestId, streamUrl, retried = false) {
   try {
     const session = await initSession();
     const payload = {
@@ -334,6 +342,14 @@ async function queryCloudAPIStreaming(word, context, pageUrl, tabId, requestId, 
         errCode = errBody.code || errBody.error || errCode;
         errMsg = errBody.message || errMsg;
       } catch { /* ignore parse failure */ }
+
+      // JWT expired — force refresh and retry once
+      if ((resp.status === 401 || resp.status === 403) && errCode !== 'UPGRADE_REQUIRED' && !retried) {
+        console.warn('[Mandrain] Streaming auth error, refreshing session and retrying...');
+        await chrome.storage.local.remove('auth.session');
+        return queryCloudAPIStreaming(word, context, pageUrl, tabId, requestId, streamUrl, true);
+      }
+
       sendStreamEvent(tabId, requestId, { type: 'error', error: errCode, message: errMsg });
       return;
     }
