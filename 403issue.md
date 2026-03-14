@@ -1,7 +1,7 @@
 # 403 Error Investigation — mandrain-analyze-stream-dev
 
 **Date:** 2026-03-14  
-**Status:** UNRESOLVED
+**Status:** ✅ RESOLVED — 端到端验证通过，Chrome 划词返回结果正常
 
 ---
 
@@ -97,6 +97,66 @@ aws s3 cp s3://mandrain-lambda-code-106500537365-dev/analyze/latest.zip latest.z
 Expand-Archive latest.zip -DestinationPath latest-analyze
 Select-String "streamHandler\|streamifyResponse\|exports\." latest-analyze/index.js | Select -Last 20
 ```
+
+---
+
+## 解决过程记录
+
+### 2026-03-14 第一阶段：确认 Lambda 从未被 invoke
+
+- Lambda 日志组 `/aws/lambda/mandrain-analyze-stream-dev` stored=0，证实请求在到达 handler 之前就被拒绝
+- 与此对比，`/aws/lambda/mandrain-analyze-dev` stored=80KB（有执行记录）
+- 之前的 console test TOKEN_INVALID 结果，实际测试的是 `mandrain-analyze-dev` 而非 stream 版本
+
+### 2026-03-14 第二阶段：定位 403 根因 — 缺少 `lambda:InvokeFunction` 权限
+
+AWS Console 提示：
+> Your function URL auth type is NONE, but is missing permissions required for public access. To allow unauthenticated requests, create a resource-based policy that grants **lambda:invokeFunction** and **lambda:invokeFunctionUrl** permissions to all principals (*).
+
+之前 CFN 只配置了 `lambda:InvokeFunctionUrl`，缺少 `lambda:InvokeFunction`。
+
+**修复（commit af48e1b）：** 在 `cfn-lambda.yaml` 中新增：
+```yaml
+AnalyzeStreamInvokePermission:
+  Type: AWS::Lambda::Permission
+  Properties:
+    FunctionName: !GetAtt AnalyzeStreamFunction.Arn
+    Action: lambda:InvokeFunction
+    Principal: '*'
+```
+
+部署后 Lambda 开始被 Chrome 成功 invoke（CloudWatch 日志时间与 Chrome 触发时间吻合）✅
+
+### 2026-03-14 第三阶段：streaming 路径错误 — `handleOnceNonStreaming`
+
+Lambda 被 invoke 后报错：
+```
+TypeError: underlyingStream.setContentType is not a function
+at HttpResponseStream.from (file:///var/runtime/index.mjs:1036:26)
+at Runtime.handleOnceNonStreaming
+```
+
+**根因：** handler 的 export 方式不对。Lambda 运行时通过判断 handler 是否是 `streamifyResponse` 返回值来决定走 streaming 还是 non-streaming 路径。
+
+```js
+// 错误：包了一层普通函数，运行时识别为普通 handler
+export function streamHandler(event, responseStream, context) {
+  return awslambda.streamifyResponse(_streamHandlerImpl)(event, responseStream, context);
+}
+
+// 正确：直接 export streamifyResponse 的返回值
+export const streamHandler = awslambda.streamifyResponse(_streamHandlerImpl);
+```
+
+**修复（commit 090ff5c）：** 修改 `backend/src/analyze/index.mjs`，已 push，等待部署完成后用 Chrome 验证。
+
+---
+
+## 当前状态
+
+- ✅ 403 已修复（Lambda 可被公开 invoke）
+- ✅ Streaming handler 路径修复已部署
+- ✅ Chrome 端到端验证通过：划词"一束光" → 正确返回翻译、definition、潜台词、情绪色彩
 
 ### Step 3：检查 CloudWatch Logs Insights
 

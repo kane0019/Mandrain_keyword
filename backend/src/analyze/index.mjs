@@ -11,20 +11,12 @@ const MAX_TEXT_LENGTH = 30;
 const CACHE_TTL_SECONDS = process.env.CACHE_TTL_SECONDS ? parseInt(process.env.CACHE_TTL_SECONDS) : 86400; // default 24h
 
 /**
- * Build context-aware cache sort key.
- * Same word with different prefix/suffix gets a different cache entry.
- * Format: "zh" (no context) or "zh#<8-char hash>" (with context)
+ * Build cache sort key — word-level only, context ignored.
+ * All users querying the same word/lang share one cache entry.
+ * Format: "zh"
  */
-function buildCacheSortKey(lang, prefix, suffix) {
-  const ctx = (prefix || '') + '|' + (suffix || '');
-  if (ctx === '|') return lang; // no context — bare lookup
-  // Simple FNV-1a 32-bit hash, hex-encoded to 8 chars
-  let h = 0x811c9dc5;
-  for (let i = 0; i < ctx.length; i++) {
-    h ^= ctx.charCodeAt(i);
-    h = Math.imul(h, 0x01000193);
-  }
-  return `${lang}#${(h >>> 0).toString(16).padStart(8, '0')}`;
+function buildCacheSortKey(lang) {
+  return lang;
 }
 
 export async function handler(event) {
@@ -67,7 +59,7 @@ export async function handler(event) {
 
   const queryText = text.trim();
   const queryLang = lang || 'zh';
-  const cacheSortKey = buildCacheSortKey(queryLang, prefix, suffix);
+  const cacheSortKey = buildCacheSortKey(queryLang);
 
   // ---------- 3. 查 word_cache 表 ----------
   const cacheResult = await ddbClient.send(new GetCommand({
@@ -335,7 +327,7 @@ const _streamHandlerImpl = async (event, responseStream, _context) => {
 
       const queryText = body.text.trim();
       const queryLang = body.lang || 'zh';
-      const cacheSortKey = buildCacheSortKey(queryLang, body.prefix, body.suffix);
+      const cacheSortKey = buildCacheSortKey(queryLang);
 
       write({ type: 'status', stage: 'received' });
 
