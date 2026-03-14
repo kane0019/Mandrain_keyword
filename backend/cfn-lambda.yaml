@@ -235,6 +235,7 @@ Resources:
       FunctionName: !GetAtt AnalyzeStreamFunction.Arn
       Action: lambda:InvokeFunctionUrl
       Principal: '*'
+      FunctionUrlAuthType: NONE
 
 Outputs:
   SessionInitFunctionArn:
