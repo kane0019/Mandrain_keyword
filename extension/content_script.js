@@ -16,11 +16,11 @@ let suppressedSelectionSignature = '';
 let lastCardRect = null; // stored for stream updates
 
 const ERROR_MESSAGES = {
-  TOKEN_INVALID: 'Token 无效，请在设置中重新输入',
-  SUBSCRIPTION_INACTIVE: '订阅已过期，请续费后使用',
-  DEVICE_LIMIT_EXCEEDED: '设备数量已达上限（最多3台），请移除旧设备',
-  TOKEN_MISSING: '缺少 Token，请在设置中填写',
-  TEXT_TOO_LONG: '选中文本过长，请选择单个词汇或短语'
+  TOKEN_INVALID: 'Invalid token — please re-enter in settings',
+  SUBSCRIPTION_INACTIVE: 'Subscription expired — please renew',
+  DEVICE_LIMIT_EXCEEDED: 'Device limit reached (max 3) — remove an old device first',
+  TOKEN_MISSING: 'No token set — please enter one in settings',
+  TEXT_TOO_LONG: 'Selection too long — please select a single word or phrase'
 };
 
 function getErrorMessage(code) {

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>词汇智能解析助手</title>
+  <title>Smart Word Analyzer</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -138,33 +138,33 @@
   </style>
 </head>
 <body>
-  <h1>词汇智能解析助手</h1>
+  <h1>Smart Word Analyzer</h1>
 
   <div id="statusBar" class="status-bar">
     <span id="statusDot" class="status-dot warn"></span>
-    <span id="statusText">正在检查…</span>
+    <span id="statusText">Checking…</span>
   </div>
 
   <label class="field-label" for="tokenInput">License Token</label>
-  <input id="tokenInput" class="token-input" type="text" placeholder="粘贴你的付费 Token（留空使用免费版）">
+  <input id="tokenInput" class="token-input" type="text" placeholder="Paste your paid Token (leave blank for free tier)">
 
   <div class="btn-row">
-    <button id="btnSave" class="btn btn-primary">保存</button>
-    <button id="btnReset" class="btn btn-secondary">恢复免费版</button>
+    <button id="btnSave" class="btn btn-primary">Save</button>
+    <button id="btnReset" class="btn btn-secondary">Reset to Free</button>
   </div>
 
   <div id="feedback" class="info hidden"></div>
 
   <div class="blacklist-section">
-    <div class="section-title">已停用站点</div>
+    <div class="section-title">Disabled Sites</div>
     <div id="blacklistContainer">
-      <span class="blacklist-empty">无</span>
+      <span class="blacklist-empty">None</span>
     </div>
   </div>
 
   <div class="meta">
     <span id="planLabel">Free</span>
-    <a id="registerLink" href="#">获取付费 Token →</a>
+    <a id="registerLink" href="#">Get paid Token →</a>
   </div>
 
   <script src="popup.js"></script>

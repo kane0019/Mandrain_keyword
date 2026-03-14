@@ -118,6 +118,7 @@ Resources:
             Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-DevicesTable'
           JWT_SECRET_ARN:
             Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-JwtSecretArn'
+          ANALYZE_STREAM_URL: !GetAtt AnalyzeStreamFunctionUrl.FunctionUrl
       Tags:
         - Key: Environment
           Value: !Ref EnvironmentName

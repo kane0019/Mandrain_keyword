@@ -11,11 +11,9 @@
 const API_BASE_URL = 'https://zeesoi54x2.execute-api.us-east-1.amazonaws.com/v1/api/v1'; // AWS 生产环境
 const SESSION_INIT_ENDPOINT = `${API_BASE_URL}/session/init`;
 const ANALYZE_ENDPOINT = `${API_BASE_URL}/analyze`;
-// Streaming Function URL — set to Lambda Function URL in production.
-// When set, analyze requests use NDJSON streaming for real-time progress.
-// Leave empty to fall back to non-streaming ANALYZE_ENDPOINT.
-const ANALYZE_STREAM_URL = 'https://zxdddkk6qjh6zdf2afxhijnrem0wegyi.lambda-url.us-east-1.on.aws/';
-const SESSION_TIMEOUT_MS = 5000;
+// Streaming Function URL is delivered dynamically via session/init response (stream_url field).
+// background.js reads it from the cached session object — no hardcoded URL needed.
+const SESSION_TIMEOUT_MS = 15000;
 const STREAM_TIMEOUT_MS = 90000; // 90s for streaming (DeepSeek can take 50s+)
 const DEFAULT_FREE_LICENSE_TOKEN = 'free-token-placeholder';
 // 查询词最大长度（字符数）。30字符覆盖99%+合法中文词汇/短语/谚语，
@@ -189,7 +187,13 @@ async function handleWordQuery(request, sendResponse, sender) {
   // 步骤2：云端API查询 — 优先使用 streaming
   console.log('[Mandarin] local miss, querying cloud');
 
-  if (ANALYZE_STREAM_URL && sender?.tab?.id) {
+  // Get session to determine streaming endpoint (usually cached, ~0ms)
+  let routingSession = null;
+  try { routingSession = await initSession(); } catch { /* handled in non-streaming path below */ }
+
+  const streamUrl = routingSession?.streamUrl || '';
+
+  if (streamUrl && sender?.tab?.id) {
     // Streaming path: respond immediately, push updates via tab messaging
     const tabId = sender.tab.id;
     const requestId = request.requestId || Date.now();
@@ -201,7 +205,7 @@ async function handleWordQuery(request, sendResponse, sender) {
     });
 
     // Fire-and-forget streaming (errors sent as stream events)
-    queryCloudAPIStreaming(queryWord, request.context, request.pageUrl, tabId, requestId);
+    queryCloudAPIStreaming(queryWord, request.context, request.pageUrl, tabId, requestId, streamUrl);
     return;
   }
 
@@ -290,7 +294,7 @@ async function queryCloudAPI(word, context, pageUrl) {
  * 云端 Streaming 查询 — 通过 Lambda Function URL 接收 NDJSON 事件流
  * 将实时进度推送到 content script 的标签页
  */
-async function queryCloudAPIStreaming(word, context, pageUrl, tabId, requestId) {
+async function queryCloudAPIStreaming(word, context, pageUrl, tabId, requestId, streamUrl) {
   try {
     const session = await initSession();
     const payload = {
@@ -304,7 +308,7 @@ async function queryCloudAPIStreaming(word, context, pageUrl, tabId, requestId) 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), STREAM_TIMEOUT_MS);
 
-    const resp = await fetch(ANALYZE_STREAM_URL, {
+    const resp = await fetch(streamUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -318,7 +322,14 @@ async function queryCloudAPIStreaming(word, context, pageUrl, tabId, requestId) 
 
     if (!resp.ok) {
       clearTimeout(timer);
-      sendStreamEvent(tabId, requestId, { type: 'error', error: 'HTTP_ERROR', message: `HTTP ${resp.status}` });
+      let errCode = `HTTP_${resp.status}`;
+      let errMsg = `HTTP ${resp.status}`;
+      try {
+        const errBody = await resp.json();
+        errCode = errBody.code || errBody.error || errCode;
+        errMsg = errBody.message || errMsg;
+      } catch { /* ignore parse failure */ }
+      sendStreamEvent(tabId, requestId, { type: 'error', error: errCode, message: errMsg });
       return;
     }
 
@@ -567,6 +578,7 @@ function normalizeSession(raw, installId) {
     deviceCount: Number(raw?.device_count || 1),
     maxDevices: Number(raw?.max_devices || 3),
     featureFlags: raw?.feature_flags || {},
+    streamUrl: String(raw?.stream_url || ''),
     installId: installId,
     updatedAt: Date.now()
   };
@@ -613,7 +625,7 @@ async function postJsonWithTimeout(url, payload, timeoutMs, extraHeaders = {}) {
 
     if (!response.ok) {
       throw createAppError(
-        data.code || `HTTP_${response.status}`,
+        data.code || data.error || `HTTP_${response.status}`,
         data.message || `HTTP ${response.status}`,
         response.status
       );
