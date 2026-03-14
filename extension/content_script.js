@@ -11,6 +11,7 @@
 // 当前活跃的UI卡片引用，防止重复创建
 let activeCard = null;
 let latestRequestId = 0;
+let pendingStreamId = null; // survives card dismissal so stream results still render
 let lastSelectionSignature = '';
 let suppressedSelectionSignature = '';
 let lastCardRect = null; // stored for stream updates
@@ -107,6 +108,7 @@ function handleTextSelection() {
 
   const context = extractContext(range, selectedText);
   const requestId = ++latestRequestId;
+  pendingStreamId = null; // cancel any in-flight stream from previous query
   lastCardRect = rect;
 
   // 向background发送查询请求
@@ -138,6 +140,7 @@ function handleTextSelection() {
 
       // Streaming mode: show loading card, updates come via streamUpdate messages
       if (response && response.streaming) {
+        pendingStreamId = requestId;
         showLoadingCard(rect, selectedText);
         return;
       }
@@ -244,16 +247,19 @@ chrome.runtime.onMessage.addListener((message) => {
 });
 
 function handleStreamUpdate(requestId, event) {
-  // Ignore stale requests
-  if (requestId !== latestRequestId) return;
+  // Use pendingStreamId — survives card dismissal (unlike latestRequestId)
+  if (requestId !== pendingStreamId) return;
 
   if (event.type === 'status') {
     updateLoadingStatus(event.stage, event.model);
   } else if (event.type === 'result') {
+    pendingStreamId = null;
     renderCard(event.data, lastCardRect);
   } else if (event.type === 'error' && event.error === 'UPGRADE_REQUIRED') {
+    pendingStreamId = null;
     showUpgradeCard(lastCardRect, event.text || '');
   } else if (event.type === 'error') {
+    pendingStreamId = null;
     const msg = event.message || getErrorMessage(event.error);
     showErrorCard(msg, lastCardRect);
   }
@@ -273,6 +279,20 @@ function updateLoadingStatus(stage, model) {
     'fallback': model ? `Switching to ${model.split('.')[0]}...` : 'Trying backup model...',
   };
   statusEl.textContent = messages[stage] || 'Processing...';
+
+  // Animate ellipsis in loading-status
+  const ellipsisEl = shadow.querySelector('.loading-ellipsis');
+  if (ellipsisEl) {
+    let dotCount = 0;
+    let ellipsisTimer = setInterval(() => {
+      dotCount = (dotCount + 1) % 4;
+      ellipsisEl.textContent = '.'.repeat(dotCount);
+      // If card is destroyed, stop timer
+      if (!document.body.contains(activeCard)) {
+        clearInterval(ellipsisTimer);
+      }
+    }, 400);
+  }
 }
 
 /**
@@ -340,6 +360,21 @@ function showLoadingCard(rect, selectedText) {
       line-height: 1;
     }
     .card-close:hover { color: #333; }
+    .loading-ellipsis {
+      display: inline-block;
+      width: 24px;
+      font-size: 18px;
+      letter-spacing: 2px;
+      vertical-align: middle;
+      animation: ellipsis 1.2s steps(4, end) infinite;
+    }
+    @keyframes ellipsis {
+      0% { content: ''; }
+      25% { content: '.'; }
+      50% { content: '..'; }
+      75% { content: '...'; }
+      100% { content: ''; }
+    }
   `;
   shadowRoot.appendChild(style);
 
@@ -349,7 +384,7 @@ function showLoadingCard(rect, selectedText) {
       <div class="card-close">✕</div>
       <div class="loading-word">"${selectedText}"</div>
       <div class="loading-spinner"></div>
-      <div class="loading-status">Analyzing...</div>
+      <div class="loading-status">Analyzing<span class="loading-ellipsis">...</span></div>
     </div>
   `;
   shadowRoot.appendChild(cardDiv);
