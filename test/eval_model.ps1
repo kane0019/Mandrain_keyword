@@ -110,7 +110,7 @@ $CASES = @(
     # =====================================================================
     # E: 带语境的完整段落 (无 prefix/suffix，全句作为 text)
     # =====================================================================
-    @{ text="领导说大家辛苦了，周末别休息，再冲一冲"; prefix=""; suffix=""; category="E"; note="应识别出反话/压榨含义而非真诚感谢"; keywords="exploit,overwork,mandatory,ironic,forced" }
+    @{ text="领导说大家辛苦了，周末别休息，再冲一冲"; prefix=""; suffix=""; category="E"; note="应识别出反话/压榨含义而非真诚感谢"; keywords="exploit,overwork,mandatory,ironic,forced,overtime,pressure,demand,mask" }
     @{ text="她说你今天挺会穿的"; prefix=""; suffix=""; category="E"; note="可能是真夸也可能是嘲讽，应分析歧义"; keywords="ambiguous,compliment,sarcas,backhanded" }
     @{ text="他发朋友圈不是分享生活，是在凡尔赛"; prefix=""; suffix=""; category="E"; note="应解释凡尔赛在此处的用法"; keywords="brag,show off,humble ?brag,flaunt" }
 

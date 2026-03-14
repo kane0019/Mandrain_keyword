@@ -574,8 +574,8 @@ function renderCard(data, rect) {
         <span class="card-content">${data.sentiment || '—'}</span>
       </div>
       <div class="card-footer">
-        <button class="card-btn card-btn-copy">复制</button>
-        <button class="card-btn card-btn-disable">在此站点停用</button>
+        <button class="card-btn card-btn-copy">Copy</button>
+        <button class="card-btn card-btn-disable">Disable on this site</button>
       </div>
     </div>
   `;
@@ -717,7 +717,7 @@ Definition: ${data.definition || data.literal || '—'}
   `.trim();
 
   navigator.clipboard.writeText(text).then(() => {
-    alert('已复制到剪贴板');
+    alert('Copied to clipboard');
   });
 }
 
