@@ -422,11 +422,7 @@ const _streamHandlerImpl = async (event, responseStream, _context) => {
     responseStream.end();
 };
 
-// Lazy wrapper: awslambda.streamifyResponse() is called at invocation time,
-// not at module load time — avoids init crash if the global isn't ready yet.
-export function streamHandler(event, responseStream, context) {
-  return awslambda.streamifyResponse(_streamHandlerImpl)(event, responseStream, context);
-}
+export const streamHandler = awslambda.streamifyResponse(_streamHandlerImpl);
 
 /**
  * DeepSeek streaming with progress heartbeats sent to client.
