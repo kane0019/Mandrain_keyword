@@ -11,6 +11,7 @@ import { response, parseBody } from '../shared/response.mjs';
 const ddbClient = DynamoDBDocumentClient.from(new DynamoDBClient());
 const LICENSES_TABLE = process.env.LICENSES_TABLE;
 const DEVICES_TABLE = process.env.DEVICES_TABLE;
+const ANALYZE_STREAM_URL = process.env.ANALYZE_STREAM_URL || '';
 
 export async function handler(event) {
   // CORS preflight
@@ -109,6 +110,7 @@ export async function handler(event) {
     plan: license.plan,
     device_count: deviceCount,
     max_devices: maxDevices,
+    stream_url: ANALYZE_STREAM_URL,
     feature_flags: {
       cloud_analysis: license.plan !== 'free',
     },
