@@ -230,11 +230,11 @@ Resources:
 
   AnalyzeStreamFunctionUrlPermission:
     Type: AWS::Lambda::Permission
+    DependsOn: AnalyzeStreamFunctionUrl
     Properties:
-      FunctionName: !Ref AnalyzeStreamFunction
+      FunctionName: !GetAtt AnalyzeStreamFunction.Arn
       Action: lambda:InvokeFunctionUrl
       Principal: '*'
-      FunctionUrlAuthType: NONE
 
 Outputs:
   SessionInitFunctionArn:

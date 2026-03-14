@@ -278,8 +278,7 @@ const STREAM_HEADERS = {
   'Cache-Control': 'no-cache',
 };
 
-export const streamHandler = awslambda.streamifyResponse(
-  async (event, responseStream, _context) => {
+const _streamHandlerImpl = async (event, responseStream, _context) => {
     const httpMethod = event.requestContext?.http?.method || '';
 
     // CORS preflight
@@ -421,8 +420,13 @@ export const streamHandler = awslambda.streamifyResponse(
     }
 
     responseStream.end();
-  }
-);
+};
+
+// Lazy wrapper: awslambda.streamifyResponse() is called at invocation time,
+// not at module load time — avoids init crash if the global isn't ready yet.
+export function streamHandler(event, responseStream, context) {
+  return awslambda.streamifyResponse(_streamHandlerImpl)(event, responseStream, context);
+}
 
 /**
  * DeepSeek streaming with progress heartbeats sent to client.
