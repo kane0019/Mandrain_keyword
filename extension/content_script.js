@@ -678,12 +678,41 @@ function showErrorCard(message, rect) {
       font-size: 13px;
       color: #666;
     }
+    .card-footer {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .card-btn-disable {
+      background: none;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 11px;
+      color: #999;
+      cursor: pointer;
+    }
+    .card-btn-disable:hover {
+      border-color: #bbb;
+      color: #666;
+    }
   `;
   shadowRoot.appendChild(style);
 
   const cardDiv = document.createElement('div');
-  cardDiv.innerHTML = `<div class="card">${message}</div>`;
+  cardDiv.innerHTML = `
+    <div class="card">
+      ${message}
+      <div class="card-footer">
+        <button class="card-btn-disable">Disable on this site</button>
+      </div>
+    </div>
+  `;
   shadowRoot.appendChild(cardDiv);
+
+  shadowRoot.querySelector('.card-btn-disable').addEventListener('click', () => {
+    disableOnCurrentSite();
+  });
 
   document.body.appendChild(container);
   activeCard = container;
