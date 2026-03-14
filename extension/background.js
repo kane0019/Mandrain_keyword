@@ -304,10 +304,27 @@ async function queryCloudAPI(word, context, pageUrl) {
 }
 
 /**
+ * Chrome MV3 service workers are killed after ~30s of no Chrome-API activity.
+ * Fire-and-forget streaming (sendResponse called early) loses Chrome tracking.
+ * Periodically calling a Chrome API prevents the idle kill while streaming.
+ */
+function startKeepAlive() {
+  // Ping immediately — Chrome kills the SW as soon as there are no pending Chrome API
+  // callbacks, which can be milliseconds after sendResponse() returns. Without an
+  // immediate ping the SW may die before the fetch TCP handshake is established.
+  chrome.storage.local.get('_ka');
+  const interval = setInterval(() => {
+    chrome.storage.local.get('_ka');
+  }, 5000);
+  return () => clearInterval(interval);
+}
+
+/**
  * 云端 Streaming 查询 — 通过 Lambda Function URL 接收 NDJSON 事件流
  * 将实时进度推送到 content script 的标签页
  */
 async function queryCloudAPIStreaming(word, context, pageUrl, tabId, requestId, streamUrl, retried = false) {
+  const stopKeepAlive = startKeepAlive();
   try {
     const session = await initSession();
     const payload = {
@@ -395,6 +412,8 @@ async function queryCloudAPIStreaming(word, context, pageUrl, tabId, requestId, 
     } else {
       sendStreamEvent(tabId, requestId, { type: 'error', error: 'STREAM_FAILED', message: error.message });
     }
+  } finally {
+    stopKeepAlive();
   }
 }
 

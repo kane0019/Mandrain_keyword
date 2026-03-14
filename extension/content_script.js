@@ -12,9 +12,12 @@
 let activeCard = null;
 let latestRequestId = 0;
 let pendingStreamId = null; // survives card dismissal so stream results still render
+let pendingStreamTimer = null; // client-side watchdog: clears loading card if stream goes silent
 let lastSelectionSignature = '';
 let suppressedSelectionSignature = '';
 let lastCardRect = null; // stored for stream updates
+
+const STREAM_CLIENT_TIMEOUT_MS = 30000; // 30s — kills loading card if background goes silent
 
 const ERROR_MESSAGES = {
   TOKEN_INVALID: 'Invalid token — please re-enter in settings',
@@ -65,7 +68,7 @@ function onDocumentMouseUp(event) {
   }
 
   if (siteDisabled) return;
-  handleTextSelection();
+  handleTextSelection(event.clientX, event.clientY);
 }
 
 function onSelectionChange() {
@@ -82,8 +85,8 @@ function onSelectionChange() {
 /**
  * 处理文本选择
  */
-function handleTextSelection() {
-  const snapshot = getSelectionSnapshot();
+function handleTextSelection(mouseX, mouseY) {
+  const snapshot = getSelectionSnapshot(mouseX, mouseY);
 
   if (!snapshot) {
     destroyCard({ cancelPending: true });
@@ -142,6 +145,15 @@ function handleTextSelection() {
       if (response && response.streaming) {
         pendingStreamId = requestId;
         showLoadingCard(rect, selectedText);
+        // Watchdog: if background (MV3 service worker) is suspended mid-stream,
+        // no events will ever arrive — clear the loading card after 30s.
+        clearTimeout(pendingStreamTimer);
+        pendingStreamTimer = setTimeout(() => {
+          if (pendingStreamId === requestId) {
+            pendingStreamId = null;
+            showErrorCard('Request timed out — please try again', lastCardRect);
+          }
+        }, STREAM_CLIENT_TIMEOUT_MS);
         return;
       }
 
@@ -157,7 +169,38 @@ function handleTextSelection() {
   );
 }
 
-function getSelectionSnapshot() {
+/**
+ * Compute card (x, y) so it stays within the visible viewport.
+ * Prefers below the selection; flips above if it would overflow the bottom.
+ * Shifts left if it would overflow the right edge.
+ * @param {object} rect  Selection bounding rect (viewport-relative)
+ * @param {number} cardW Card width in px (default 320)
+ * @param {number} cardH Estimated card height in px (default 220)
+ * @returns {{ left: string, top: string }} CSS pixel strings
+ */
+function computeCardPosition(rect, cardW = 320, cardH = 220) {
+  const margin = 8;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  // Horizontal: align to selection left, clamp so card stays in viewport
+  let left = rect.left;
+  if (left + cardW + margin > vw) left = vw - cardW - margin;
+  if (left < margin) left = margin;
+
+  // Vertical: below selection by default, flip above if insufficient space
+  let top;
+  if (rect.bottom + cardH + margin <= vh) {
+    top = rect.bottom + 10;
+  } else {
+    top = rect.top - cardH - 10;
+    if (top < margin) top = margin;
+  }
+
+  return { left: `${Math.round(left)}px`, top: `${Math.round(top)}px` };
+}
+
+function getSelectionSnapshot(fallbackX, fallbackY) {
   const selection = window.getSelection();
   if (!selection || selection.rangeCount === 0) {
     return null;
@@ -169,13 +212,30 @@ function getSelectionSnapshot() {
   }
 
   const range = selection.getRangeAt(0).cloneRange();
-  const rawRect = range.getBoundingClientRect();
-  const rect = {
+  let rawRect = range.getBoundingClientRect();
+
+  // Some pages return a zero rect (overflow:hidden, CSS transforms, etc.)
+  // Try individual line rects first, then fall back to mouse coordinates.
+  if (!rawRect || (rawRect.width === 0 && rawRect.height === 0 && rawRect.top === 0)) {
+    const clientRects = range.getClientRects();
+    if (clientRects.length > 0) {
+      rawRect = clientRects[clientRects.length - 1]; // last rect = end of selection
+    }
+  }
+
+  const isZeroRect = !rawRect || (rawRect.top === 0 && rawRect.left === 0 && rawRect.bottom === 0);
+  const rect = isZeroRect && fallbackX != null ? {
+    left: fallbackX,
+    top: (fallbackY ?? 0) - 20,
+    bottom: fallbackY ?? 0,
+    width: 0,
+    height: 20,
+  } : {
     left: rawRect.left,
     top: rawRect.top,
     bottom: rawRect.bottom,
     width: rawRect.width,
-    height: rawRect.height
+    height: rawRect.height,
   };
 
   return {
@@ -250,7 +310,17 @@ function handleStreamUpdate(requestId, event) {
   // Use pendingStreamId — survives card dismissal (unlike latestRequestId)
   if (requestId !== pendingStreamId) return;
 
+  // Any incoming event resets the watchdog timer
+  clearTimeout(pendingStreamTimer);
+
   if (event.type === 'status') {
+    // Restart watchdog on each heartbeat so long-running models don't time out
+    pendingStreamTimer = setTimeout(() => {
+      if (pendingStreamId === requestId) {
+        pendingStreamId = null;
+        showErrorCard('Request timed out — please try again', lastCardRect);
+      }
+    }, STREAM_CLIENT_TIMEOUT_MS);
     updateLoadingStatus(event.stage, event.model);
   } else if (event.type === 'result') {
     pendingStreamId = null;
@@ -273,26 +343,13 @@ function updateLoadingStatus(stage, model) {
   if (!statusEl) return;
 
   const messages = {
-    'received': 'Connecting...',
-    'analyzing': model ? `Analyzing with ${model.split('.')[0]}...` : 'Analyzing...',
-    'thinking': 'Model is thinking...',
-    'fallback': model ? `Switching to ${model.split('.')[0]}...` : 'Trying backup model...',
+    'received':  'Request received',
+    'analyzing': 'Analyzing with language engine',
+    'thinking':  'Analyzing with language engine',
+    'fallback':  'Analyzing with language engine',
   };
-  statusEl.textContent = messages[stage] || 'Processing...';
-
-  // Animate ellipsis in loading-status
-  const ellipsisEl = shadow.querySelector('.loading-ellipsis');
-  if (ellipsisEl) {
-    let dotCount = 0;
-    let ellipsisTimer = setInterval(() => {
-      dotCount = (dotCount + 1) % 4;
-      ellipsisEl.textContent = '.'.repeat(dotCount);
-      // If card is destroyed, stop timer
-      if (!document.body.contains(activeCard)) {
-        clearInterval(ellipsisTimer);
-      }
-    }, 400);
-  }
+  // Keep the loading-dots CSS animation class; just swap the text
+  statusEl.textContent = messages[stage] || 'Analyzing with language engine';
 }
 
 /**
@@ -303,10 +360,11 @@ function showLoadingCard(rect, selectedText) {
 
   const container = document.createElement('div');
   container.id = 'mandrain-card-container';
+  const { left: posLeft, top: posTop } = computeCardPosition(rect, 320, 80);
   container.style.cssText = `
     position: fixed;
-    left: ${rect.left}px;
-    top: ${rect.bottom + 10}px;
+    left: ${posLeft};
+    top: ${posTop};
     z-index: 2147483647;
   `;
 
@@ -348,6 +406,23 @@ function showLoadingCard(rect, selectedText) {
       color: #888;
       font-size: 12px;
     }
+    .loading-elapsed {
+      color: #bbb;
+      font-size: 11px;
+      margin-top: 5px;
+    }
+    .loading-dots::after {
+      content: '';
+      display: inline-block;
+      animation: dots 1.5s steps(4, end) infinite;
+    }
+    @keyframes dots {
+      0%   { content: ''; }
+      25%  { content: '.'; }
+      50%  { content: '..'; }
+      75%  { content: '...'; }
+      100% { content: ''; }
+    }
     .card-close {
       width: 24px;
       height: 24px;
@@ -360,21 +435,6 @@ function showLoadingCard(rect, selectedText) {
       line-height: 1;
     }
     .card-close:hover { color: #333; }
-    .loading-ellipsis {
-      display: inline-block;
-      width: 24px;
-      font-size: 18px;
-      letter-spacing: 2px;
-      vertical-align: middle;
-      animation: ellipsis 1.2s steps(4, end) infinite;
-    }
-    @keyframes ellipsis {
-      0% { content: ''; }
-      25% { content: '.'; }
-      50% { content: '..'; }
-      75% { content: '...'; }
-      100% { content: ''; }
-    }
   `;
   shadowRoot.appendChild(style);
 
@@ -384,12 +444,22 @@ function showLoadingCard(rect, selectedText) {
       <div class="card-close">✕</div>
       <div class="loading-word">"${selectedText}"</div>
       <div class="loading-spinner"></div>
-      <div class="loading-status">Analyzing<span class="loading-ellipsis">...</span></div>
+      <div class="loading-status loading-dots">Connecting</div>
+      <div class="loading-elapsed"></div>
     </div>
   `;
   shadowRoot.appendChild(cardDiv);
 
   shadowRoot.querySelector('.card-close').addEventListener('click', closeCard);
+
+  // Elapsed time counter — shows seconds so user knows backend is alive
+  const elapsedEl = shadowRoot.querySelector('.loading-elapsed');
+  const startTime = Date.now();
+  const elapsedTimer = setInterval(() => {
+    if (!document.body.contains(container)) { clearInterval(elapsedTimer); return; }
+    const sec = Math.round((Date.now() - startTime) / 1000);
+    if (elapsedEl) elapsedEl.textContent = `${sec}s`;
+  }, 1000);
 
   document.addEventListener('pointerdown', onOutsidePointerDown, true);
   document.addEventListener('keydown', onEscKey);
@@ -406,10 +476,11 @@ function showUpgradeCard(rect, selectedText) {
 
   const container = document.createElement('div');
   container.id = 'mandrain-card-container';
+  const { left: posLeft, top: posTop } = computeCardPosition(rect, 320, 180);
   container.style.cssText = `
     position: fixed;
-    left: ${rect.left}px;
-    top: ${rect.bottom + 10}px;
+    left: ${posLeft};
+    top: ${posTop};
     z-index: 2147483647;
   `;
 
@@ -511,10 +582,11 @@ function renderCard(data, rect) {
   // 创建容器
   const container = document.createElement('div');
   container.id = 'mandrain-card-container';
+  const { left: posLeft, top: posTop } = computeCardPosition(rect, 320, 220);
   container.style.cssText = `
     position: fixed;
-    left: ${rect.left}px;
-    top: ${rect.bottom + 10}px;
+    left: ${posLeft};
+    top: ${posTop};
     z-index: 2147483647;
   `;
 
@@ -655,10 +727,11 @@ function showErrorCard(message, rect) {
 
   const container = document.createElement('div');
   container.id = 'mandrain-card-container';
+  const { left: posLeft, top: posTop } = computeCardPosition(rect, 320, 100);
   container.style.cssText = `
     position: fixed;
-    left: ${rect.left}px;
-    top: ${rect.bottom + 10}px;
+    left: ${posLeft};
+    top: ${posTop};
     z-index: 2147483647;
   `;
 

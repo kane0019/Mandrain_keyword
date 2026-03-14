@@ -137,7 +137,7 @@ Resources:
       Runtime: nodejs22.x
       Handler: index.handler
       Role: !GetAtt LambdaExecutionRole.Arn
-      MemorySize: 512
+      MemorySize: 256
       Timeout: 60
       Code:
         S3Bucket:
@@ -178,7 +178,7 @@ Resources:
       Runtime: nodejs22.x
       Handler: index.streamHandler
       Role: !GetAtt LambdaExecutionRole.Arn
-      MemorySize: 512
+      MemorySize: 256
       Timeout: 120
       Code:
         S3Bucket:
