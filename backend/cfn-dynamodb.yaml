@@ -28,9 +28,18 @@ Resources:
       AttributeDefinitions:
         - AttributeName: license_token
           AttributeType: S
+        - AttributeName: customer_email
+          AttributeType: S
       KeySchema:
         - AttributeName: license_token
           KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: email-index
+          KeySchema:
+            - AttributeName: customer_email
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
       SSESpecification:
