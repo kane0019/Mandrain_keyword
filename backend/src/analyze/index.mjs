@@ -71,7 +71,7 @@ export async function handler(event) {
     const cached = cacheResult.Item;
     // implication/sentiment are context-dependent and not stored in cache.
     // Re-compute them fresh with the current context using a lightweight model call.
-    const implResult = await invokeNovaProForImplication(
+    const implResult = await invokeDeepSeekForImplication(
       queryText, cached.en || '', cached.definition || '', prefix, suffix, page_url
     );
     return response(200, {
@@ -281,7 +281,7 @@ async function invokeNovaPro(prompt) {
  */
 const IMPLICATION_SYSTEM_PROMPT = 'You are a Chinese language expert. You are given a word with its known English equivalent and literal meaning, plus surrounding context. Return ONLY a JSON object: {"implication":"the word\'s real/cultural meaning in THIS specific context (English, ≤50 chars)","sentiment":"positive or negative or neutral"}. No other text.';
 
-async function invokeNovaProForImplication(word, en, definition, prefix, suffix, pageUrl) {
+async function invokeDeepSeekForImplication(word, en, definition, prefix, suffix, pageUrl) {
   let userMsg = `Word: ${word}\nEnglish equivalent: ${en}\nLiteral meaning: ${definition}`;
   if (prefix || suffix) {
     userMsg += '\nSurrounding context (for disambiguation only):';
@@ -289,21 +289,24 @@ async function invokeNovaProForImplication(word, en, definition, prefix, suffix,
     if (suffix) userMsg += `\n  After: ${suffix}`;
   }
   if (pageUrl) userMsg += `\nSource: ${pageUrl}`;
-  const fullPrompt = IMPLICATION_SYSTEM_PROMPT + '\n\n' + userMsg;
   const requestBody = {
-    messages: [{ role: 'user', content: [{ text: fullPrompt }] }],
-    inferenceConfig: { maxTokens: 128, temperature: 0.3 },
+    messages: [
+      { role: 'system', content: IMPLICATION_SYSTEM_PROMPT },
+      { role: 'user', content: userMsg },
+    ],
+    max_tokens: 128,
+    temperature: 0.3,
   };
   const command = new InvokeModelCommand({
-    modelId: NOVA_PRO_MODEL_ID,
+    modelId: DEEPSEEK_MODEL_ID,
     contentType: 'application/json',
     accept: 'application/json',
     body: JSON.stringify(requestBody),
   });
-  const resp = await bedrockClient.send(command);
+  const resp = await bedrockSendWithRetry(command);
   const respBody = JSON.parse(new TextDecoder().decode(resp.body));
-  const text = respBody.output?.message?.content?.[0]?.text || '';
-  console.log('[NovaPro-implication] raw response:', text);
+  const text = respBody.choices?.[0]?.message?.content || '';
+  console.log('[DeepSeek-implication] raw response:', text);
   return parseJsonFromText(text);
 }
 
@@ -419,7 +422,7 @@ const _streamHandlerImpl = async (event, responseStream, _context) => {
             model: cached.model || 'unknown', source: 'cache',
           },
         });
-        const implResult = await invokeNovaProForImplication(
+        const implResult = await invokeDeepSeekForImplication(
           queryText, cached.en || '', cached.definition || '',
           body.prefix, body.suffix, body.page_url
         );
