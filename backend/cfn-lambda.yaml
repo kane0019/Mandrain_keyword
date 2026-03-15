@@ -291,6 +291,8 @@ Resources:
     Properties:
       LogGroupName: !Sub '/aws/lambda/mandrain-ls-webhook-${EnvironmentName}'
       RetentionInDays: 30
+
+Outputs:
   SessionInitFunctionArn:
     Description: session-init Lambda ARN
     Value: !GetAtt SessionInitFunction.Arn
