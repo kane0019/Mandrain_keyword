@@ -69,12 +69,17 @@ export async function handler(event) {
 
   if (cacheResult.Item) {
     const cached = cacheResult.Item;
+    // implication/sentiment are context-dependent and not stored in cache.
+    // Re-compute them fresh with the current context using a lightweight model call.
+    const implResult = await invokeNovaProForImplication(
+      queryText, cached.en || '', cached.definition || '', prefix, suffix, page_url
+    );
     return response(200, {
       zh: cached.zh,
       en: cached.en,
       definition: cached.definition,
-      implication: cached.implication,
-      sentiment: cached.sentiment,
+      implication: implResult?.implication || '',
+      sentiment: implResult?.sentiment || 'neutral',
       model: cached.model || 'unknown',
       source: 'cache',
     });
@@ -109,8 +114,8 @@ export async function handler(event) {
       zh: aiResult.zh || queryText,
       en: aiResult.en || '',
       definition: aiResult.definition || '',
-      implication: aiResult.implication || '',
       sentiment: aiResult.sentiment || 'neutral',
+      // implication intentionally NOT cached — context-dependent.
       model: aiResult._model || 'unknown',
       source: 'cloud',
       ttl,
@@ -269,6 +274,39 @@ async function invokeNovaPro(prompt) {
   return parsed ? { ...parsed, _model: 'amazon.nova-pro-v1:0' } : null;
 }
 
+/**
+ * Lightweight Nova Pro call used on cache hits: the word's en/definition are
+ * already known, so we only need to interpret it in the CURRENT context.
+ * Using a focused system prompt keeps tokens low (~$0.00005/call) and fast (~1-2s).
+ */
+const IMPLICATION_SYSTEM_PROMPT = 'You are a Chinese language expert. You are given a word with its known English equivalent and literal meaning, plus surrounding context. Return ONLY a JSON object: {"implication":"the word\'s real/cultural meaning in THIS specific context (English, ≤50 chars)","sentiment":"positive or negative or neutral"}. No other text.';
+
+async function invokeNovaProForImplication(word, en, definition, prefix, suffix, pageUrl) {
+  let userMsg = `Word: ${word}\nEnglish equivalent: ${en}\nLiteral meaning: ${definition}`;
+  if (prefix || suffix) {
+    userMsg += '\nSurrounding context (for disambiguation only):';
+    if (prefix) userMsg += `\n  Before: ${prefix}`;
+    if (suffix) userMsg += `\n  After: ${suffix}`;
+  }
+  if (pageUrl) userMsg += `\nSource: ${pageUrl}`;
+  const fullPrompt = IMPLICATION_SYSTEM_PROMPT + '\n\n' + userMsg;
+  const requestBody = {
+    messages: [{ role: 'user', content: [{ text: fullPrompt }] }],
+    inferenceConfig: { maxTokens: 128, temperature: 0.3 },
+  };
+  const command = new InvokeModelCommand({
+    modelId: NOVA_PRO_MODEL_ID,
+    contentType: 'application/json',
+    accept: 'application/json',
+    body: JSON.stringify(requestBody),
+  });
+  const resp = await bedrockClient.send(command);
+  const respBody = JSON.parse(new TextDecoder().decode(resp.body));
+  const text = respBody.output?.message?.content?.[0]?.text || '';
+  console.log('[NovaPro-implication] raw response:', text);
+  return parseJsonFromText(text);
+}
+
 async function invokeBedrockClaude(prompt) {
   try {
     // 尝试 DeepSeek streaming（内置 idle + total 超时）
@@ -371,11 +409,26 @@ const _streamHandlerImpl = async (event, responseStream, _context) => {
 
       if (cacheResult.Item) {
         const cached = cacheResult.Item;
+        // Send definition+sentiment immediately (context-independent, from cache).
+        // Implication is context-dependent — stream it as a follow-up result event.
+        write({
+          type: 'partial',
+          data: {
+            zh: cached.zh, en: cached.en, definition: cached.definition,
+            sentiment: cached.sentiment || 'neutral',
+            model: cached.model || 'unknown', source: 'cache',
+          },
+        });
+        const implResult = await invokeNovaProForImplication(
+          queryText, cached.en || '', cached.definition || '',
+          body.prefix, body.suffix, body.page_url
+        );
         write({
           type: 'result',
           data: {
             zh: cached.zh, en: cached.en, definition: cached.definition,
-            implication: cached.implication, sentiment: cached.sentiment,
+            implication: implResult?.implication || '',
+            sentiment: implResult?.sentiment || cached.sentiment || 'neutral',
             model: cached.model || 'unknown', source: 'cache',
           },
         });
@@ -416,14 +469,16 @@ const _streamHandlerImpl = async (event, responseStream, _context) => {
       }
 
       // ---------- Write cache ----------
+      // implication intentionally NOT cached — context-dependent.
       const ttl = Math.floor(Date.now() / 1000) + CACHE_TTL_SECONDS;
       await ddbClient.send(new PutCommand({
         TableName: WORD_CACHE_TABLE,
         Item: {
           text: queryText, lang: cacheSortKey,
           zh: aiResult.zh || queryText, en: aiResult.en || '',
-          definition: aiResult.definition || '', implication: aiResult.implication || '',
-          sentiment: aiResult.sentiment || 'neutral', model: aiResult._model || 'unknown',
+          definition: aiResult.definition || '',
+          sentiment: aiResult.sentiment || 'neutral',
+          model: aiResult._model || 'unknown',
           source: 'cloud', ttl,
         },
       }));

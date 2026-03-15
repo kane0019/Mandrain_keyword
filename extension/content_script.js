@@ -322,8 +322,36 @@ function handleStreamUpdate(requestId, event) {
       }
     }, STREAM_CLIENT_TIMEOUT_MS);
     updateLoadingStatus(event.stage, event.model);
+  } else if (event.type === 'partial') {
+    // Cache hit: show card immediately with definition+sentiment; implication still loading.
+    renderPartialCard(event.data, lastCardRect);
+    // Keep watchdog alive — result with implication is still incoming.
+    pendingStreamTimer = setTimeout(() => {
+      if (pendingStreamId === requestId) {
+        pendingStreamId = null;
+        // Partial card already shows useful info; gracefully clear loading state.
+        if (activeCard && activeCard.shadowRoot) {
+          const implEl = activeCard.shadowRoot.querySelector('.card-implication');
+          if (implEl) {
+            implEl.classList.remove('card-implication-loading');
+            implEl.textContent = '—';
+            return;
+          }
+        }
+        showErrorCard('Request timed out — please try again', lastCardRect);
+      }
+    }, STREAM_CLIENT_TIMEOUT_MS);
   } else if (event.type === 'result') {
     pendingStreamId = null;
+    // If a partial card is already visible, update implication in-place (no flicker).
+    if (activeCard && activeCard.shadowRoot) {
+      const implEl = activeCard.shadowRoot.querySelector('.card-implication');
+      if (implEl) {
+        implEl.classList.remove('card-implication-loading');
+        implEl.textContent = event.data.implication || '—';
+        return;
+      }
+    }
     renderCard(event.data, lastCardRect);
   } else if (event.type === 'error' && event.error === 'UPGRADE_REQUIRED') {
     pendingStreamId = null;
@@ -669,6 +697,18 @@ function renderCard(data, rect) {
     .card-close:hover {
       color: #333;
     }
+    .card-implication-loading { color: #bbb; }
+    .card-implication-loading::after {
+      content: '';
+      animation: impl-dots 1.5s steps(4, end) infinite;
+    }
+    @keyframes impl-dots {
+      0%   { content: ''; }
+      25%  { content: '.'; }
+      50%  { content: '..'; }
+      75%  { content: '...'; }
+      100% { content: ''; }
+    }
   `;
   shadowRoot.appendChild(style);
 
@@ -683,7 +723,7 @@ function renderCard(data, rect) {
       </div>
       <div class="card-item">
         <span class="card-label">Implication</span>
-        <span class="card-content">${data.implication || '—'}</span>
+        <span class="card-content card-implication">${data.implication || '—'}</span>
       </div>
       <div class="card-item">
         <span class="card-label">Sentiment</span>
@@ -713,6 +753,103 @@ function renderCard(data, rect) {
   document.addEventListener('pointerdown', onOutsidePointerDown, true);
 
   // Esc键销毁卡片
+  document.addEventListener('keydown', onEscKey);
+
+  document.body.appendChild(container);
+  activeCard = container;
+}
+
+/**
+ * Partial card — shown on cache hit before implication arrives.
+ * Immediately renders zh/en/definition/sentiment from cache.
+ * The .card-implication span shows a loading animation until the result
+ * event arrives and handleStreamUpdate updates it in-place.
+ */
+function renderPartialCard(data, rect) {
+  destroyCard();
+
+  const container = document.createElement('div');
+  container.id = 'mandrain-card-container';
+  const { left: posLeft, top: posTop } = computeCardPosition(rect, 320, 220);
+  container.style.cssText = `
+    position: fixed;
+    left: ${posLeft};
+    top: ${posTop};
+    z-index: 2147483647;
+  `;
+
+  const shadowRoot = container.attachShadow({ mode: 'open' });
+
+  const style = document.createElement('style');
+  style.textContent = `
+    :host { all: initial; }
+    .card {
+      width: 320px; background: #fff; border: 1px solid #d0d0d0;
+      border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); padding: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px; color: #333; line-height: 1.6;
+    }
+    .card-title { font-weight: 600; color: #222; margin-bottom: 10px; font-size: 14px; }
+    .card-item { margin-bottom: 8px; display: flex; align-items: flex-start; gap: 8px; }
+    .card-label { color: #666; font-weight: 500; flex: 0 0 84px; }
+    .card-content { flex: 1; min-width: 0; color: #333; word-break: break-word; }
+    .card-footer {
+      margin-top: 10px; padding-top: 10px; border-top: 1px solid #e8e8e8;
+      display: flex; gap: 8px;
+    }
+    .card-btn {
+      flex: 1; padding: 6px 8px; border: none; border-radius: 3px;
+      background: #f0f0f0; cursor: pointer; font-size: 12px; color: #333;
+      transition: background 0.2s;
+    }
+    .card-btn:hover { background: #e0e0e0; }
+    .card-close {
+      width: 24px; height: 24px; position: absolute; top: 4px; right: 4px;
+      cursor: pointer; color: #999; font-size: 16px; line-height: 1;
+    }
+    .card-close:hover { color: #333; }
+    .card-implication-loading { color: #bbb; }
+    .card-implication-loading::after {
+      content: '';
+      animation: impl-dots 1.5s steps(4, end) infinite;
+    }
+    @keyframes impl-dots {
+      0%   { content: ''; } 25%  { content: '.'; }
+      50%  { content: '..'; } 75%  { content: '...'; } 100% { content: ''; }
+    }
+  `;
+  shadowRoot.appendChild(style);
+
+  const cardDiv = document.createElement('div');
+  cardDiv.innerHTML = `
+    <div class="card">
+      <div class="card-close">✕</div>
+      <div class="card-title">"${data.zh || ''}" → "${data.en || ''}"</div>
+      <div class="card-item">
+        <span class="card-label">Definition</span>
+        <span class="card-content">${data.definition || '—'}</span>
+      </div>
+      <div class="card-item">
+        <span class="card-label">Implication</span>
+        <span class="card-content card-implication card-implication-loading">Analyzing context</span>
+      </div>
+      <div class="card-item">
+        <span class="card-label">Sentiment</span>
+        <span class="card-content">${data.sentiment || '—'}</span>
+      </div>
+      <div class="card-footer">
+        <button class="card-btn card-btn-copy">Copy</button>
+        <button class="card-btn card-btn-disable">Disable on this site</button>
+      </div>
+    </div>
+  `;
+  shadowRoot.appendChild(cardDiv);
+
+  shadowRoot.querySelector('.card-close').addEventListener('click', closeCard);
+  shadowRoot.querySelector('.card-btn-copy').addEventListener('click', () => copyToClipboard(data));
+  shadowRoot.querySelector('.card-btn-disable').addEventListener('click', () => disableOnCurrentSite());
+
+  document.addEventListener('pointerdown', onOutsidePointerDown, true);
   document.addEventListener('keydown', onEscKey);
 
   document.body.appendChild(container);
