@@ -223,6 +223,7 @@ Resources:
       - WebhookPostMethod
     Properties:
       RestApiId: !Ref MandrainApi
+      Description: 'routes: POST /api/v1/session/init, POST /api/v1/analyze, POST /api/v1/webhook'
 
   ApiStage:
     Type: AWS::ApiGateway::Stage
