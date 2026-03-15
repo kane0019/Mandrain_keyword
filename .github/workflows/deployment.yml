@@ -96,7 +96,7 @@ jobs:
         working-directory: backend
         run: |
           ENV="${{ needs.prepare.outputs.environment }}"
-          STACK_NAME="mandrain-extension-secrets-${ENV}"
+          STACK_NAME="mandrain-extension-secret-${ENV}"
           echo "Deploying stack: ${STACK_NAME}"
 
           aws cloudformation deploy \
