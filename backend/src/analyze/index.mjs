@@ -129,7 +129,7 @@ export async function handler(event) {
   });
 }
 
-const SYSTEM_PROMPT = '你是中文语义分析专家，专注于网络语言、俚语和文化内涵分析。严格按以下JSON格式返回，不含其他文字，每个字段限50字以内：{"zh":"原词","en":"最贴切英文等价词(网络语给俚语而非字面直译)","definition":"字面含义(英文,简短)","implication":"当代中文语境真实含义(英文,简短)","sentiment":"positive或negative或neutral"}';
+const SYSTEM_PROMPT = '你是中文语义分析专家，专注于网络语言、俚语和文化内涵分析。用户会提供一个目标词汇和可选的上下文。上下文仅用于消除歧义，不是目标词汇的组成部分。严格按以下JSON格式返回，不含其他文字，每个字段限50字以内：{"zh":"原词","en":"目标词汇本身最贴切的英文等价词（仅翻译该词，不受上下文影响；网络语给俚语而非字面直译）","definition":"字面含义(英文,简短)","implication":"结合上下文分析该词在当前语境中的真实含义(英文,简短)","sentiment":"positive或negative或neutral"}';
 
 const DEEPSEEK_IDLE_TIMEOUT_MS = 15000;  // 15s 无新 chunk 才判定超时 (Function URL 无 29s 限制)
 const DEEPSEEK_TOTAL_TIMEOUT_MS = 55000; // 55s 绝对上限，Lambda 60s timeout 留 5s 缓冲
@@ -137,9 +137,12 @@ const NOVA_PRO_MODEL_ID = 'amazon.nova-pro-v1:0';
 const DEEPSEEK_MODEL_ID = 'deepseek.v3.2';
 
 function buildPrompt(text, prefix, suffix, pageUrl) {
-  let userMsg = `词汇: ${text}`;
-  if (prefix) userMsg += `\n前文: ${prefix}`;
-  if (suffix) userMsg += `\n后文: ${suffix}`;
+  let userMsg = `目标词汇（用户选中）: ${text}`;
+  if (prefix || suffix) {
+    userMsg += '\n上下文（仅供消歧，不是目标词汇的一部分）:';
+    if (prefix) userMsg += `\n  前文: ${prefix}`;
+    if (suffix) userMsg += `\n  后文: ${suffix}`;
+  }
   if (pageUrl) userMsg += `\n来源: ${pageUrl}`;
   return userMsg;
 }
