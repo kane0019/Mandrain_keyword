@@ -154,6 +154,35 @@ function parseJsonFromText(text) {
   }
 }
 
+/**
+ * bedrockClient.send() wrapper with connect-timeout and 1 automatic retry.
+ * AWS SDK v3 doesn't apply a socket-connect timeout by default, so the call
+ * can hang indefinitely when the Bedrock endpoint is transiently unreachable
+ * via NAT.  Each attempt is hard-aborted after connectTimeoutMs; on abort we
+ * wait briefly and retry once before re-throwing.
+ */
+async function bedrockSendWithRetry(command, connectTimeoutMs = 12000, maxRetries = 1) {
+  let lastErr;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), connectTimeoutMs);
+    try {
+      return await bedrockClient.send(command, { abortSignal: controller.signal });
+    } catch (err) {
+      if (err.name === 'AbortError' && attempt < maxRetries) {
+        console.warn(`[Bedrock] Connect timeout on attempt ${attempt + 1}, retrying...`);
+        lastErr = err;
+        await new Promise(r => setTimeout(r, 500));
+        continue;
+      }
+      throw err;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  throw lastErr;
+}
+
 async function invokeDeepSeek(prompt) {
   const requestBody = {
     messages: [
@@ -170,7 +199,7 @@ async function invokeDeepSeek(prompt) {
     body: JSON.stringify(requestBody),
   });
 
-  const resp = await bedrockClient.send(command);
+  const resp = await bedrockSendWithRetry(command);
   const stream = resp.body;
   let fullText = '';
 
@@ -437,7 +466,7 @@ async function invokeDeepSeekWithProgress(prompt, write) {
     body: JSON.stringify(requestBody),
   });
 
-  const resp = await bedrockClient.send(command);
+  const resp = await bedrockSendWithRetry(command);
   const stream = resp.body;
   let fullText = '';
   let chunkCount = 0;
