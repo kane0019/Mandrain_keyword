@@ -77,6 +77,14 @@ Resources:
       ParentId: !Ref V1Resource
       PathPart: analyze
 
+  # ========== /api/v1/webhook resource ==========
+  WebhookResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref MandrainApi
+      ParentId: !Ref V1Resource
+      PathPart: webhook
+
   # ========== POST /api/v1/session/init ==========
   SessionInitPostMethod:
     Type: AWS::ApiGateway::Method
@@ -160,6 +168,22 @@ Resources:
             method.response.header.Access-Control-Allow-Methods: true
             method.response.header.Access-Control-Allow-Origin: true
 
+  # ========== POST /api/v1/webhook ==========
+  WebhookPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref MandrainApi
+      ResourceId: !Ref WebhookResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub
+          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FunctionArn}/invocations'
+          - FunctionArn:
+              Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LsWebhookFunctionArn'
+
   # ========== Lambda Invoke Permissions ==========
   SessionInitLambdaPermission:
     Type: AWS::Lambda::Permission
@@ -179,6 +203,15 @@ Resources:
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${MandrainApi}/*/POST/api/v1/analyze'
 
+  LsWebhookLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LsWebhookFunctionArn'
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${MandrainApi}/*/POST/api/v1/webhook'
+
   # ========== Deployment ==========
   ApiDeployment:
     Type: AWS::ApiGateway::Deployment
@@ -187,6 +220,7 @@ Resources:
       - SessionInitOptionsMethod
       - AnalyzePostMethod
       - AnalyzeOptionsMethod
+      - WebhookPostMethod
     Properties:
       RestApiId: !Ref MandrainApi
 
@@ -225,6 +259,6 @@ Outputs:
     Description: session/init endpoint
     Value: !Sub 'https://${MandrainApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/v1/session/init'
 
-  AnalyzeEndpoint:
-    Description: analyze endpoint
-    Value: !Sub 'https://${MandrainApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/v1/analyze'
+  WebhookEndpoint:
+    Description: Lemon Squeezy webhook endpoint URL
+    Value: !Sub 'https://${MandrainApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/api/v1/webhook'

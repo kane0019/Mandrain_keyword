@@ -22,6 +22,11 @@ Parameters:
     Default: 'PLACEHOLDER_ANALYZE_PACKAGE.zip'
     Description: S3 key for analyze Lambda deployment package
 
+  LsWebhookS3Key:
+    Type: String
+    Default: 'PLACEHOLDER_LS_WEBHOOK_PACKAGE.zip'
+    Description: S3 key for ls-webhook Lambda deployment package
+
 Conditions:
   IsDevEnv: !Equals [!Ref EnvironmentName, dev]
 
@@ -55,6 +60,10 @@ Resources:
                   - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LicensesTableArn'
                   - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-DevicesTableArn'
                   - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-WordCacheTableArn'
+                  - !Sub
+                    - '${TableArn}/index/*'
+                    - TableArn:
+                        Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LicensesTableArn'
 
         - PolicyName: SecretsManagerAccess
           PolicyDocument:
@@ -64,7 +73,8 @@ Resources:
                 Action:
                   - secretsmanager:GetSecretValue
                 Resource:
-                  Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-JwtSecretArn'
+                  - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-JwtSecretArn'
+                  - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LsWebhookSecretArn'
 
         - PolicyName: BedrockAccess
           PolicyDocument:
@@ -244,7 +254,43 @@ Resources:
       Action: lambda:InvokeFunction
       Principal: '*'
 
-Outputs:
+  # ========== ls-webhook Lambda ==========
+  LsWebhookFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub 'mandrain-ls-webhook-${EnvironmentName}'
+      Runtime: nodejs22.x
+      Handler: index.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      MemorySize: 256
+      Timeout: 15
+      Code:
+        S3Bucket:
+          Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LambdaCodeBucket'
+        S3Key: !Ref LsWebhookS3Key
+      VpcConfig:
+        SecurityGroupIds:
+          - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LambdaSecurityGroupId'
+        SubnetIds: !Split
+          - ','
+          - Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-PrivateSubnetIds'
+      Environment:
+        Variables:
+          LICENSES_TABLE:
+            Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LicensesTable'
+          LS_SIGNING_SECRET_ARN:
+            Fn::ImportValue: !Sub 'mandrain-${EnvironmentName}-LsWebhookSecretArn'
+          LS_STORE_ID: '314613'
+          LS_VARIANT_PLAN_MAP: '{"1398402":"pro"}'
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  LsWebhookLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/mandrain-ls-webhook-${EnvironmentName}'
+      RetentionInDays: 30
   SessionInitFunctionArn:
     Description: session-init Lambda ARN
     Value: !GetAtt SessionInitFunction.Arn
@@ -286,3 +332,15 @@ Outputs:
     Value: !GetAtt LambdaExecutionRole.Arn
     Export:
       Name: !Sub 'mandrain-${EnvironmentName}-LambdaRoleArn'
+
+  LsWebhookFunctionArn:
+    Description: ls-webhook Lambda ARN
+    Value: !GetAtt LsWebhookFunction.Arn
+    Export:
+      Name: !Sub 'mandrain-${EnvironmentName}-LsWebhookFunctionArn'
+
+  LsWebhookFunctionName:
+    Description: ls-webhook Lambda function name
+    Value: !Ref LsWebhookFunction
+    Export:
+      Name: !Sub 'mandrain-${EnvironmentName}-LsWebhookFunctionName'
