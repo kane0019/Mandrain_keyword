@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mandrain — Understand Chinese Beyond Literal Translation</title>
+  <meta name="description" content="Decode Chinese slang, tone, sentiment, and implied meaning while reading posts, comments, memes, and online discussions." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #1a56db;
+      --blue-dark: #1246b3;
+      --blue-light: #e8f0fe;
+      --gray-50: #f8f9fa;
+      --gray-100: #f1f3f5;
+      --gray-200: #e9ecef;
+      --gray-400: #868e96;
+      --gray-600: #495057;
+      --gray-800: #212529;
+      --text: #1a1a2e;
+      --text-muted: #6c757d;
+      --border: #dee2e6;
+      --radius: 12px;
+      --radius-lg: 20px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.05), 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: #fff;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Nav ──────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--blue);
+      letter-spacing: -0.3px;
+      text-decoration: none;
+    }
+    .logo span { color: var(--text); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-600);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--blue);
+      color: #fff !important;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      transition: background 0.15s !important;
+    }
+    .nav-cta:hover { background: var(--blue-dark) !important; color: #fff !important; }
+
+    /* ── Layout util ─────────────────────────────────── */
+    .section { padding: 96px 24px; }
+    .section-sm { padding: 72px 24px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 17px;
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.65;
+    }
+
+    /* ── Buttons ─────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 13px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: none;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(26,86,219,0.35); }
+    .btn-secondary { background: #fff; color: var(--text); border: 1.5px solid var(--border); }
+    .btn-secondary:hover { border-color: #adb5bd; background: var(--gray-50); }
+
+    /* ── Hero ────────────────────────────────────────── */
+    .hero {
+      padding: 88px 24px 80px;
+      background: linear-gradient(160deg, #f0f4ff 0%, #ffffff 55%);
+    }
+    .hero-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--blue-light);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 99px;
+      margin-bottom: 24px;
+    }
+    .hero-badge svg { width: 14px; height: 14px; }
+    .hero h1 {
+      font-size: clamp(34px, 5vw, 52px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.12;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--blue);
+    }
+    .hero p {
+      font-size: 17px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 36px;
+      max-width: 480px;
+    }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+    .hero-note {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hero-note svg { width: 14px; height: 14px; color: #28a745; }
+
+    /* Extension mockup */
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .ext-mockup {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      width: 100%;
+      max-width: 360px;
+      overflow: hidden;
+      font-size: 13px;
+    }
+    .ext-header {
+      background: var(--gray-50);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ext-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .ext-dot-r { background: #ff5f57; }
+    .ext-dot-y { background: #febc2e; }
+    .ext-dot-g { background: #28c840; }
+    .ext-addr {
+      flex: 1;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11px;
+      color: var(--gray-400);
+      font-family: monospace;
+    }
+    .ext-body { padding: 20px; }
+    .ext-selected {
+      background: #fff3cd;
+      border-radius: 4px;
+      padding: 2px 5px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #856404;
+      display: inline-block;
+      margin-bottom: 14px;
+    }
+    .ext-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .ext-card-word {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .ext-card-pinyin {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .ext-card-section { margin-bottom: 10px; }
+    .ext-card-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--blue);
+      margin-bottom: 3px;
+    }
+    .ext-card-value {
+      font-size: 13px;
+      color: var(--gray-800);
+      line-height: 1.5;
+    }
+    .ext-tag {
+      display: inline-block;
+      background: #fff0f0;
+      color: #c0392b;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 99px;
+      margin-top: 8px;
+    }
+    .ext-tag-blue {
+      background: var(--blue-light);
+      color: var(--blue);
+    }
+
+    /* ── Comparison ──────────────────────────────────── */
+    .comparison { background: var(--gray-50); }
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .cmp-card {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow);
+    }
+    .cmp-card.bad { border-color: #f5c6cb; }
+    .cmp-card.good { border-color: #b8daff; }
+    .cmp-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .cmp-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .cmp-icon.red { background: #fff0f0; }
+    .cmp-icon.blue { background: var(--blue-light); }
+    .cmp-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .cmp-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .cmp-example {
+      background: var(--gray-50);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .cmp-example.last { margin-bottom: 0; }
+    .cmp-phrase {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .cmp-result {
+      font-size: 13px;
+      color: var(--gray-600);
+      line-height: 1.5;
+    }
+    .cmp-result.wrong { color: #dc3545; text-decoration: line-through; }
+    .cmp-result.right { color: #155724; }
+    .cmp-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      font-style: italic;
+    }
+
+    /* ── Features ────────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 52px;
+    }
+    .feature-card {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .feature-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .feature-icon {
+      width: 44px; height: 44px;
+      background: var(--blue-light);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+    .feature-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .feature-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ── Use cases ───────────────────────────────────── */
+    .usecases { background: var(--gray-50); }
+    .usecases-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 52px;
+    }
+    .usecase-card {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+    .usecase-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .usecase-icon {
+      font-size: 24px;
+      width: 48px; height: 48px;
+      background: var(--blue-light);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .usecase-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .usecase-sub { font-size: 13px; color: var(--text-muted); }
+    .usecase-example {
+      background: var(--gray-50);
+      border-radius: 8px;
+      padding: 12px 14px;
+      border-left: 3px solid var(--blue);
+    }
+    .usecase-zh { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .usecase-en { font-size: 12px; color: var(--text-muted); }
+
+    /* ── Pricing ─────────────────────────────────────── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 800px;
+      margin: 52px auto 0;
+    }
+    .price-card {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      box-shadow: var(--shadow);
+      text-align: left;
+    }
+    .price-card.featured {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(26,86,219,0.08), var(--shadow-md);
+    }
+    .price-badge {
+      display: inline-block;
+      background: var(--blue);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 99px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .price-tier { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .price-amount {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+    }
+    .price-amount span { font-size: 16px; font-weight: 500; color: var(--text-muted); }
+    .price-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 20px 0;
+    }
+    .price-features { list-style: none; margin-bottom: 28px; }
+    .price-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--gray-600);
+      padding: 6px 0;
+    }
+    .price-features li::before {
+      content: "✓";
+      color: var(--blue);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .price-note { font-size: 12px; color: var(--text-muted); margin-top: 12px; text-align: center; }
+
+    /* ── Trust ───────────────────────────────────────── */
+    .trust { background: var(--gray-50); }
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 52px;
+    }
+    .trust-card {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+    .trust-icon {
+      font-size: 24px;
+      margin-bottom: 14px;
+    }
+    .trust-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .trust-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ── FAQ ─────────────────────────────────────────── */
+    .faq-list { max-width: 720px; margin: 52px auto 0; }
+    .faq-item {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .faq-q {
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      padding: 20px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      font-family: inherit;
+    }
+    .faq-q:hover { background: var(--gray-50); }
+    .faq-chevron {
+      width: 20px; height: 20px;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+      color: var(--text-muted);
+    }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+    .faq-a {
+      display: none;
+      padding: 0 24px 20px;
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+    .faq-item.open .faq-a { display: block; }
+
+    /* ── CTA Banner ──────────────────────────────────── */
+    .cta-banner {
+      background: linear-gradient(135deg, #1a56db 0%, #1246b3 100%);
+      color: #fff;
+      text-align: center;
+      padding: 80px 24px;
+    }
+    .cta-banner h2 {
+      font-size: clamp(26px, 4vw, 38px);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 16px;
+    }
+    .cta-banner p {
+      font-size: 17px;
+      opacity: 0.8;
+      margin-bottom: 36px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cta-banner .btn-primary {
+      background: #fff;
+      color: var(--blue);
+    }
+    .cta-banner .btn-primary:hover { background: #f0f4ff; }
+    .cta-banner .btn-secondary {
+      border-color: rgba(255,255,255,0.4);
+      color: #fff;
+      background: transparent;
+    }
+    .cta-banner .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+    .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* ── Footer ──────────────────────────────────────── */
+    footer {
+      background: var(--gray-800);
+      color: #adb5bd;
+      padding: 48px 24px;
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 40px;
+    }
+    .footer-brand .logo { color: #fff; font-size: 20px; }
+    .footer-brand p {
+      font-size: 13px;
+      color: #6c757d;
+      margin-top: 12px;
+      line-height: 1.6;
+      max-width: 280px;
+    }
+    .footer-social {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .footer-social a {
+      width: 34px; height: 34px;
+      background: #343a40;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: #adb5bd;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.15s;
+    }
+    .footer-social a:hover { background: #495057; color: #fff; }
+    .footer-col h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #dee2e6;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 10px; }
+    .footer-col a {
+      font-size: 13px;
+      color: #6c757d;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-col a:hover { color: #adb5bd; }
+    .footer-bottom {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding-top: 24px;
+      border-top: 1px solid #343a40;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #6c757d;
+    }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media (max-width: 768px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+      .hero-visual { order: -1; }
+      .comparison-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .usecases-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .trust-grid { grid-template-columns: 1fr 1fr; }
+      .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 500px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .trust-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAV ══════════════════════════════════════════════ -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">Mand<span>rain</span></a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#trust">Privacy</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#" class="nav-cta">Add to Chrome</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ══ HERO ══════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        Chrome Extension · Free to Start
+      </div>
+      <h1>Understand Chinese<br /><em>beyond literal translation</em></h1>
+      <p>Decode slang, tone, sentiment, and implied meaning while reading Chinese posts, comments, memes, and online discussions — without switching tabs.</p>
+      <div class="hero-btns">
+        <a href="#" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+          Add to Chrome
+        </a>
+        <a href="#features" class="btn btn-secondary">View Features →</a>
+      </div>
+      <div class="hero-note">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        Free plan available · No account required · Works on any website
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="ext-mockup">
+        <div class="ext-header">
+          <div class="ext-dot ext-dot-r"></div>
+          <div class="ext-dot ext-dot-y"></div>
+          <div class="ext-dot ext-dot-g"></div>
+          <div class="ext-addr">weibo.com/timeline</div>
+        </div>
+        <div class="ext-body">
+          <div style="font-size:13px;color:#6c757d;margin-bottom:10px;">You selected:</div>
+          <div class="ext-selected">卷 (juǎn)</div>
+          <div class="ext-card">
+            <div class="ext-card-word">卷 — juǎn</div>
+            <div class="ext-card-pinyin">Literally: "to roll" or "curl"</div>
+            <div class="ext-card-section">
+              <div class="ext-card-label">Natural translation</div>
+              <div class="ext-card-value">To participate in an exhausting cycle of overwork and competition — "the rat race"</div>
+            </div>
+            <div class="ext-card-section">
+              <div class="ext-card-label">Implied meaning</div>
+              <div class="ext-card-value">Often used critically to describe relentless competition that benefits no one — "why are we all doing this to ourselves?"</div>
+            </div>
+            <div class="ext-card-section">
+              <div class="ext-card-label">Sentiment</div>
+              <div class="ext-card-value">Tired, cynical, or self-aware exhaustion</div>
+            </div>
+            <span class="ext-tag">Internet Slang</span>
+            <span class="ext-tag ext-tag-blue">Contextual Analysis</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ COMPARISON ════════════════════════════════════════ -->
+<section class="section comparison" id="comparison">
+  <div class="container">
+    <div class="section-label">Why it matters</div>
+    <h2 class="section-title">Normal translation isn't enough</h2>
+    <p class="section-sub">Literal translation gets the words right but misses the point. Chinese internet language is rich with slang, sarcasm, and culturally loaded meaning that word-for-word tools consistently fail to capture.</p>
+
+    <div class="comparison-grid">
+      <div class="cmp-card bad">
+        <div class="cmp-header">
+          <div class="cmp-icon red">❌</div>
+          <div>
+            <div class="cmp-title">Literal translation</div>
+            <div class="cmp-sub">What standard translators return</div>
+          </div>
+        </div>
+
+        <div class="cmp-example">
+          <div class="cmp-phrase">躺平</div>
+          <div class="cmp-result wrong">"Lie flat"</div>
+          <div class="cmp-note">Technically accurate. Completely useless in context.</div>
+        </div>
+        <div class="cmp-example">
+          <div class="cmp-phrase">内卷</div>
+          <div class="cmp-result wrong">"Internal volume" or "involution"</div>
+          <div class="cmp-note">Meaningless to anyone outside academia.</div>
+        </div>
+        <div class="cmp-example last">
+          <div class="cmp-phrase">拿捏了</div>
+          <div class="cmp-result wrong">"Pinched it"</div>
+          <div class="cmp-note">Context, tone, and meaning completely lost.</div>
+        </div>
+      </div>
+
+      <div class="cmp-card good">
+        <div class="cmp-header">
+          <div class="cmp-icon blue">✦</div>
+          <div>
+            <div class="cmp-title">Mandrain contextual understanding</div>
+            <div class="cmp-sub">What you actually need to know</div>
+          </div>
+        </div>
+
+        <div class="cmp-example">
+          <div class="cmp-phrase">躺平</div>
+          <div class="cmp-result right">"Opting out" — rejecting the pressure to hustle. A quiet form of protest against relentless societal expectations.</div>
+        </div>
+        <div class="cmp-example">
+          <div class="cmp-phrase">内卷</div>
+          <div class="cmp-result right">"The rat race" — intense, exhausting competition where everyone loses. Carries frustration and irony.</div>
+        </div>
+        <div class="cmp-example last">
+          <div class="cmp-phrase">拿捏了</div>
+          <div class="cmp-result right">"Nailed it" or "got them right where I want them" — confident, playful mastery. Positive or boastful tone.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FEATURES ══════════════════════════════════════════ -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-label">What it does</div>
+    <h2 class="section-title">Everything you need to understand real Chinese online language</h2>
+    <p class="section-sub">Select any Chinese text while browsing. Mandrain instantly shows you what it actually means — not just what it literally says.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🌐</div>
+        <div class="feature-title">Natural English Translation</div>
+        <div class="feature-desc">Get fluent, natural equivalents — not word-for-word renderings. Phrased the way an English speaker would actually say it.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔤</div>
+        <div class="feature-title">Internet Slang Dictionary</div>
+        <div class="feature-desc">2,000+ frequently used terms from Chinese social media, forums, and online culture. Constantly updated to stay current.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💡</div>
+        <div class="feature-title">Implied Meaning</div>
+        <div class="feature-desc">Understand what people really mean. Mandrain surfaces the subtext, cultural context, and indirect message behind the words.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎭</div>
+        <div class="feature-title">Tone & Sentiment Analysis</div>
+        <div class="feature-desc">Detect sarcasm, frustration, affection, irony, and playfulness. Know not just what someone said, but how they felt saying it.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Works Anywhere You Browse</div>
+        <div class="feature-desc">Works on any site — Weibo, Bilibili, Xiaohongshu, Reddit, news sites, forums. Just select text and the card appears.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <div class="feature-title">AI-Powered Contextual Analysis</div>
+        <div class="feature-desc">For nuanced expressions that a static dictionary can't cover, AI provides a deeper analysis of meaning within context.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ USE CASES ══════════════════════════════════════════ -->
+<section class="section usecases" id="usecases">
+  <div class="container">
+    <div class="section-label">Who uses it</div>
+    <h2 class="section-title">Built for real reading, not textbook Chinese</h2>
+    <p class="section-sub">Whether you're following a discussion or trying to understand a meme, Mandrain is designed for the informal, slang-heavy Chinese you encounter every day online.</p>
+
+    <div class="usecases-grid">
+      <div class="usecase-card">
+        <div class="usecase-header">
+          <div class="usecase-icon">📱</div>
+          <div>
+            <div class="usecase-title">Social media posts</div>
+            <div class="usecase-sub">Weibo, Xiaohongshu, WeChat Moments</div>
+          </div>
+        </div>
+        <div class="usecase-example">
+          <div class="usecase-zh">真的好卷啊，感觉自己要躺平了</div>
+          <div class="usecase-en">"This competition is exhausting — I'm seriously considering checking out of it all."</div>
+        </div>
+      </div>
+
+      <div class="usecase-card">
+        <div class="usecase-header">
+          <div class="usecase-icon">💬</div>
+          <div>
+            <div class="usecase-title">Comment sections</div>
+            <div class="usecase-sub">Bilibili, Douyin, news sites</div>
+          </div>
+        </div>
+        <div class="usecase-example">
+          <div class="usecase-zh">他这个拿捏了，笑死我了</div>
+          <div class="usecase-en">"He absolutely nailed that move — I'm dying laughing." (Impressed, amused tone.)</div>
+        </div>
+      </div>
+
+      <div class="usecase-card">
+        <div class="usecase-header">
+          <div class="usecase-icon">🗣️</div>
+          <div>
+            <div class="usecase-title">Forum discussions</div>
+            <div class="usecase-sub">Tieba, Zhihu, NGA</div>
+          </div>
+        </div>
+        <div class="usecase-example">
+          <div class="usecase-zh">这波属于是拿大了</div>
+          <div class="usecase-en">"This was a total overreach / way too bold." (Critical, slightly mocking tone.)</div>
+        </div>
+      </div>
+
+      <div class="usecase-card">
+        <div class="usecase-header">
+          <div class="usecase-icon">🎭</div>
+          <div>
+            <div class="usecase-title">Memes & viral content</div>
+            <div class="usecase-sub">Emotionally loaded & culturally specific</div>
+          </div>
+        </div>
+        <div class="usecase-example">
+          <div class="usecase-zh">苦一苦自己，幸福下一代</div>
+          <div class="usecase-en">"Suffer now so the next generation can have it better." (Often used sarcastically — questioning whether the sacrifice is worth it.)</div>
+        </div>
+      </div>
+
+      <div class="usecase-card">
+        <div class="usecase-header">
+          <div class="usecase-icon">📚</div>
+          <div>
+            <div class="usecase-title">Language learners</div>
+            <div class="usecase-sub">Beyond textbook Mandarin</div>
+          </div>
+        </div>
+        <div class="usecase-example">
+          <div class="usecase-zh">整了个大活儿</div>
+          <div class="usecase-en">"Pulled off something epic / made a big production of it." (Impressed or mildly dramatic. Common in gaming and entertainment.)</div>
+        </div>
+      </div>
+
+      <div class="usecase-card">
+        <div class="usecase-header">
+          <div class="usecase-icon">🔍</div>
+          <div>
+            <div class="usecase-title">Researchers & analysts</div>
+            <div class="usecase-sub">Media, culture, social listening</div>
+          </div>
+        </div>
+        <div class="usecase-example">
+          <div class="usecase-zh">破防了，真的破防了</div>
+          <div class="usecase-en">"I'm genuinely shaken / this hit me hard." (Emotionally overwhelmed, defenses broken down — positive or negative.)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PRICING ════════════════════════════════════════════ -->
+<section class="section" id="pricing">
+  <div class="container" style="text-align:center;">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Start free. Upgrade when you're ready.</h2>
+    <p class="section-sub" style="margin:0 auto 0;">No signup required to start. The free plan is genuinely useful — upgrade only if you want deeper analysis and the full slang library.</p>
+
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-tier">Free</div>
+        <div class="price-amount">$0 <span>/ forever</span></div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>Natural English translation</li>
+          <li>Common everyday vocabulary</li>
+          <li>Basic tone and sentiment hints</li>
+          <li>Works on any website</li>
+          <li>No account required</li>
+        </ul>
+        <a href="#" class="btn btn-secondary" style="width:100%;justify-content:center;">Add to Chrome — Free</a>
+      </div>
+
+      <div class="price-card featured">
+        <div class="price-badge">Pro</div>
+        <div class="price-tier">Pro</div>
+        <div class="price-amount">$4 <span>/ month</span></div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>Everything in Free</li>
+          <li>2,000+ Chinese internet slang entries</li>
+          <li>AI-powered contextual analysis</li>
+          <li>Deeper implied meaning explanations</li>
+          <li>Sentiment and tone breakdown</li>
+          <li>Slang from social media, gaming, memes</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#" class="btn btn-primary" style="width:100%;justify-content:center;">Get Pro</a>
+        <div class="price-note">Cancel anytime · Secure checkout</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TRUST ══════════════════════════════════════════════ -->
+<section class="section trust" id="trust">
+  <div class="container">
+    <div class="section-label">Trust & Privacy</div>
+    <h2 class="section-title">Built by an independent developer.<br />Held to a high standard.</h2>
+    <p class="section-sub">Mandrain is a solo-built product, not a faceless corporation — which means accountability is personal. Here's exactly how I handle your data and maintain the extension.</p>
+
+    <div class="trust-grid">
+      <div class="trust-card">
+        <div class="trust-icon">🔒</div>
+        <div class="trust-title">Minimal data processing</div>
+        <div class="trust-desc">Only the text you explicitly select is ever sent for analysis. Mandrain does not read, scan, or store any other page content, browsing history, or personal data.</div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-icon">🚫</div>
+        <div class="trust-title">No tracking, no ads</div>
+        <div class="trust-desc">There is no analytics tracking, no ad network, and no data sold to third parties. The business model is simple: a paid plan. That's it.</div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-icon">⚙️</div>
+        <div class="trust-title">Actively maintained</div>
+        <div class="trust-desc">Mandrain is in active development. Slang entries are updated as language evolves, and issues are responded to personally and promptly.</div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-icon">📬</div>
+        <div class="trust-title">Real support by email</div>
+        <div class="trust-desc">Questions, concerns, or feedback go directly to the developer — not a support queue. You'll get a genuine response, not a template.</div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-icon">👤</div>
+        <div class="trust-title">Built by a real person</div>
+        <div class="trust-desc">Mandrain was built by an independent developer who uses it personally. The motivation is to build something genuinely useful, not to scale at any cost.</div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-icon">📄</div>
+        <div class="trust-title">Clear privacy policy</div>
+        <div class="trust-desc">The privacy policy is written in plain language, not legalese. It clearly states what data is used, how, and why — with no hidden clauses.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ════════════════════════════════════════════════ -->
+<section class="section" id="faq">
+  <div class="container" style="text-align:center;">
+    <div class="section-label">FAQ</div>
+    <h2 class="section-title">Common questions</h2>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How is Mandrain different from Google Translate or DeepL?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a">Standard translation tools are designed for formal text and word-for-word accuracy. They struggle with slang, sarcasm, indirect phrasing, and culturally specific expressions. Mandrain is specifically built for informal Chinese internet language — it explains implied meaning, tone, and sentiment in addition to translating the words.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Does it work on social media and forums?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a">Yes. Mandrain works on any website where you can select text — including Weibo, Bilibili, Xiaohongshu, Reddit, forums, news sites, and more. Just select a word or phrase and the card appears instantly.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What does the free version include?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a">The free plan includes natural English translation, common everyday vocabulary, basic tone and sentiment context, and full support for any website. No account or signup is required to use it.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What does Pro unlock?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a">Pro adds access to 2,000+ curated Chinese internet slang entries, AI-powered contextual analysis for nuanced or ambiguous expressions, deeper implied meaning explanations, and detailed tone and sentiment breakdowns. It's designed for heavy readers of Chinese online content.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How is user data handled?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a">Only the text you explicitly select is sent to the server for analysis. No page content, browsing history, or personal information is collected or stored. There is no tracking, no advertising, and no data sharing with third parties. See the Privacy Policy for full details.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Who is Mandrain for?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a">Mandrain is designed for anyone who reads Chinese online content but isn't fluent in informal Mandarin — including language learners, expats, researchers, journalists, global professionals, and anyone who regularly encounters Chinese social media, forums, or online discussions and wants to understand more than the literal translation provides.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA BANNER ════════════════════════════════════════ -->
+<section class="cta-banner">
+  <h2>Ready to actually understand Chinese online?</h2>
+  <p>Start for free. No account needed. Works on any website in seconds.</p>
+  <div class="cta-btns">
+    <a href="#" class="btn btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+      Add to Chrome — Free
+    </a>
+    <a href="#pricing" class="btn btn-secondary">View Pricing</a>
+  </div>
+</section>
+
+<!-- ══ FOOTER ════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="#" class="logo">Mand<span style="color:#adb5bd">rain</span></a>
+      <p>A Chrome extension for understanding Chinese internet language beyond literal translation. Built by an independent developer.</p>
+      <div class="footer-social">
+        <a href="#" title="X / Twitter">𝕏</a>
+        <a href="#" title="Medium" style="font-size:16px;font-weight:700;">M</a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="#">Chrome Web Store</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Legal & Support</h4>
+      <ul>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Use</a></li>
+        <li><a href="mailto:hello@mandrain.app">hello@mandrain.app</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© 2026 Mandrain. Built independently.</span>
+    <span>Made for people who read the internet in Chinese.</span>
+  </div>
+</footer>
+
+<script>
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+</script>
+</body>
+</html>
