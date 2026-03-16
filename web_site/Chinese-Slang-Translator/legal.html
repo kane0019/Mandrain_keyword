@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legal — Chinese Slang Translator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f9fa; color: #212529; line-height: 1.7; }
+    nav { background: #fff; border-bottom: 1px solid #e9ecef; padding: 14px 24px; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+    nav a { color: #6c757d; text-decoration: none; } nav a:hover { text-decoration: underline; }
+    nav .sep { color: #adb5bd; }
+    .page { max-width: 780px; margin: 48px auto; padding: 0 24px 80px; }
+    .toc { background: #fff; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px 24px; margin-bottom: 40px; }
+    .toc h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: #6c757d; margin-bottom: 12px; }
+    .toc ul { list-style: none; } .toc ul li { margin-bottom: 6px; }
+    .toc ul li a { color: #0d6efd; text-decoration: none; font-size: 14px; } .toc ul li a:hover { text-decoration: underline; }
+    section { margin-bottom: 56px; }
+    h1 { font-size: 28px; margin-bottom: 6px; }
+    .meta { font-size: 13px; color: #6c757d; margin-bottom: 36px; }
+    h2 { font-size: 19px; margin: 32px 0 10px; padding-top: 8px; border-top: 1px solid #e9ecef; }
+    h3 { font-size: 15px; margin: 20px 0 6px; color: #343a40; }
+    p { margin-bottom: 12px; font-size: 15px; }
+    ul { margin: 8px 0 12px 20px; font-size: 15px; } ul li { margin-bottom: 6px; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 14px; }
+    th { background: #f8f9fa; text-align: left; padding: 9px 12px; border: 1px solid #dee2e6; font-weight: 600; }
+    td { padding: 9px 12px; border: 1px solid #dee2e6; vertical-align: top; }
+    .badge { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 20px; font-weight: 600; }
+    .badge-green { background: #d1fae5; color: #065f46; }
+    .badge-yellow { background: #fef3c7; color: #92400e; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .highlight-box { background: #f0f9ff; border-left: 3px solid #0ea5e9; padding: 14px 16px; border-radius: 0 6px 6px 0; margin: 16px 0; font-size: 14px; }
+    footer { text-align: center; font-size: 13px; color: #adb5bd; border-top: 1px solid #e9ecef; padding-top: 24px; }
+    a { color: #0d6efd; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../">Gecktool</a>
+  <span class="sep">/</span>
+  <a href="./">Chinese Slang Translator</a>
+  <span class="sep">/</span>
+  Legal
+</nav>
+
+<div class="page">
+
+  <h1>Legal Policies</h1>
+  <p class="meta">Chinese Slang Translator · Last updated: March 17, 2026 · Published by Gecktool</p>
+
+  <div class="toc">
+    <h2>Contents</h2>
+    <ul>
+      <li><a href="#privacy">1. Privacy Policy</a></li>
+      <li><a href="#terms">2. Terms &amp; Conditions</a></li>
+      <li><a href="#refund">3. Refund Policy</a></li>
+      <li><a href="#contact">4. Contact</a></li>
+    </ul>
+  </div>
+
+  <!-- ══ PRIVACY POLICY ══════════════════════════════════════════ -->
+  <section id="privacy">
+    <h1 style="font-size:22px;">1. Privacy Policy</h1>
+
+    <h2>What this extension does</h2>
+    <p>Chinese Slang Translator is a Chrome extension that lets you select Chinese text on any webpage and instantly see an English explanation of its slang meaning, tone, and cultural context. It reads only the text you explicitly select — it never scans or reads any other page content.</p>
+
+    <h2>Data we collect — full inventory</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Data item</th>
+          <th>When collected</th>
+          <th>Why</th>
+          <th>Stored where</th>
+          <th>Retention</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Selected text</strong><br><em>The Chinese word or phrase you highlight (≤ 30 characters)</em></td>
+          <td>On every lookup</td>
+          <td>Core function — the text to be analyzed</td>
+          <td>Sent to our backend; cached in AWS DynamoDB (encrypted at rest)</td>
+          <td>24 hours (cache TTL), then auto-deleted</td>
+        </tr>
+        <tr>
+          <td><strong>Surrounding context</strong><br><em>Up to 200 characters before and after the selected text, extracted from the same DOM text node</em></td>
+          <td>On every lookup (paid plan only)</td>
+          <td>Disambiguation — helps AI distinguish meaning when a word has multiple uses</td>
+          <td>Transmitted to our backend for real-time analysis only; <strong>never stored or logged</strong></td>
+          <td>Not retained — used in-flight only</td>
+        </tr>
+        <tr>
+          <td><strong>Page URL (origin + path only)</strong><br><em>e.g. weibo.com/timeline — query strings and fragments are stripped</em></td>
+          <td>On every lookup (paid plan only)</td>
+          <td>Provides domain context for slang that varies by platform</td>
+          <td>Transmitted in-flight only; <strong>never stored</strong></td>
+          <td>Not retained</td>
+        </tr>
+        <tr>
+          <td><strong>License token</strong><br><em>A subscription key you enter in the extension popup</em></td>
+          <td>When you enter or update it</td>
+          <td>Authenticates your subscription and plan (free / paid)</td>
+          <td>Stored locally in <code>chrome.storage.local</code> on your device only; never transmitted except for verification</td>
+          <td>Until you reset or uninstall the extension</td>
+        </tr>
+        <tr>
+          <td><strong>Anonymous install ID</strong><br><em>A randomly generated UUID created on first install</em></td>
+          <td>On first install</td>
+          <td>Enforces per-account device limit (max 3 devices). Not linked to any personal identity.</td>
+          <td>Stored locally in <code>chrome.storage.local</code>; hashed and associated with your license token server-side</td>
+          <td>Until you uninstall</td>
+        </tr>
+        <tr>
+          <td><strong>Enabled site list (whitelist)</strong><br><em>Hostnames of sites where you have enabled the extension</em></td>
+          <td>When you toggle a site on/off</td>
+          <td>Controls on which sites the extension activates</td>
+          <td>Stored locally in <code>chrome.storage.local</code> only; never sent to our servers</td>
+          <td>Until you clear it or uninstall</td>
+        </tr>
+        <tr>
+          <td><strong>Hint-dismissed site list</strong><br><em>Hostnames where you clicked "Disable" on the hint card</em></td>
+          <td>When you dismiss the hint</td>
+          <td>Prevents the enable-hint from reappearing on the same site after page reload</td>
+          <td>Stored locally in <code>chrome.storage.local</code> only; never sent to our servers</td>
+          <td>Until you uninstall</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="highlight-box">
+      <strong>What we do NOT collect:</strong> browsing history, full page content, keystrokes, form inputs, passwords, personal identity (name, email, IP address), or any data from pages where the extension is not enabled.
+    </div>
+
+    <h2>How selected text is protected</h2>
+    <ul>
+      <li>All transmission is over HTTPS (TLS 1.2+).</li>
+      <li>Every request requires a valid JWT signed by our backend — unauthenticated requests are rejected.</li>
+      <li>Selected text is validated and capped at 30 characters server-side before being passed to AI models.</li>
+      <li>Context (prefix/suffix) is capped at 200 characters each and sanitized to remove any HTML/XML tags before being included in AI prompts — protecting against prompt injection attacks.</li>
+      <li>AI analysis results for common words are cached in DynamoDB and shared across users, meaning most lookups never send your context to an AI model at all.</li>
+    </ul>
+
+    <h2>Third-party services</h2>
+    <table>
+      <thead><tr><th>Service</th><th>Purpose</th><th>What is sent</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>AWS Bedrock (Claude / DeepSeek / Nova Pro)</td>
+          <td>AI-powered slang analysis (paid users, cache miss only)</td>
+          <td>Selected text + surrounding context (no personal data)</td>
+        </tr>
+        <tr>
+          <td>AWS DynamoDB</td>
+          <td>Word analysis cache</td>
+          <td>Selected text + analysis result (no personal data)</td>
+        </tr>
+        <tr>
+          <td>AWS API Gateway + Lambda</td>
+          <td>Backend infrastructure</td>
+          <td>Standard HTTPS request metadata (not stored)</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>No analytics, advertising, or tracking services are used.</p>
+
+    <h2>Your rights</h2>
+    <p>Because we do not collect personally identifiable information, there is no personal data profile to access, correct, or delete. To remove all locally stored extension data, uninstall the extension from Chrome — this clears all <code>chrome.storage.local</code> entries. To request deletion of any cached word entries associated with your token, contact us at the address below.</p>
+
+    <h2>Children's privacy</h2>
+    <p>This extension is not directed at children under 13. We do not knowingly collect any information from children.</p>
+
+    <h2>Changes to this policy</h2>
+    <p>We will update the "Last updated" date at the top of this page when changes are made. Continued use of the extension after changes constitutes acceptance.</p>
+  </section>
+
+  <!-- ══ TERMS & CONDITIONS ══════════════════════════════════════ -->
+  <section id="terms">
+    <h1 style="font-size:22px;">2. Terms &amp; Conditions</h1>
+
+    <h2>Acceptance</h2>
+    <p>By installing or using Chinese Slang Translator, you agree to these Terms. If you do not agree, do not install or use the extension.</p>
+
+    <h2>License</h2>
+    <p>We grant you a limited, non-exclusive, non-transferable, revocable license to use the extension solely for personal, non-commercial purposes. You may not copy, modify, distribute, sell, or reverse-engineer any part of the extension.</p>
+
+    <h2>Permitted use</h2>
+    <ul>
+      <li>Use the extension to translate and understand Chinese slang while browsing.</li>
+      <li>One paid subscription may be used on up to 3 personal devices simultaneously.</li>
+    </ul>
+
+    <h2>Prohibited use</h2>
+    <ul>
+      <li>Automated querying, scraping, or bulk use of the analysis API.</li>
+      <li>Sharing, reselling, or redistributing license tokens.</li>
+      <li>Attempting to circumvent rate limits, authentication, or other security controls.</li>
+      <li>Using the extension for any unlawful purpose.</li>
+    </ul>
+
+    <h2>Free plan limitations</h2>
+    <p>Free plan users have access to a curated local dictionary of 2,000+ entries. Full AI-powered contextual analysis requires a paid subscription. We reserve the right to modify free plan limits at any time.</p>
+
+    <h2>Service availability</h2>
+    <p>We strive for high availability but do not guarantee uninterrupted service. The extension may be temporarily unavailable due to maintenance, infrastructure issues, or third-party service outages. No compensation is provided for downtime.</p>
+
+    <h2>Disclaimer of warranties</h2>
+    <p>The extension is provided "as is" without warranties of any kind. We do not warrant that AI-generated translations or interpretations are accurate, complete, or suitable for any particular purpose. Always exercise your own judgment.</p>
+
+    <h2>Limitation of liability</h2>
+    <p>To the maximum extent permitted by applicable law, Gecktool shall not be liable for any indirect, incidental, special, or consequential damages arising from use of the extension.</p>
+
+    <h2>Governing law</h2>
+    <p>These Terms are governed by the laws of the jurisdiction in which Gecktool operates. Disputes shall be resolved through good-faith negotiation before any formal proceedings.</p>
+
+    <h2>Changes to terms</h2>
+    <p>We may update these Terms at any time. Continued use after changes constitutes acceptance of the revised Terms.</p>
+  </section>
+
+  <!-- ══ REFUND POLICY ══════════════════════════════════════════ -->
+  <section id="refund">
+    <h1 style="font-size:22px;">3. Refund Policy</h1>
+
+    <h2>Subscription model</h2>
+    <p>Chinese Slang Translator is offered as a monthly subscription at <strong>$4.99 / month</strong>. Subscriptions are billed monthly and renew automatically until cancelled.</p>
+
+    <h2>Refund eligibility</h2>
+    <table>
+      <thead><tr><th>Situation</th><th>Eligibility</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Request within <strong>7 days</strong> of first payment, extension did not work as described</td>
+          <td><span class="badge badge-green">Full refund</span></td>
+        </tr>
+        <tr>
+          <td>Request within <strong>7 days</strong>, changed your mind</td>
+          <td><span class="badge badge-green">Full refund</span></td>
+        </tr>
+        <tr>
+          <td>Request after 7 days but within 30 days, documented technical issue we could not resolve</td>
+          <td><span class="badge badge-yellow">Case-by-case</span></td>
+        </tr>
+        <tr>
+          <td>Request after 30 days</td>
+          <td><span class="badge badge-red">Not eligible</span></td>
+        </tr>
+        <tr>
+          <td>Renewal charge you forgot to cancel</td>
+          <td><span class="badge badge-yellow">One-time courtesy refund if requested within 3 days</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>How to request a refund</h2>
+    <p>Email <a href="mailto:hello@mandrain.app">hello@mandrain.app</a> with the subject line <strong>"Refund Request"</strong> and include:</p>
+    <ul>
+      <li>The email address used for your subscription</li>
+      <li>Date of purchase</li>
+      <li>Brief reason for the request</li>
+    </ul>
+    <p>We will respond within 3 business days. Approved refunds are processed within 5–10 business days depending on your payment provider.</p>
+
+    <h2>Cancellation</h2>
+    <p>You may cancel your subscription at any time. Cancellation stops future charges; you retain access until the end of the current billing period. Cancellation does not automatically trigger a refund for the current period unless it falls within the 7-day window above.</p>
+  </section>
+
+  <!-- ══ CONTACT ════════════════════════════════════════════════ -->
+  <section id="contact">
+    <h1 style="font-size:22px;">4. Contact</h1>
+    <p>For any questions about these policies, data requests, or refunds:</p>
+    <ul>
+      <li>Email: <a href="mailto:hello@mandrain.app">hello@mandrain.app</a></li>
+      <li>Product: <a href="./">Chinese Slang Translator</a></li>
+      <li>Publisher: Gecktool</li>
+    </ul>
+  </section>
+
+  <footer>
+    © 2026 Gecktool · Chinese Slang Translator · <a href="./">Product page</a>
+  </footer>
+
+</div>
+</body>
+</html>
