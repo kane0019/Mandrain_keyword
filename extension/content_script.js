@@ -76,15 +76,17 @@ function onDocumentMouseUp(event) {
     return;
   }
 
-  if (siteDisabled && !hintDismissed) {
+  if (siteDisabled) {
     // Method B: show lightweight "enable on this site" hint on text selection
-    const sel = window.getSelection();
-    const text = sel?.toString().trim() || '';
-    if (text.length >= 1 && text.length <= MAX_TEXT_LENGTH) {
-      const range = sel.rangeCount > 0 ? sel.getRangeAt(0) : null;
-      showEnableHint(range?.getBoundingClientRect());
+    if (!hintDismissed) {
+      const sel = window.getSelection();
+      const text = sel?.toString().trim() || '';
+      if (text.length >= 1 && text.length <= MAX_TEXT_LENGTH) {
+        const range = sel.rangeCount > 0 ? sel.getRangeAt(0) : null;
+        showEnableHint(range?.getBoundingClientRect());
+      }
     }
-    return;
+    return; // always block translation when site is disabled
   }
   handleTextSelection(event.clientX, event.clientY);
 }
