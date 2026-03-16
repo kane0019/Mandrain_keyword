@@ -1071,7 +1071,7 @@ function showEnableHint(rect) {
 
   const container = document.createElement('div');
   container.id = 'mandrain-card-container';
-  const { left: posLeft, top: posTop } = computeCardPosition(rect, 310, 44);
+  const { left: posLeft, top: posTop } = computeCardPosition(rect, 320, 50);
   container.style.cssText = `
     position: fixed;
     left: ${posLeft};
@@ -1083,46 +1083,53 @@ function showEnableHint(rect) {
 
   const style = document.createElement('style');
   style.textContent = `
+    :host { all: initial; }
     .hint {
       display: flex;
       align-items: center;
-      gap: 10px;
-      background: #1f1f1f;
-      color: #eee;
-      border-radius: 20px;
-      padding: 8px 14px;
+      gap: 8px;
+      background: #fff;
+      border: 1px solid #d0d0d0;
+      border-radius: 6px;
+      padding: 10px 14px;
       font-size: 12px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: #333;
       white-space: nowrap;
-      box-shadow: 0 3px 14px rgba(0,0,0,0.3);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+    .hint-label {
+      flex: 1;
+      font-size: 12px;
+      color: #555;
     }
     .hint-enable {
-      background: #4096ff;
+      background: #4a90d9;
       color: #fff;
       border: none;
-      border-radius: 10px;
-      padding: 3px 10px;
-      font-size: 11px;
+      border-radius: 4px;
+      padding: 4px 12px;
+      font-size: 12px;
       font-weight: 600;
       cursor: pointer;
     }
-    .hint-enable:hover { background: #1677ff; }
+    .hint-enable:hover { background: #3a7fc1; }
     .hint-disable {
-      background: transparent;
-      color: #aaa;
-      border: 1px solid #555;
-      border-radius: 10px;
-      padding: 3px 10px;
-      font-size: 11px;
-      font-weight: 500;
+      background: #fff;
+      color: #888;
+      border: 1px solid #d0d0d0;
+      border-radius: 4px;
+      padding: 4px 12px;
+      font-size: 12px;
       cursor: pointer;
     }
-    .hint-disable:hover { color: #eee; border-color: #888; }
+    .hint-disable:hover { background: #f5f5f5; color: #555; }
   `;
 
   const div = document.createElement('div');
   div.innerHTML = `
     <div class="hint">
-      <span>Enable Mandrain here?</span>
+      <span class="hint-label">Enable Mandrain here?</span>
       <button class="hint-enable">Enable</button>
       <button class="hint-disable">Disable</button>
     </div>
