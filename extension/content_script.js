@@ -32,18 +32,18 @@ function getErrorMessage(code) {
   return ERROR_MESSAGES[code] || '查询失败';
 }
 
-// 站点黑名单：检查当前域名是否被停用，是则不注册任何事件监听
+// 站点白名单：只在已启用的站点上激活插件
 let siteDisabled = false;
 
-chrome.storage.local.get('blacklist', (result) => {
-  const blacklist = result.blacklist || [];
-  const hostname = location.hostname;
-  if (blacklist.includes(hostname)) {
+// 始终初始化监听器，包括未启用的站点（用于显示“启用提示”）
+initListeners();
+
+chrome.storage.local.get('whitelist', (result) => {
+  const whitelist = result.whitelist || [];
+  if (!whitelist.includes(location.hostname)) {
     siteDisabled = true;
-    console.log('[Mandrain] disabled on', hostname);
-    return;
+    console.log('[Mandrain] not enabled on', location.hostname);
   }
-  initListeners();
 });
 
 function initListeners() {
@@ -51,12 +51,16 @@ function initListeners() {
   document.addEventListener('selectionchange', onSelectionChange);
 }
 
-// Re-enable when user removes this site from blacklist (no refresh needed)
+// 站点白名单变更时无需刷新页面即生效
 chrome.runtime.onMessage.addListener((msg) => {
-  if (msg.action === 'blacklistRemoved' && siteDisabled) {
+  if (msg.action === 'whitelistAdded' && siteDisabled) {
     siteDisabled = false;
-    initListeners();
-    console.log('[Mandrain] re-enabled on', location.hostname);
+    console.log('[Mandrain] enabled on', location.hostname);
+  }
+  if (msg.action === 'whitelistRemoved' && !siteDisabled) {
+    siteDisabled = true;
+    destroyCard({ cancelPending: true });
+    console.log('[Mandrain] disabled on', location.hostname);
   }
 });
 
@@ -67,7 +71,15 @@ function onDocumentMouseUp(event) {
     return;
   }
 
-  if (siteDisabled) return;
+  if (siteDisabled) {
+    // Method B: show lightweight "enable on this site" hint on text selection
+    const sel = window.getSelection();
+    const text = sel?.toString().trim() || '';
+    if (text.length >= 1 && text.length <= MAX_TEXT_LENGTH) {
+      showEnableHint(sel.getRangeAt(0)?.getBoundingClientRect());
+    }
+    return;
+  }
   handleTextSelection(event.clientX, event.clientY);
 }
 
@@ -1005,21 +1017,121 @@ Definition: ${data.definition || data.literal || '—'}
 }
 
 /**
- * 在当前站点停用插件
+ * 在当前站点停用插件（从白名单移除）
  */
 function disableOnCurrentSite() {
   const hostname = location.hostname;
   chrome.runtime.sendMessage(
-    { action: 'blacklistAdd', hostname: hostname },
+    { action: 'whitelistRemove', hostname: hostname },
     (response) => {
       if (chrome.runtime.lastError) return;
       if (response && response.success) {
         siteDisabled = true;
-        document.removeEventListener('mouseup', onDocumentMouseUp);
-        document.removeEventListener('selectionchange', onSelectionChange);
         destroyCard({ cancelPending: true });
         console.log('[Mandrain] disabled on', hostname);
       }
     }
   );
+}
+
+/**
+ * 在当前站点开启插件（加入白名单）
+ */
+function enableOnCurrentSite() {
+  const hostname = location.hostname;
+  chrome.runtime.sendMessage(
+    { action: 'whitelistAdd', hostname: hostname },
+    (response) => {
+      if (chrome.runtime.lastError) return;
+      if (response && response.success) {
+        siteDisabled = false;
+        destroyCard({ cancelPending: true });
+        console.log('[Mandrain] enabled on', hostname);
+      }
+    }
+  );
+}
+
+/**
+ * Method B: 轻量级“在此站点开启”提示卡片
+ * 当用户在未开启的站点上划词时显示，5秒后自动消失。
+ */
+function showEnableHint(rect) {
+  if (activeCard) return; // 已有卡片则不重复显示
+  if (!rect) return;
+
+  const container = document.createElement('div');
+  container.id = 'mandrain-card-container';
+  const { left: posLeft, top: posTop } = computeCardPosition(rect, 280, 44);
+  container.style.cssText = `
+    position: fixed;
+    left: ${posLeft}px;
+    top: ${posTop}px;
+    z-index: 2147483647;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  `;
+  const shadow = container.attachShadow({ mode: 'open' });
+
+  const style = document.createElement('style');
+  style.textContent = `
+    .hint {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #1f1f1f;
+      color: #eee;
+      border-radius: 20px;
+      padding: 8px 14px;
+      font-size: 12px;
+      white-space: nowrap;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.3);
+    }
+    .hint-enable {
+      background: #4096ff;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .hint-enable:hover { background: #1677ff; }
+    .hint-dismiss {
+      cursor: pointer;
+      opacity: 0.45;
+      font-size: 13px;
+      line-height: 1;
+      user-select: none;
+    }
+    .hint-dismiss:hover { opacity: 0.85; }
+  `;
+
+  const div = document.createElement('div');
+  div.innerHTML = `
+    <div class="hint">
+      <span>Mandrain not enabled here</span>
+      <button class="hint-enable">Enable</button>
+      <span class="hint-dismiss">✕</span>
+    </div>
+  `;
+  shadow.appendChild(style);
+  shadow.appendChild(div);
+
+  shadow.querySelector('.hint-enable').addEventListener('click', () => {
+    enableOnCurrentSite();
+  });
+  shadow.querySelector('.hint-dismiss').addEventListener('click', () => {
+    destroyCard();
+  });
+
+  document.addEventListener('pointerdown', onOutsidePointerDown, true);
+  document.addEventListener('keydown', onEscKey);
+  document.body.appendChild(container);
+  activeCard = container;
+
+  // 5秒后自动消失
+  setTimeout(() => {
+    if (activeCard === container) destroyCard();
+  }, 5000);
 }

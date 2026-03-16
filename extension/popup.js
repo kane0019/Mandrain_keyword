@@ -31,6 +31,47 @@ document.addEventListener('DOMContentLoaded', () => {
     chrome.tabs.create({ url: REGISTER_URL });
   });
 
+  // ── 当前站点 Toggle (Method A) ────────────────────────────
+  const siteToggle = document.getElementById('siteToggle');
+  const siteToggleLabel = document.getElementById('siteToggleLabel');
+  let currentHostname = null;
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const url = tabs[0]?.url || '';
+    if (!url || url.startsWith('chrome://') || url.startsWith('chrome-extension://')) {
+      siteToggleLabel.textContent = 'N/A (browser page)';
+      siteToggle.disabled = true;
+      return;
+    }
+    try { currentHostname = new URL(url).hostname; }
+    catch { siteToggleLabel.textContent = 'N/A'; siteToggle.disabled = true; return; }
+
+    chrome.runtime.sendMessage({ action: 'whitelistGet' }, (resp) => {
+      if (chrome.runtime.lastError) return;
+      const enabled = (resp?.whitelist || []).includes(currentHostname);
+      siteToggle.checked = enabled;
+      siteToggleLabel.textContent = enabled
+        ? `✓ Enabled on ${currentHostname}`
+        : `${currentHostname} (disabled)`;
+    });
+  });
+
+  siteToggle.addEventListener('change', () => {
+    if (!currentHostname) return;
+    const action = siteToggle.checked ? 'whitelistAdd' : 'whitelistRemove';
+    chrome.runtime.sendMessage({ action, hostname: currentHostname }, (resp) => {
+      if (chrome.runtime.lastError || !resp?.success) {
+        siteToggle.checked = !siteToggle.checked;
+        return;
+      }
+      const enabled = siteToggle.checked;
+      siteToggleLabel.textContent = enabled
+        ? `✓ Enabled on ${currentHostname}`
+        : `${currentHostname} (disabled)`;
+      renderWhitelist(resp.whitelist);
+    });
+  });
+
   btnSave.addEventListener('click', () => {
     const token = tokenInput.value.trim();
     if (!token) {
@@ -111,17 +152,17 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => feedback.classList.add('hidden'), 4000);
   }
 
-  // ── 站点黑名单管理 ──────────────────────────────
+  // ── 已启用站点白名单管理 ──────────────────────────────
   const blacklistContainer = document.getElementById('blacklistContainer');
 
-  function loadBlacklist() {
-    chrome.runtime.sendMessage({ action: 'blacklistGet' }, (response) => {
+  function loadWhitelist() {
+    chrome.runtime.sendMessage({ action: 'whitelistGet' }, (response) => {
       if (chrome.runtime.lastError || !response?.success) return;
-      renderBlacklist(response.blacklist);
+      renderWhitelist(response.whitelist);
     });
   }
 
-  function renderBlacklist(list) {
+  function renderWhitelist(list) {
     if (!list || list.length === 0) {
       blacklistContainer.innerHTML = '<span class="blacklist-empty">None</span>';
       return;
@@ -129,20 +170,26 @@ document.addEventListener('DOMContentLoaded', () => {
     blacklistContainer.innerHTML = list.map((hostname) =>
       `<div class="blacklist-item">
         <span>${hostname}</span>
-        <span class="blacklist-remove" data-host="${hostname}">Remove</span>
+        <span class="blacklist-remove" data-host="${hostname}">Disable</span>
       </div>`
     ).join('');
 
     blacklistContainer.querySelectorAll('.blacklist-remove').forEach((btn) => {
       btn.addEventListener('click', () => {
         const host = btn.getAttribute('data-host');
-        chrome.runtime.sendMessage({ action: 'blacklistRemove', hostname: host }, (resp) => {
-          if (resp?.success) renderBlacklist(resp.blacklist);
+        chrome.runtime.sendMessage({ action: 'whitelistRemove', hostname: host }, (resp) => {
+          if (resp?.success) {
+            renderWhitelist(resp.whitelist);
+            if (host === currentHostname) {
+              siteToggle.checked = false;
+              siteToggleLabel.textContent = `${currentHostname} (disabled)`;
+            }
+          }
         });
       });
     });
   }
 
   loadState();
-  loadBlacklist();
+  loadWhitelist();
 });

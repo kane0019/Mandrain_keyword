@@ -87,18 +87,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
-  if (request.action === 'blacklistAdd') {
-    handleBlacklistAdd(request.hostname, sendResponse);
+  if (request.action === 'whitelistAdd') {
+    handleWhitelistAdd(request.hostname, sendResponse);
     return true;
   }
 
-  if (request.action === 'blacklistRemove') {
-    handleBlacklistRemove(request.hostname, sendResponse);
+  if (request.action === 'whitelistRemove') {
+    handleWhitelistRemove(request.hostname, sendResponse);
     return true;
   }
 
-  if (request.action === 'blacklistGet') {
-    handleBlacklistGet(sendResponse);
+  if (request.action === 'whitelistGet') {
+    handleWhitelistGet(sendResponse);
     return true;
   }
 
@@ -112,39 +112,44 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // Service Worker启动时预热
 ensureLocalDBReady();
 
-// ── 站点黑名单管理 ─────────────────────────────────
+// ── 站点白名单管理 ─────────────────────────────────
 
-async function handleBlacklistAdd(hostname, sendResponse) {
+async function handleWhitelistAdd(hostname, sendResponse) {
   if (!hostname) {
     sendResponse({ success: false, error: 'empty hostname' });
     return;
   }
-  const result = await chrome.storage.local.get('blacklist');
-  const blacklist = result.blacklist || [];
-  if (!blacklist.includes(hostname)) {
-    blacklist.push(hostname);
-    await chrome.storage.local.set({ blacklist });
+  const result = await chrome.storage.local.get('whitelist');
+  const whitelist = result.whitelist || [];
+  if (!whitelist.includes(hostname)) {
+    whitelist.push(hostname);
+    await chrome.storage.local.set({ whitelist });
   }
-  console.log('[Mandrain] blacklist add:', hostname);
-  sendResponse({ success: true, blacklist });
-}
-
-async function handleBlacklistRemove(hostname, sendResponse) {
-  const result = await chrome.storage.local.get('blacklist');
-  const blacklist = (result.blacklist || []).filter(h => h !== hostname);
-  await chrome.storage.local.set({ blacklist });
-  console.log('[Mandrain] blacklist remove:', hostname);
-  // Notify matching tabs so content script re-enables without a page refresh
+  console.log('[Mandrain] whitelist add:', hostname);
+  // Notify matching tabs so content script enables without page refresh
   const tabs = await chrome.tabs.query({ url: `*://${hostname}/*` });
   for (const tab of tabs) {
-    chrome.tabs.sendMessage(tab.id, { action: 'blacklistRemoved', hostname }).catch(() => {});
+    chrome.tabs.sendMessage(tab.id, { action: 'whitelistAdded', hostname }).catch(() => {});
   }
-  sendResponse({ success: true, blacklist });
+  sendResponse({ success: true, whitelist });
 }
 
-async function handleBlacklistGet(sendResponse) {
-  const result = await chrome.storage.local.get('blacklist');
-  sendResponse({ success: true, blacklist: result.blacklist || [] });
+async function handleWhitelistRemove(hostname, sendResponse) {
+  const result = await chrome.storage.local.get('whitelist');
+  const whitelist = (result.whitelist || []).filter(h => h !== hostname);
+  await chrome.storage.local.set({ whitelist });
+  console.log('[Mandrain] whitelist remove:', hostname);
+  // Notify matching tabs so content script disables without page refresh
+  const tabs = await chrome.tabs.query({ url: `*://${hostname}/*` });
+  for (const tab of tabs) {
+    chrome.tabs.sendMessage(tab.id, { action: 'whitelistRemoved', hostname }).catch(() => {});
+  }
+  sendResponse({ success: true, whitelist });
+}
+
+async function handleWhitelistGet(sendResponse) {
+  const result = await chrome.storage.local.get('whitelist');
+  sendResponse({ success: true, whitelist: result.whitelist || [] });
 }
 bootstrapAuth().catch((error) => {
   console.warn('[Mandrain] bootstrap auth skipped:', error.message);

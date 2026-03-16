@@ -135,6 +135,49 @@
       margin-left: 8px;
     }
     .blacklist-remove:hover { text-decoration: underline; }
+    .site-section {
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      background: #f5f5f5;
+    }
+    .site-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #333;
+    }
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 36px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #ccc;
+      border-radius: 20px;
+      transition: background 0.2s;
+    }
+    .toggle-slider:before {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      left: 3px;
+      top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: #4096ff; }
+    .toggle-switch input:checked + .toggle-slider:before { transform: translateX(16px); }
+    .toggle-switch input:disabled + .toggle-slider { opacity: 0.4; cursor: not-allowed; }
   </style>
 </head>
 <body>
@@ -143,6 +186,16 @@
   <div id="statusBar" class="status-bar">
     <span id="statusDot" class="status-dot warn"></span>
     <span id="statusText">Checking…</span>
+  </div>
+
+  <div class="site-section">
+    <div class="site-toggle-row">
+      <span id="siteToggleLabel">Checking…</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="siteToggle">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
   </div>
 
   <label class="field-label" for="tokenInput">License Token</label>
@@ -156,7 +209,7 @@
   <div id="feedback" class="info hidden"></div>
 
   <div class="blacklist-section">
-    <div class="section-title">Disabled Sites</div>
+    <div class="section-title">Enabled Sites</div>
     <div id="blacklistContainer">
       <span class="blacklist-empty">None</span>
     </div>

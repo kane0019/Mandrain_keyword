@@ -308,5 +308,27 @@ const MAX_QUERY_LENGTH = 30;  // 查询词最大字符数
 ### v1.0.0 (2026-03-05)
 - ✨ 初始版本发布
 - 支持本地词库 + 云端降级
+
+---
+
+## 已知问题 / 技术债
+
+### API Gateway 新路由需手动触发 Redeployment
+
+**问题**：`AWS::ApiGateway::Deployment` 是不可变资源。向 `cfn-apigateway.yaml` 添加新路由后，CFN 更新 stack 时不会自动将新路由发布到 Stage，导致新路由返回 `403 {"message":"Missing Authentication Token"}`。
+
+**临时方案**：每次新增路由后，修改 `ApiDeployment` 下的 `Description` 字段（更新路由列表即可），CFN 会将其视为资源替换并触发重新发布。
+
+**根本解决方案（待做）**：在 `deployment.yml` 的 `deploy-apigateway` job 末尾加一步：
+
+```bash
+aws apigateway create-deployment \
+  --rest-api-id <api-id> \
+  --stage-name v1 \
+  --description "auto-deploy-$(date +%Y%m%d%H%M%S)"
+```
+
+这样每次 CFN deploy 后自动触发一次 redeployment，彻底规避此问题。
+
 - Shadow DOM UI隔离
 - 复制到剪贴板
