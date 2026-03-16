@@ -35,6 +35,7 @@ function getErrorMessage(code) {
 // 站点白名单：只在已启用的站点上激活插件
 let siteDisabled = true; // whitelist model: default disabled until confirmed
 const MAX_TEXT_LENGTH = 200; // shared by hint and translation
+let hintDismissed = false;   // suppresses hint after user explicitly dismisses it
 
 // 始终初始化监听器，包括未启用的站点（用于显示“启用提示”）
 initListeners();
@@ -58,6 +59,7 @@ function initListeners() {
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.action === 'whitelistAdded' && siteDisabled) {
     siteDisabled = false;
+    hintDismissed = false;
     console.log('[Mandrain] enabled on', location.hostname);
   }
   if (msg.action === 'whitelistRemoved' && !siteDisabled) {
@@ -74,7 +76,7 @@ function onDocumentMouseUp(event) {
     return;
   }
 
-  if (siteDisabled) {
+  if (siteDisabled && !hintDismissed) {
     // Method B: show lightweight "enable on this site" hint on text selection
     const sel = window.getSelection();
     const text = sel?.toString().trim() || '';
@@ -974,6 +976,7 @@ function destroyCard(options = {}) {
  * 统一关闭入口：关闭后抑制同一选区重复触发
  */
 function closeCard() {
+  if (siteDisabled) hintDismissed = true; // user explicitly dismissed hint
   suppressedSelectionSignature = lastSelectionSignature;
   clearSelection();
   destroyCard({ cancelPending: true });
@@ -1126,6 +1129,7 @@ function showEnableHint(rect) {
     enableOnCurrentSite();
   });
   shadow.querySelector('.hint-dismiss').addEventListener('click', () => {
+    hintDismissed = true;
     destroyCard();
   });
 
