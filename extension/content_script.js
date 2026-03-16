@@ -1065,8 +1065,8 @@ function showEnableHint(rect) {
   const { left: posLeft, top: posTop } = computeCardPosition(rect, 280, 44);
   container.style.cssText = `
     position: fixed;
-    left: ${posLeft}px;
-    top: ${posTop}px;
+    left: ${posLeft};
+    top: ${posTop};
     z-index: 2147483647;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   `;
