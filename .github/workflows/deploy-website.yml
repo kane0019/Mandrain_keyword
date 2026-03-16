@@ -56,19 +56,6 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # ── Deploy CloudFormation website stack (idempotent) ─
-      - name: Deploy website S3 stack
-        run: |
-          ENV="${{ steps.config.outputs.environment }}"
-          STACK_NAME="mandrain-website-${ENV}"
-          echo "Deploying CFN stack: ${STACK_NAME}"
-
-          aws cloudformation deploy \
-            --template-file backend/cfn-website.yaml \
-            --stack-name "${STACK_NAME}" \
-            --parameter-overrides EnvironmentName="${ENV}" \
-            --no-fail-on-empty-changeset
-
       # ── Sync web_site/ to S3 ────────────────────────────
       - name: Sync website files to S3
         run: |
