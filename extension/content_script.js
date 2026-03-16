@@ -976,7 +976,6 @@ function destroyCard(options = {}) {
  * 统一关闭入口：关闭后抑制同一选区重复触发
  */
 function closeCard() {
-  if (siteDisabled) hintDismissed = true; // user explicitly dismissed hint
   suppressedSelectionSignature = lastSelectionSignature;
   clearSelection();
   destroyCard({ cancelPending: true });
@@ -994,7 +993,8 @@ function clearSelection() {
  */
 function onOutsidePointerDown(event) {
   if (activeCard && event.target instanceof Node && !activeCard.contains(event.target)) {
-    closeCard();
+    if (siteDisabled) destroyCard(); // hint card: just close, no suppression
+    else closeCard(); // translation card: suppress same-selection re-trigger
   }
 }
 
@@ -1069,7 +1069,7 @@ function showEnableHint(rect) {
 
   const container = document.createElement('div');
   container.id = 'mandrain-card-container';
-  const { left: posLeft, top: posTop } = computeCardPosition(rect, 280, 44);
+  const { left: posLeft, top: posTop } = computeCardPosition(rect, 310, 44);
   container.style.cssText = `
     position: fixed;
     left: ${posLeft};
@@ -1104,22 +1104,25 @@ function showEnableHint(rect) {
       cursor: pointer;
     }
     .hint-enable:hover { background: #1677ff; }
-    .hint-dismiss {
+    .hint-disable {
+      background: transparent;
+      color: #aaa;
+      border: 1px solid #555;
+      border-radius: 10px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 500;
       cursor: pointer;
-      opacity: 0.45;
-      font-size: 13px;
-      line-height: 1;
-      user-select: none;
     }
-    .hint-dismiss:hover { opacity: 0.85; }
+    .hint-disable:hover { color: #eee; border-color: #888; }
   `;
 
   const div = document.createElement('div');
   div.innerHTML = `
     <div class="hint">
-      <span>Mandrain not enabled here</span>
+      <span>Enable Mandrain here?</span>
       <button class="hint-enable">Enable</button>
-      <span class="hint-dismiss">✕</span>
+      <button class="hint-disable">Disable</button>
     </div>
   `;
   shadow.appendChild(style);
@@ -1128,7 +1131,7 @@ function showEnableHint(rect) {
   shadow.querySelector('.hint-enable').addEventListener('click', () => {
     enableOnCurrentSite();
   });
-  shadow.querySelector('.hint-dismiss').addEventListener('click', () => {
+  shadow.querySelector('.hint-disable').addEventListener('click', () => {
     hintDismissed = true;
     destroyCard();
   });
