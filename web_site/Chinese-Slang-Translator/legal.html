@@ -83,8 +83,8 @@
           <td><strong>Selected text</strong><br><em>The Chinese word or phrase you highlight (≤ 30 characters)</em></td>
           <td>On every lookup</td>
           <td>Core function — the text to be analyzed</td>
-          <td>Sent to our backend; cached in AWS DynamoDB (encrypted at rest)</td>
-          <td>24 hours (cache TTL), then auto-deleted</td>
+          <td>The <em>analysis result</em> for the word is cached in AWS DynamoDB (encrypted at rest) and shared across all users who look up the same term. The cache entry contains only the word and its analysis — <strong>no user identity, no timestamp of who queried it, no association with any individual</strong>.</td>
+          <td>Retained as long as operationally useful; periodically reviewed and pruned. Because cache entries contain no personal data, their retention has no privacy impact.</td>
         </tr>
         <tr>
           <td><strong>Surrounding context</strong><br><em>Up to 200 characters before and after the selected text, extracted from the same DOM text node</em></td>
@@ -141,7 +141,7 @@
       <li>Every request requires a valid JWT signed by our backend — unauthenticated requests are rejected.</li>
       <li>Selected text is validated and capped at 30 characters server-side before being passed to AI models.</li>
       <li>Context (prefix/suffix) is capped at 200 characters each and sanitized to remove any HTML/XML tags before being included in AI prompts — protecting against prompt injection attacks.</li>
-      <li>AI analysis results for common words are cached in DynamoDB and shared across users, meaning most lookups never send your context to an AI model at all.</li>
+      <li>AI analysis results are cached per word and shared anonymously across all users. Cache entries contain only the word and its analysis — no user identity or query history is ever stored. Most lookups are served from cache without involving an AI model at all.</li>
     </ul>
 
     <h2>Third-party services</h2>
