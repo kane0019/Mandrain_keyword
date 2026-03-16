@@ -33,15 +33,17 @@ function getErrorMessage(code) {
 }
 
 // 站点白名单：只在已启用的站点上激活插件
-let siteDisabled = false;
+let siteDisabled = true; // whitelist model: default disabled until confirmed
 
 // 始终初始化监听器，包括未启用的站点（用于显示“启用提示”）
 initListeners();
 
 chrome.storage.local.get('whitelist', (result) => {
   const whitelist = result.whitelist || [];
-  if (!whitelist.includes(location.hostname)) {
-    siteDisabled = true;
+  if (whitelist.includes(location.hostname)) {
+    siteDisabled = false;
+    console.log('[Mandrain] enabled on', location.hostname);
+  } else {
     console.log('[Mandrain] not enabled on', location.hostname);
   }
 });
