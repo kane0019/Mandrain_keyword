@@ -240,6 +240,35 @@ Resources:
               - ec2:DescribeTags
             Resource: '*'
 
+          # S3 — Website static files (sync from GitHub Actions)
+          - Sid: S3WebsiteFiles
+            Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:DeleteObject
+              - s3:ListBucket
+              - s3:GetBucketLocation
+              - s3:PutObjectAcl
+            Resource:
+              - !Sub 'arn:aws:s3:::mandrain-website-*'
+              - !Sub 'arn:aws:s3:::mandrain-website-*/*'
+
+          # CloudFormation — deploy website stack
+          - Sid: CloudFormationWebsite
+            Effect: Allow
+            Action:
+              - cloudformation:CreateStack
+              - cloudformation:UpdateStack
+              - cloudformation:DescribeStacks
+              - cloudformation:DescribeStackEvents
+              - cloudformation:GetTemplate
+              - cloudformation:CreateChangeSet
+              - cloudformation:DeleteChangeSet
+              - cloudformation:DescribeChangeSet
+              - cloudformation:ExecuteChangeSet
+            Resource: !Sub 'arn:aws:cloudformation:*:${AWS::AccountId}:stack/mandrain-website-*'
+
           # SSM — CloudFormation reads parameter store during deploy
           - Sid: SSMRead
             Effect: Allow
