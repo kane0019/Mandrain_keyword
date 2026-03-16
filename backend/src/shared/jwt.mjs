@@ -14,8 +14,15 @@ export async function getJwtSecret() {
     SecretId: process.env.JWT_SECRET_ARN,
   }));
 
-  const parsed = JSON.parse(resp.SecretString);
-  cachedSecret = new TextEncoder().encode(parsed.jwt_signing_key);
+  // Support both plain string and JSON {"jwt_signing_key": "..."} formats
+  let key = resp.SecretString;
+  try {
+    const parsed = JSON.parse(key);
+    key = parsed.jwt_signing_key || parsed.secret || key;
+  } catch (_) {
+    // plain string, use as-is
+  }
+  cachedSecret = new TextEncoder().encode(key);
   return cachedSecret;
 }
 

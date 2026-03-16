@@ -20,6 +20,9 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   # ========== Stage 1: Determine environment ==========
   prepare:
@@ -42,11 +45,7 @@ jobs:
       - name: Set S3 bucket name
         id: bucket
         run: |
-          if [ "${{ steps.env.outputs.environment }}" = "prod" ]; then
-            echo "name=${{ vars.LAMBDA_BUCKET_PROD }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "name=${{ vars.LAMBDA_BUCKET_DEV }}" >> "$GITHUB_OUTPUT"
-          fi
+          echo "name=${{ vars.LAMBDA_BUCKET_DEV }}" >> "$GITHUB_OUTPUT"
 
   # ========== Stage 2: Deploy DynamoDB ==========
   deploy-dynamodb:
@@ -66,7 +65,7 @@ jobs:
         working-directory: backend
         run: |
           ENV="${{ needs.prepare.outputs.environment }}"
-          STACK_NAME="mandrain-dynamodb-${ENV}"
+          STACK_NAME="mandrain-extension-dynamodb-${ENV}"
           echo "Deploying stack: ${STACK_NAME}"
 
           aws cloudformation deploy \
@@ -79,7 +78,39 @@ jobs:
           echo "- Stack: \`${STACK_NAME}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- Status: Deployed" >> "$GITHUB_STEP_SUMMARY"
 
-  # ========== Stage 3: Build & Upload Lambda Code ==========
+  # ========== Stage 3: Deploy Secrets Stack ==========
+  deploy-secrets:
+    runs-on: ubuntu-latest
+    needs: prepare
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy Secrets stack
+        working-directory: backend
+        run: |
+          ENV="${{ needs.prepare.outputs.environment }}"
+          STACK_NAME="mandrain-extension-secret-${ENV}"
+          echo "Deploying stack: ${STACK_NAME}"
+
+          aws cloudformation deploy \
+            --template-file cfn-secrets.yaml \
+            --stack-name "${STACK_NAME}" \
+            --parameter-overrides EnvironmentName="${ENV}" \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --no-fail-on-empty-changeset
+
+          echo "### Secrets Stack" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Stack: \`${STACK_NAME}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Status: Deployed" >> "$GITHUB_STEP_SUMMARY"
+
+  # ========== Stage 4: Build & Upload Lambda Code ==========
   build-and-upload:
     runs-on: ubuntu-latest
     needs: prepare
@@ -108,7 +139,8 @@ jobs:
         working-directory: backend
         run: |
           cd dist/session-init && zip -r ../session-init.zip index.mjs && cd ../..
-          cd dist/analyze && zip -r ../analyze.zip index.mjs && cd ../..
+          cd dist/analyze && zip -r ../analyze.zip index.js && cd ../..
+          cd dist/ls-webhook && zip -r ../ls-webhook.zip index.mjs && cd ../..
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -131,13 +163,15 @@ jobs:
 
           aws s3 cp session-init.zip "s3://${BUCKET}/session-init/${S3_PREFIX}.zip"
           aws s3 cp analyze.zip "s3://${BUCKET}/analyze/${S3_PREFIX}.zip"
+          aws s3 cp ls-webhook.zip "s3://${BUCKET}/ls-webhook/${S3_PREFIX}.zip"
           aws s3 cp session-init.zip "s3://${BUCKET}/session-init/latest.zip"
           aws s3 cp analyze.zip "s3://${BUCKET}/analyze/latest.zip"
+          aws s3 cp ls-webhook.zip "s3://${BUCKET}/ls-webhook/latest.zip"
 
-  # ========== Stage 4: Deploy Lambda (depends on DynamoDB + Upload) ==========
+  # ========== Stage 5: Deploy Lambda (depends on DynamoDB + Secrets + Upload) ==========
   deploy-lambda:
     runs-on: ubuntu-latest
-    needs: [prepare, deploy-dynamodb, build-and-upload]
+    needs: [prepare, deploy-dynamodb, deploy-secrets, build-and-upload]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -152,7 +186,7 @@ jobs:
         working-directory: backend
         run: |
           ENV="${{ needs.prepare.outputs.environment }}"
-          STACK_NAME="mandrain-lambda-${ENV}"
+          STACK_NAME="mandrain-extension-lambda-${ENV}"
           S3_PREFIX="${{ needs.build-and-upload.outputs.s3_prefix }}"
 
           echo "Deploying stack: ${STACK_NAME}"
@@ -164,7 +198,7 @@ jobs:
               EnvironmentName="${ENV}" \
               SessionInitS3Key="session-init/${S3_PREFIX}.zip" \
               AnalyzeS3Key="analyze/${S3_PREFIX}.zip" \
-              JwtSecretArn="${{ secrets.JWT_SECRET_ARN }}" \
+              LsWebhookS3Key="ls-webhook/${S3_PREFIX}.zip" \
             --capabilities CAPABILITY_NAMED_IAM \
             --no-fail-on-empty-changeset
 
@@ -173,7 +207,7 @@ jobs:
           echo "- S3 Key: \`${S3_PREFIX}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- Status: Deployed" >> "$GITHUB_STEP_SUMMARY"
 
-  # ========== Stage 5: Deploy API Gateway (depends on Lambda) ==========
+  # ========== Stage 6: Deploy API Gateway (depends on Lambda) ==========
   deploy-apigateway:
     runs-on: ubuntu-latest
     needs: [prepare, deploy-lambda]
@@ -191,7 +225,7 @@ jobs:
         working-directory: backend
         run: |
           ENV="${{ needs.prepare.outputs.environment }}"
-          STACK_NAME="mandrain-apigateway-${ENV}"
+          STACK_NAME="mandrain-extension-apigateway-${ENV}"
 
           echo "Deploying stack: ${STACK_NAME}"
 
@@ -215,7 +249,7 @@ jobs:
   # ========== Summary ==========
   summary:
     runs-on: ubuntu-latest
-    needs: [prepare, deploy-dynamodb, build-and-upload, deploy-lambda, deploy-apigateway]
+    needs: [prepare, deploy-dynamodb, deploy-secrets, build-and-upload, deploy-lambda, deploy-apigateway]
     if: always()
     steps:
       - name: Deploy Summary
@@ -225,6 +259,7 @@ jobs:
           echo "|-------|--------|" >> "$GITHUB_STEP_SUMMARY"
           echo "| Environment | ${{ needs.prepare.outputs.environment }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| DynamoDB | ${{ needs.deploy-dynamodb.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Secrets | ${{ needs.deploy-secrets.result }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Build & Upload | ${{ needs.build-and-upload.result }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Lambda | ${{ needs.deploy-lambda.result }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| API Gateway | ${{ needs.deploy-apigateway.result }} |" >> "$GITHUB_STEP_SUMMARY"

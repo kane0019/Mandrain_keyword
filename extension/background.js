@@ -8,10 +8,13 @@
  * 5. 会话初始化（session/init）与鉴权状态管理
  */
 
-const API_BASE_URL = 'http://localhost:3721/api/v1'; // 开发环境：本地 mock server（生产环境替换为实际地址）
+const API_BASE_URL = 'https://zeesoi54x2.execute-api.us-east-1.amazonaws.com/v1/api/v1'; // AWS 生产环境
 const SESSION_INIT_ENDPOINT = `${API_BASE_URL}/session/init`;
 const ANALYZE_ENDPOINT = `${API_BASE_URL}/analyze`;
-const SESSION_TIMEOUT_MS = 5000;
+// Streaming Function URL is delivered dynamically via session/init response (stream_url field).
+// background.js reads it from the cached session object — no hardcoded URL needed.
+const SESSION_TIMEOUT_MS = 15000;
+const STREAM_TIMEOUT_MS = 90000; // 90s for streaming (DeepSeek can take 50s+)
 const DEFAULT_FREE_LICENSE_TOKEN = 'free-token-placeholder';
 // 查询词最大长度（字符数）。30字符覆盖99%+合法中文词汇/短语/谚语，
 // 超出则视为整句/整段滥用，拒绝云端调用以控制成本。
@@ -59,7 +62,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log('[Mandrain] received message', request);
 
   if (request.action === 'queryWord') {
-    handleWordQuery(request, sendResponse).catch((error) => {
+    handleWordQuery(request, sendResponse, sender).catch((error) => {
       console.error('[Mandrain] handleWordQuery failed:', error);
       sendResponse({
         success: false,
@@ -84,18 +87,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
-  if (request.action === 'blacklistAdd') {
-    handleBlacklistAdd(request.hostname, sendResponse);
+  if (request.action === 'whitelistAdd') {
+    handleWhitelistAdd(request.hostname, sendResponse);
     return true;
   }
 
-  if (request.action === 'blacklistRemove') {
-    handleBlacklistRemove(request.hostname, sendResponse);
+  if (request.action === 'whitelistRemove') {
+    handleWhitelistRemove(request.hostname, sendResponse);
     return true;
   }
 
-  if (request.action === 'blacklistGet') {
-    handleBlacklistGet(sendResponse);
+  if (request.action === 'whitelistGet') {
+    handleWhitelistGet(sendResponse);
     return true;
   }
 
@@ -109,34 +112,44 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // Service Worker启动时预热
 ensureLocalDBReady();
 
-// ── 站点黑名单管理 ─────────────────────────────────
+// ── 站点白名单管理 ─────────────────────────────────
 
-async function handleBlacklistAdd(hostname, sendResponse) {
+async function handleWhitelistAdd(hostname, sendResponse) {
   if (!hostname) {
     sendResponse({ success: false, error: 'empty hostname' });
     return;
   }
-  const result = await chrome.storage.local.get('blacklist');
-  const blacklist = result.blacklist || [];
-  if (!blacklist.includes(hostname)) {
-    blacklist.push(hostname);
-    await chrome.storage.local.set({ blacklist });
+  const result = await chrome.storage.local.get('whitelist');
+  const whitelist = result.whitelist || [];
+  if (!whitelist.includes(hostname)) {
+    whitelist.push(hostname);
+    await chrome.storage.local.set({ whitelist });
   }
-  console.log('[Mandrain] blacklist add:', hostname);
-  sendResponse({ success: true, blacklist });
+  console.log('[Mandrain] whitelist add:', hostname);
+  // Notify matching tabs so content script enables without page refresh
+  const tabs = await chrome.tabs.query({ url: `*://${hostname}/*` });
+  for (const tab of tabs) {
+    chrome.tabs.sendMessage(tab.id, { action: 'whitelistAdded', hostname }).catch(() => {});
+  }
+  sendResponse({ success: true, whitelist });
 }
 
-async function handleBlacklistRemove(hostname, sendResponse) {
-  const result = await chrome.storage.local.get('blacklist');
-  const blacklist = (result.blacklist || []).filter(h => h !== hostname);
-  await chrome.storage.local.set({ blacklist });
-  console.log('[Mandrain] blacklist remove:', hostname);
-  sendResponse({ success: true, blacklist });
+async function handleWhitelistRemove(hostname, sendResponse) {
+  const result = await chrome.storage.local.get('whitelist');
+  const whitelist = (result.whitelist || []).filter(h => h !== hostname);
+  await chrome.storage.local.set({ whitelist });
+  console.log('[Mandrain] whitelist remove:', hostname);
+  // Notify matching tabs so content script disables without page refresh
+  const tabs = await chrome.tabs.query({ url: `*://${hostname}/*` });
+  for (const tab of tabs) {
+    chrome.tabs.sendMessage(tab.id, { action: 'whitelistRemoved', hostname }).catch(() => {});
+  }
+  sendResponse({ success: true, whitelist });
 }
 
-async function handleBlacklistGet(sendResponse) {
-  const result = await chrome.storage.local.get('blacklist');
-  sendResponse({ success: true, blacklist: result.blacklist || [] });
+async function handleWhitelistGet(sendResponse) {
+  const result = await chrome.storage.local.get('whitelist');
+  sendResponse({ success: true, whitelist: result.whitelist || [] });
 }
 bootstrapAuth().catch((error) => {
   console.warn('[Mandrain] bootstrap auth skipped:', error.message);
@@ -145,7 +158,7 @@ bootstrapAuth().catch((error) => {
 /**
  * 主查询逻辑 - 本地优先 + 云端降级
  */
-async function handleWordQuery(request, sendResponse) {
+async function handleWordQuery(request, sendResponse, sender) {
   const { word } = request;
   const queryWord = (word || '').trim();
 
@@ -181,8 +194,32 @@ async function handleWordQuery(request, sendResponse) {
     return;
   }
 
-  // 步骤2：云端API查询
-  console.log('[Mandrain] local miss, querying cloud');
+  // 步骤2：云端API查询 — 优先使用 streaming
+  console.log('[Mandarin] local miss, querying cloud');
+
+  // Get session to determine streaming endpoint (usually cached, ~0ms)
+  let routingSession = null;
+  try { routingSession = await initSession(); } catch { /* handled in non-streaming path below */ }
+
+  const streamUrl = routingSession?.streamUrl || '';
+
+  if (streamUrl && sender?.tab?.id) {
+    // Streaming path: respond immediately, push updates via tab messaging
+    const tabId = sender.tab.id;
+    const requestId = request.requestId || Date.now();
+
+    sendResponse({
+      success: true,
+      streaming: true,
+      requestId: requestId
+    });
+
+    // Fire-and-forget streaming (errors sent as stream events)
+    queryCloudAPIStreaming(queryWord, request.context, request.pageUrl, tabId, requestId, streamUrl);
+    return;
+  }
+
+  // Non-streaming fallback
   try {
     const cloudResult = await queryCloudAPI(queryWord, request.context, request.pageUrl);
     console.log('[Mandrain] cloud result', cloudResult);
@@ -194,12 +231,30 @@ async function handleWordQuery(request, sendResponse) {
   } catch (error) {
     console.warn('[Mandrain] 云端请求失败，进入降级模式:', error.message);
 
+    // JWT 过期时自动刷新 session 并重试一次
+    if (error.code === 'TOKEN_INVALID' && !request._retried) {
+      console.warn('[Mandrain] Token invalid (non-stream), refreshing session and retrying...');
+      await chrome.storage.local.remove('auth.session');
+      request._retried = true;
+      return handleWordQuery(request, sendResponse, sender);
+    }
+
     // 会话/鉴权类错误直接透传错误码，不做降级
     const authErrors = ['TOKEN_INVALID', 'SUBSCRIPTION_INACTIVE', 'DEVICE_LIMIT_EXCEEDED', 'TOKEN_MISSING'];
     if (authErrors.includes(error.code)) {
       sendResponse({
         success: false,
         code: error.code,
+        error: error.message
+      });
+      return;
+    }
+
+    // Free plan: cache miss → upsell, not a generic error
+    if (error.code === 'UPGRADE_REQUIRED') {
+      sendResponse({
+        success: false,
+        code: 'UPGRADE_REQUIRED',
         error: error.message
       });
       return;
@@ -251,6 +306,133 @@ async function queryCloudAPI(word, context, pageUrl) {
       'X-Mandrain-Version': chrome.runtime.getManifest().version
     }
   );
+}
+
+/**
+ * Chrome MV3 service workers are killed after ~30s of no Chrome-API activity.
+ * Fire-and-forget streaming (sendResponse called early) loses Chrome tracking.
+ * Periodically calling a Chrome API prevents the idle kill while streaming.
+ */
+function startKeepAlive() {
+  // Ping immediately — Chrome kills the SW as soon as there are no pending Chrome API
+  // callbacks, which can be milliseconds after sendResponse() returns. Without an
+  // immediate ping the SW may die before the fetch TCP handshake is established.
+  chrome.storage.local.get('_ka');
+  const interval = setInterval(() => {
+    chrome.storage.local.get('_ka');
+  }, 5000);
+  return () => clearInterval(interval);
+}
+
+/**
+ * 云端 Streaming 查询 — 通过 Lambda Function URL 接收 NDJSON 事件流
+ * 将实时进度推送到 content script 的标签页
+ */
+async function queryCloudAPIStreaming(word, context, pageUrl, tabId, requestId, streamUrl, retried = false) {
+  const stopKeepAlive = startKeepAlive();
+  try {
+    const session = await initSession();
+    const payload = {
+      text: word,
+      prefix: context?.prefix || '',
+      suffix: context?.suffix || '',
+      page_url: pageUrl || '',
+      lang: 'zh'
+    };
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), STREAM_TIMEOUT_MS);
+
+    const resp = await fetch(streamUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.accessToken}`,
+        'X-Install-Id': session.installId,
+        'X-Mandrain-Version': chrome.runtime.getManifest().version,
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+
+    if (!resp.ok) {
+      clearTimeout(timer);
+      let errCode = `HTTP_${resp.status}`;
+      let errMsg = `HTTP ${resp.status}`;
+      try {
+        const errBody = await resp.json();
+        errCode = errBody.code || errBody.error || errCode;
+        errMsg = errBody.message || errMsg;
+      } catch { /* ignore parse failure */ }
+
+      // JWT expired — force refresh and retry once
+      if ((resp.status === 401 || resp.status === 403) && errCode !== 'UPGRADE_REQUIRED' && !retried) {
+        console.warn('[Mandrain] Streaming auth error, refreshing session and retrying...');
+        await chrome.storage.local.remove('auth.session');
+        return queryCloudAPIStreaming(word, context, pageUrl, tabId, requestId, streamUrl, true);
+      }
+
+      sendStreamEvent(tabId, requestId, { type: 'error', error: errCode, message: errMsg });
+      return;
+    }
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+
+      // Process complete NDJSON lines
+      const lines = buffer.split('\n');
+      buffer = lines.pop(); // keep incomplete last line
+
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        try {
+          const event = JSON.parse(line);
+          sendStreamEvent(tabId, requestId, event);
+        } catch {
+          console.warn('[Mandrain] Unparseable stream line:', line);
+        }
+      }
+    }
+
+    // Process any remaining buffer
+    if (buffer.trim()) {
+      try {
+        sendStreamEvent(tabId, requestId, JSON.parse(buffer));
+      } catch { /* ignore */ }
+    }
+
+    clearTimeout(timer);
+  } catch (error) {
+    console.error('[Mandrain] Streaming query failed:', error.message);
+
+    if (error.name === 'AbortError') {
+      sendStreamEvent(tabId, requestId, { type: 'error', error: 'STREAM_TIMEOUT', message: 'Streaming request timed out' });
+    } else {
+      sendStreamEvent(tabId, requestId, { type: 'error', error: 'STREAM_FAILED', message: error.message });
+    }
+  } finally {
+    stopKeepAlive();
+  }
+}
+
+/**
+ * Push a stream event to a content script tab
+ */
+function sendStreamEvent(tabId, requestId, event) {
+  chrome.tabs.sendMessage(tabId, {
+    action: 'streamUpdate',
+    requestId: requestId,
+    event: event,
+  }).catch(() => {
+    // Tab may have been closed; ignore
+  });
 }
 
 /**
@@ -441,6 +623,7 @@ function normalizeSession(raw, installId) {
     deviceCount: Number(raw?.device_count || 1),
     maxDevices: Number(raw?.max_devices || 3),
     featureFlags: raw?.feature_flags || {},
+    streamUrl: String(raw?.stream_url || ''),
     installId: installId,
     updatedAt: Date.now()
   };
@@ -487,7 +670,7 @@ async function postJsonWithTimeout(url, payload, timeoutMs, extraHeaders = {}) {
 
     if (!response.ok) {
       throw createAppError(
-        data.code || `HTTP_${response.status}`,
+        data.code || data.error || `HTTP_${response.status}`,
         data.message || `HTTP ${response.status}`,
         response.status
       );

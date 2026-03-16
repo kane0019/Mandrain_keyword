@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>词汇智能解析助手</title>
+  <title>Chinese Slang Translator</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -135,36 +135,89 @@
       margin-left: 8px;
     }
     .blacklist-remove:hover { text-decoration: underline; }
+    .site-section {
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      background: #f5f5f5;
+    }
+    .site-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #333;
+    }
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 36px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #ccc;
+      border-radius: 20px;
+      transition: background 0.2s;
+    }
+    .toggle-slider:before {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      left: 3px;
+      top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: #4096ff; }
+    .toggle-switch input:checked + .toggle-slider:before { transform: translateX(16px); }
+    .toggle-switch input:disabled + .toggle-slider { opacity: 0.4; cursor: not-allowed; }
   </style>
 </head>
 <body>
-  <h1>词汇智能解析助手</h1>
+  <h1>Chinese Slang Translator</h1>
 
   <div id="statusBar" class="status-bar">
     <span id="statusDot" class="status-dot warn"></span>
-    <span id="statusText">正在检查…</span>
+    <span id="statusText">Checking…</span>
+  </div>
+
+  <div class="site-section">
+    <div class="site-toggle-row">
+      <span id="siteToggleLabel">Checking…</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="siteToggle">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
   </div>
 
   <label class="field-label" for="tokenInput">License Token</label>
-  <input id="tokenInput" class="token-input" type="text" placeholder="粘贴你的付费 Token（留空使用免费版）">
+  <input id="tokenInput" class="token-input" type="text" placeholder="Paste your paid Token (leave blank for free tier)">
 
   <div class="btn-row">
-    <button id="btnSave" class="btn btn-primary">保存</button>
-    <button id="btnReset" class="btn btn-secondary">恢复免费版</button>
+    <button id="btnSave" class="btn btn-primary">Save</button>
+    <button id="btnReset" class="btn btn-secondary">Reset to Free</button>
   </div>
 
   <div id="feedback" class="info hidden"></div>
 
   <div class="blacklist-section">
-    <div class="section-title">已停用站点</div>
+    <div class="section-title">Enabled Sites</div>
     <div id="blacklistContainer">
-      <span class="blacklist-empty">无</span>
+      <span class="blacklist-empty">None</span>
     </div>
   </div>
 
   <div class="meta">
     <span id="planLabel">Free</span>
-    <a id="registerLink" href="#">获取付费 Token →</a>
+    <a id="registerLink" href="#">Get paid Token →</a>
   </div>
 
   <script src="popup.js"></script>

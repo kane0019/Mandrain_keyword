@@ -1,0 +1,286 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Mandrain Keyword - GitHub Actions Deployment Role
+  Creates a dedicated OIDC-federated IAM role for CI/CD deployments.
+  Deploy this stack ONCE manually, then set AWS_ROLE_ARN secret to the output.
+
+Parameters:
+  GitHubOrg:
+    Type: String
+    Description: GitHub organisation or user name (e.g. "your-org")
+  GitHubRepo:
+    Type: String
+    Description: GitHub repository name (e.g. "Mandrain_keyword")
+  LambdaBucketDev:
+    Type: String
+    Description: S3 bucket for Lambda packages
+  GitHubOIDCProviderArn:
+    Type: String
+    Description: >-
+      ARN of the existing GitHub OIDC provider in this account.
+      Find it at IAM → Identity providers → token.actions.githubusercontent.com.
+      Format: arn:aws:iam::<account-id>:oidc-provider/token.actions.githubusercontent.com
+    Default: ''
+
+Resources:
+
+  # ========== Deployment Role ==========#
+  GitHubActionsDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: mandrain-github-actions-deploy
+      Description: GitHub Actions deployment role for Mandrain Keyword
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Ref GitHubOIDCProviderArn
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              StringLike:
+                # Allows any branch/tag/PR in the repo
+                token.actions.githubusercontent.com:sub: !Sub 'repo:${GitHubOrg}/${GitHubRepo}:*'
+      Tags:
+        - Key: Project
+          Value: mandrain-keyword
+
+  # ========== Deployment Permissions ==========
+  GitHubActionsDeployPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: mandrain-github-deploy-policy
+      Roles:
+        - !Ref GitHubActionsDeployRole
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+
+          # CloudFormation — deploy / describe stacks
+          - Sid: CloudFormation
+            Effect: Allow
+            Action:
+              - cloudformation:CreateStack
+              - cloudformation:UpdateStack
+              - cloudformation:DeleteStack
+              - cloudformation:DescribeStacks
+              - cloudformation:DescribeStackEvents
+              - cloudformation:DescribeStackResource
+              - cloudformation:DescribeStackResources
+              - cloudformation:GetTemplate
+              - cloudformation:GetTemplateSummary
+              - cloudformation:ListStackResources
+              - cloudformation:ValidateTemplate
+              - cloudformation:CreateChangeSet
+              - cloudformation:DeleteChangeSet
+              - cloudformation:DescribeChangeSet
+              - cloudformation:ExecuteChangeSet
+            Resource: !Sub 'arn:aws:cloudformation:*:${AWS::AccountId}:stack/mandrain-*'
+
+          # S3 — Lambda code packages (scoped to project bucket)
+          - Sid: S3LambdaPackages
+            Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:DeleteObject
+              - s3:ListBucket
+              - s3:GetBucketLocation
+            Resource:
+              - !Sub 'arn:aws:s3:::${LambdaBucketDev}'
+              - !Sub 'arn:aws:s3:::${LambdaBucketDev}/*'
+
+          # Lambda — functions + Function URLs (scoped to project functions)
+          - Sid: Lambda
+            Effect: Allow
+            Action:
+              - lambda:CreateFunction
+              - lambda:UpdateFunctionCode
+              - lambda:UpdateFunctionConfiguration
+              - lambda:GetFunction
+              - lambda:GetFunctionConfiguration
+              - lambda:DeleteFunction
+              - lambda:AddPermission
+              - lambda:RemovePermission
+              - lambda:GetPolicy
+              - lambda:ListFunctions
+              - lambda:TagResource
+              - lambda:UntagResource
+              - lambda:CreateFunctionUrlConfig
+              - lambda:UpdateFunctionUrlConfig
+              - lambda:DeleteFunctionUrlConfig
+              - lambda:GetFunctionUrlConfig
+              - lambda:ListFunctionUrlConfigs
+            Resource:
+              - !Sub 'arn:aws:lambda:*:${AWS::AccountId}:function:mandrain-*'
+
+          # Lambda — read-only on layers (Bedrock SDK etc.)
+          - Sid: LambdaLayerRead
+            Effect: Allow
+            Action:
+              - lambda:GetLayerVersion
+              - lambda:ListLayerVersions
+            Resource: '*'
+
+          # CloudWatch Logs — log groups created by Lambda stacks
+          - Sid: Logs
+            Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:DeleteLogGroup
+              - logs:DescribeLogGroups
+              - logs:PutRetentionPolicy
+              - logs:DeleteRetentionPolicy
+            Resource: !Sub 'arn:aws:logs:*:${AWS::AccountId}:log-group:/aws/lambda/mandrain-*'
+
+          # DynamoDB — tables scoped to project
+          - Sid: DynamoDB
+            Effect: Allow
+            Action:
+              - dynamodb:CreateTable
+              - dynamodb:UpdateTable
+              - dynamodb:DeleteTable
+              - dynamodb:DescribeTable
+              - dynamodb:DescribeTimeToLive
+              - dynamodb:UpdateTimeToLive
+              - dynamodb:ListTagsOfResource
+              - dynamodb:TagResource
+              - dynamodb:UntagResource
+              - dynamodb:DescribeContinuousBackups
+            Resource: !Sub 'arn:aws:dynamodb:*:${AWS::AccountId}:table/mandrain-*'
+
+          # API Gateway — REST APIs
+          - Sid: APIGateway
+            Effect: Allow
+            Action:
+              - apigateway:GET
+              - apigateway:POST
+              - apigateway:PUT
+              - apigateway:DELETE
+              - apigateway:PATCH
+            Resource: 'arn:aws:apigateway:*::*'
+
+          # IAM — create/manage roles for Lambda (CAPABILITY_NAMED_IAM)
+          - Sid: IAMRoles
+            Effect: Allow
+            Action:
+              - iam:CreateRole
+              - iam:UpdateRole
+              - iam:DeleteRole
+              - iam:GetRole
+              - iam:PassRole
+              - iam:AttachRolePolicy
+              - iam:DetachRolePolicy
+              - iam:PutRolePolicy
+              - iam:DeleteRolePolicy
+              - iam:GetRolePolicy
+              - iam:ListRolePolicies
+              - iam:ListAttachedRolePolicies
+              - iam:TagRole
+              - iam:UntagRole
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/mandrain-*'
+
+          # Secrets Manager — read JWT secret ARN during deploy
+          - Sid: SecretsManagerRead
+            Effect: Allow
+            Action:
+              - secretsmanager:CreateSecret
+              - secretsmanager:UpdateSecret
+              - secretsmanager:DeleteSecret
+              - secretsmanager:DescribeSecret
+              - secretsmanager:GetSecretValue
+              - secretsmanager:TagResource
+            Resource: !Sub 'arn:aws:secretsmanager:*:${AWS::AccountId}:secret:mandrain-*'
+
+          # EC2 / VPC — for cfn-vpc-s3 stack
+          - Sid: VPC
+            Effect: Allow
+            Action:
+              - ec2:CreateVpc
+              - ec2:DeleteVpc
+              - ec2:DescribeVpcs
+              - ec2:ModifyVpcAttribute
+              - ec2:CreateSubnet
+              - ec2:DeleteSubnet
+              - ec2:DescribeSubnets
+              - ec2:CreateRouteTable
+              - ec2:DeleteRouteTable
+              - ec2:DescribeRouteTables
+              - ec2:AssociateRouteTable
+              - ec2:DisassociateRouteTable
+              - ec2:CreateRoute
+              - ec2:DeleteRoute
+              - ec2:CreateInternetGateway
+              - ec2:DeleteInternetGateway
+              - ec2:AttachInternetGateway
+              - ec2:DetachInternetGateway
+              - ec2:DescribeInternetGateways
+              - ec2:AllocateAddress
+              - ec2:ReleaseAddress
+              - ec2:DescribeAddresses
+              - ec2:CreateNatGateway
+              - ec2:DeleteNatGateway
+              - ec2:DescribeNatGateways
+              - ec2:CreateSecurityGroup
+              - ec2:DeleteSecurityGroup
+              - ec2:DescribeSecurityGroups
+              - ec2:AuthorizeSecurityGroupIngress
+              - ec2:AuthorizeSecurityGroupEgress
+              - ec2:RevokeSecurityGroupIngress
+              - ec2:RevokeSecurityGroupEgress
+              - ec2:CreateVpcEndpoint
+              - ec2:DeleteVpcEndpoints
+              - ec2:DescribeVpcEndpoints
+              - ec2:ModifyVpcEndpoint
+              - ec2:DescribeAvailabilityZones
+              - ec2:CreateTags
+              - ec2:DescribeTags
+            Resource: '*'
+
+          # S3 — Website static files (sync from GitHub Actions)
+          - Sid: S3WebsiteFiles
+            Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:DeleteObject
+              - s3:ListBucket
+              - s3:GetBucketLocation
+              - s3:PutObjectAcl
+            Resource:
+              - !Sub 'arn:aws:s3:::mandrain-website-*'
+              - !Sub 'arn:aws:s3:::mandrain-website-*/*'
+
+          # CloudFormation — deploy website stack
+          - Sid: CloudFormationWebsite
+            Effect: Allow
+            Action:
+              - cloudformation:CreateStack
+              - cloudformation:UpdateStack
+              - cloudformation:DescribeStacks
+              - cloudformation:DescribeStackEvents
+              - cloudformation:GetTemplate
+              - cloudformation:CreateChangeSet
+              - cloudformation:DeleteChangeSet
+              - cloudformation:DescribeChangeSet
+              - cloudformation:ExecuteChangeSet
+            Resource: !Sub 'arn:aws:cloudformation:*:${AWS::AccountId}:stack/mandrain-website-*'
+
+          # SSM — CloudFormation reads parameter store during deploy
+          - Sid: SSMRead
+            Effect: Allow
+            Action:
+              - ssm:GetParameters
+              - ssm:GetParameter
+            Resource: !Sub 'arn:aws:ssm:*:${AWS::AccountId}:parameter/mandrain-*'
+
+Outputs:
+  DeployRoleArn:
+    Description: >
+      Set this as the AWS_ROLE_ARN secret in your GitHub repository.
+    Value: !GetAtt GitHubActionsDeployRole.Arn
+    Export:
+      Name: mandrain-github-deploy-role-arn

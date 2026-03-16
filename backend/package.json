@@ -4,17 +4,20 @@
   "description": "Mandrain Keyword Chrome Extension - AWS Lambda Backend",
   "type": "module",
   "scripts": {
-    "build": "npm run build:session-init && npm run build:analyze",
+    "build": "npm run build:session-init && npm run build:analyze && npm run build:ls-webhook",
     "build:session-init": "esbuild src/session-init/index.mjs --bundle --platform=node --target=node20 --format=esm --outfile=dist/session-init/index.mjs --external:@aws-sdk/*",
-    "build:analyze": "esbuild src/analyze/index.mjs --bundle --platform=node --target=node20 --format=esm --outfile=dist/analyze/index.mjs --external:@aws-sdk/*",
-    "package": "npm run build && npm run zip:session-init && npm run zip:analyze",
+    "build:analyze": "esbuild src/analyze/index.mjs --bundle --platform=node --target=node20 --format=cjs --outfile=dist/analyze/index.js --external:@aws-sdk/*",
+    "build:ls-webhook": "esbuild src/ls-webhook/index.mjs --bundle --platform=node --target=node20 --format=esm --outfile=dist/ls-webhook/index.mjs --external:@aws-sdk/client-dynamodb --external:@aws-sdk/lib-dynamodb",
+    "package": "npm run build && npm run zip:session-init && npm run zip:analyze && npm run zip:ls-webhook",
     "zip:session-init": "cd dist/session-init && zip -r ../session-init.zip index.mjs",
-    "zip:analyze": "cd dist/analyze && zip -r ../analyze.zip index.mjs"
+    "zip:analyze": "cd dist/analyze && zip -r ../analyze.zip index.js",
+    "zip:ls-webhook": "cd dist/ls-webhook && zip -r ../ls-webhook.zip index.mjs"
   },
   "dependencies": {
     "jose": "^5.x"
   },
   "devDependencies": {
-    "esbuild": "^0.20.x"
+    "esbuild": "^0.20.x",
+    "@aws-sdk/client-secrets-manager": "^3.0.0"
   }
 }

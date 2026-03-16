@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "词汇智能解析助手",
+  "name": "Chinese Slang Translator",
   "version": "1.0.0",
-  "description": "智能划词解析，提供字面意、潜台词、情绪色彩的结构化理解",
+  "description": "Intelligent word analysis providing structured insights into literal meaning, subtext, and emotional tone.",
   "permissions": [
     "activeTab",
     "scripting",
@@ -26,7 +26,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "词汇智能解析",
+    "default_title": "Chinese Slang Translator",
     "default_popup": "popup.html"
   },
   "web_accessible_resources": [

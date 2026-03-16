@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Mandrain Keyword - Static Website S3 Stack
+  S3 bucket configured for public static website hosting.
+  Deploy this stack before running the deploy-website GitHub Actions workflow.
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+    Description: Deployment environment name
+
+Resources:
+
+  # ========== S3 Website Bucket ==========
+  WebsiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'mandrain-website-${EnvironmentName}'
+      # Must disable Block Public Access before a bucket policy can grant public read
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+      Tags:
+        - Key: Project
+          Value: mandrain-keyword
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # ========== Public Read Policy ==========
+  WebsiteBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebsiteBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: '*'
+            Action: s3:GetObject
+            Resource: !Sub '${WebsiteBucket.Arn}/*'
+
+Outputs:
+  BucketName:
+    Description: S3 bucket name - set this as WEBSITE_BUCKET_DEV (or PROD) in GitHub Actions variables
+    Value: !Ref WebsiteBucket
+    Export:
+      Name: !Sub 'mandrain-website-bucket-${EnvironmentName}'
+
+  WebsiteURL:
+    Description: S3 static website endpoint URL
+    Value: !GetAtt WebsiteBucket.WebsiteURL
+    Export:
+      Name: !Sub 'mandrain-website-url-${EnvironmentName}'

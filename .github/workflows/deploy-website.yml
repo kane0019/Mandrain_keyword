@@ -1,0 +1,119 @@
+name: Deploy Website
+
+on:
+  push:
+    branches: [main, dev]
+    paths:
+      - 'web_site/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deploy environment'
+        required: true
+        default: dev
+        type: choice
+        options:
+          - dev
+          - prod
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ── Determine environment & bucket ──────────────────
+      - name: Resolve environment and bucket
+        id: config
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            ENV="${{ inputs.environment }}"
+          elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            ENV="prod"
+          else
+            ENV="dev"
+          fi
+          echo "environment=${ENV}" >> "$GITHUB_OUTPUT"
+
+          if [ "${ENV}" = "prod" ]; then
+            echo "bucket=${{ vars.WEBSITE_BUCKET_PROD }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "bucket=${{ vars.WEBSITE_BUCKET_DEV }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      # ── AWS credentials via OIDC ─────────────────────────
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # ── Deploy CloudFormation website stack (idempotent) ─
+      - name: Deploy website S3 stack
+        run: |
+          ENV="${{ steps.config.outputs.environment }}"
+          STACK_NAME="mandrain-website-${ENV}"
+          echo "Deploying CFN stack: ${STACK_NAME}"
+
+          aws cloudformation deploy \
+            --template-file backend/cfn-website.yaml \
+            --stack-name "${STACK_NAME}" \
+            --parameter-overrides EnvironmentName="${ENV}" \
+            --no-fail-on-empty-changeset
+
+      # ── Sync web_site/ to S3 ────────────────────────────
+      - name: Sync website files to S3
+        run: |
+          BUCKET="${{ steps.config.outputs.bucket }}"
+          echo "Syncing web_site/ → s3://${BUCKET}/"
+
+          # HTML — short cache, always revalidated
+          aws s3 sync web_site/ "s3://${BUCKET}/" \
+            --exclude "*" \
+            --include "*.html" \
+            --cache-control "no-cache, max-age=0" \
+            --content-type "text/html; charset=utf-8" \
+            --delete
+
+          # CSS / JS — 1 year cache (fingerprinted assets)
+          aws s3 sync web_site/ "s3://${BUCKET}/" \
+            --exclude "*" \
+            --include "*.css" \
+            --include "*.js" \
+            --cache-control "public, max-age=31536000, immutable"
+
+          # Images and other static assets — 1 week cache
+          aws s3 sync web_site/ "s3://${BUCKET}/" \
+            --exclude "*.html" \
+            --exclude "*.css" \
+            --exclude "*.js" \
+            --cache-control "public, max-age=604800" \
+            --delete
+
+      # ── Summary ─────────────────────────────────────────
+      - name: Write summary
+        run: |
+          ENV="${{ steps.config.outputs.environment }}"
+          BUCKET="${{ steps.config.outputs.bucket }}"
+
+          # Retrieve the website URL from the CFN stack output
+          WEBSITE_URL=$(aws cloudformation describe-stacks \
+            --stack-name "mandrain-website-${ENV}" \
+            --query "Stacks[0].Outputs[?OutputKey=='WebsiteURL'].OutputValue" \
+            --output text 2>/dev/null || echo "n/a")
+
+          echo "### Website Deployment" >> "$GITHUB_STEP_SUMMARY"
+          echo "| | |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Environment | \`${ENV}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| S3 Bucket | \`${BUCKET}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Website URL | ${WEBSITE_URL} |" >> "$GITHUB_STEP_SUMMARY"

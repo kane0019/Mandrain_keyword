@@ -25,16 +25,6 @@ Parameters:
     Default: '10.0.2.0/24'
     Description: CIDR block for private subnet 2
 
-  PublicSubnet1Cidr:
-    Type: String
-    Default: '10.0.101.0/24'
-    Description: CIDR block for public subnet 1
-
-  PublicSubnet2Cidr:
-    Type: String
-    Default: '10.0.102.0/24'
-    Description: CIDR block for public subnet 2
-
 Conditions:
   IsProd: !Equals [!Ref EnvironmentName, prod]
 
@@ -50,44 +40,9 @@ Resources:
         - Key: Name
           Value: !Sub 'mandrain-vpc-${EnvironmentName}'
 
-  InternetGateway:
-    Type: AWS::EC2::InternetGateway
-    Properties:
-      Tags:
-        - Key: Name
-          Value: !Sub 'mandrain-igw-${EnvironmentName}'
-
-  InternetGatewayAttachment:
-    Type: AWS::EC2::VPCGatewayAttachment
-    Properties:
-      InternetGatewayId: !Ref InternetGateway
-      VpcId: !Ref MandrainVPC
-
-  # ========== Public Subnets ==========
-  PublicSubnet1:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref MandrainVPC
-      AvailabilityZone: !Select [0, !GetAZs '']
-      CidrBlock: !Ref PublicSubnet1Cidr
-      MapPublicIpOnLaunch: false
-      Tags:
-        - Key: Name
-          Value: !Sub 'mandrain-public-1-${EnvironmentName}'
-
-  PublicSubnet2:
-    Type: AWS::EC2::Subnet
-    Condition: IsProd
-    Properties:
-      VpcId: !Ref MandrainVPC
-      AvailabilityZone: !Select [1, !GetAZs '']
-      CidrBlock: !Ref PublicSubnet2Cidr
-      MapPublicIpOnLaunch: false
-      Tags:
-        - Key: Name
-          Value: !Sub 'mandrain-public-2-${EnvironmentName}'
-
   # ========== Private Subnets (for Lambda) ==========
+  # All AWS service traffic (Bedrock, Secrets Manager, DynamoDB) uses VPC endpoints;
+  # no NAT Gateway or Internet Gateway is needed.
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -109,52 +64,7 @@ Resources:
         - Key: Name
           Value: !Sub 'mandrain-private-2-${EnvironmentName}'
 
-  # ========== NAT Gateway (Lambda in private subnet needs outbound access) ==========
-  NatGatewayEIP:
-    Type: AWS::EC2::EIP
-    DependsOn: InternetGatewayAttachment
-    Properties:
-      Domain: vpc
-
-  NatGateway:
-    Type: AWS::EC2::NatGateway
-    Properties:
-      AllocationId: !GetAtt NatGatewayEIP.AllocationId
-      SubnetId: !Ref PublicSubnet1
-      Tags:
-        - Key: Name
-          Value: !Sub 'mandrain-nat-${EnvironmentName}'
-
-  # ========== Route Tables ==========
-  PublicRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref MandrainVPC
-      Tags:
-        - Key: Name
-          Value: !Sub 'mandrain-public-rt-${EnvironmentName}'
-
-  PublicRoute:
-    Type: AWS::EC2::Route
-    DependsOn: InternetGatewayAttachment
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      DestinationCidrBlock: '0.0.0.0/0'
-      GatewayId: !Ref InternetGateway
-
-  PublicSubnet1RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      SubnetId: !Ref PublicSubnet1
-
-  PublicSubnet2RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Condition: IsProd
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      SubnetId: !Ref PublicSubnet2
-
+  # ========== Route Table (private subnets) ==========
   PrivateRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -162,13 +72,7 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub 'mandrain-private-rt-${EnvironmentName}'
-
-  PrivateRoute:
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable
-      DestinationCidrBlock: '0.0.0.0/0'
-      NatGatewayId: !Ref NatGateway
+  # No default route needed — all traffic uses VPC endpoints.
 
   PrivateSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -208,6 +112,53 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub 'mandrain-lambda-sg-${EnvironmentName}'
+
+  # ========== Security Group for VPC Interface Endpoints ==========
+  # Allows Lambda to reach Bedrock Runtime and Secrets Manager inside the VPC.
+  EndpointSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow HTTPS from Lambda to VPC interface endpoints
+      VpcId: !Ref MandrainVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          SourceSecurityGroupId: !Ref LambdaSecurityGroup
+          Description: HTTPS from Lambda
+      Tags:
+        - Key: Name
+          Value: !Sub 'mandrain-endpoint-sg-${EnvironmentName}'
+
+  # ========== VPC Interface Endpoint: Bedrock Runtime ==========
+  # Routes Lambda → Bedrock traffic inside the VPC, bypassing NAT Gateway.
+  # Eliminates the intermittent NAT-path failures that caused 120s Lambda timeouts.
+  BedrockRuntimeVPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref MandrainVPC
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.bedrock-runtime'
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: true
+      SubnetIds:
+        - !Ref PrivateSubnet1
+      SecurityGroupIds:
+        - !Ref EndpointSecurityGroup
+
+  # ========== VPC Interface Endpoint: Secrets Manager ==========
+  # jwt.mjs fetches the JWT signing key from Secrets Manager on every cold start.
+  # Putting this on PrivateLink avoids a second NAT hop on startup.
+  SecretsManagerVPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref MandrainVPC
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.secretsmanager'
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: true
+      SubnetIds:
+        - !Ref PrivateSubnet1
+      SecurityGroupIds:
+        - !Ref EndpointSecurityGroup
 
   # ========== S3 Bucket for Lambda Code ==========
   LambdaCodeBucket:

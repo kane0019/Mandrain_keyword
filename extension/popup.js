@@ -9,11 +9,11 @@
 const REGISTER_URL = 'https://example.com/register'; // 替换为实际注册页面
 
 const FEEDBACK_MESSAGES = {
-  TOKEN_INVALID: 'Token 无效，请检查后重试',
-  SUBSCRIPTION_INACTIVE: '订阅已过期，请续费',
-  DEVICE_LIMIT_EXCEEDED: '设备数量已达上限（最多3台）',
-  TOKEN_MISSING: '缺少 Token',
-  SET_TOKEN_FAILED: '保存失败，请重试'
+  TOKEN_INVALID: 'Invalid Token, please check and try again',
+  SUBSCRIPTION_INACTIVE: 'Subscription expired, please renew',
+  DEVICE_LIMIT_EXCEEDED: 'Device limit reached (max 3)',
+  TOKEN_MISSING: 'Token missing',
+  SET_TOKEN_FAILED: 'Save failed, please try again'
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -31,10 +31,51 @@ document.addEventListener('DOMContentLoaded', () => {
     chrome.tabs.create({ url: REGISTER_URL });
   });
 
+  // ── 当前站点 Toggle (Method A) ────────────────────────────
+  const siteToggle = document.getElementById('siteToggle');
+  const siteToggleLabel = document.getElementById('siteToggleLabel');
+  let currentHostname = null;
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const url = tabs[0]?.url || '';
+    if (!url || url.startsWith('chrome://') || url.startsWith('chrome-extension://')) {
+      siteToggleLabel.textContent = 'N/A (browser page)';
+      siteToggle.disabled = true;
+      return;
+    }
+    try { currentHostname = new URL(url).hostname; }
+    catch { siteToggleLabel.textContent = 'N/A'; siteToggle.disabled = true; return; }
+
+    chrome.runtime.sendMessage({ action: 'whitelistGet' }, (resp) => {
+      if (chrome.runtime.lastError) return;
+      const enabled = (resp?.whitelist || []).includes(currentHostname);
+      siteToggle.checked = enabled;
+      siteToggleLabel.textContent = enabled
+        ? `✓ Enabled on ${currentHostname}`
+        : `${currentHostname} (disabled)`;
+    });
+  });
+
+  siteToggle.addEventListener('change', () => {
+    if (!currentHostname) return;
+    const action = siteToggle.checked ? 'whitelistAdd' : 'whitelistRemove';
+    chrome.runtime.sendMessage({ action, hostname: currentHostname }, (resp) => {
+      if (chrome.runtime.lastError || !resp?.success) {
+        siteToggle.checked = !siteToggle.checked;
+        return;
+      }
+      const enabled = siteToggle.checked;
+      siteToggleLabel.textContent = enabled
+        ? `✓ Enabled on ${currentHostname}`
+        : `${currentHostname} (disabled)`;
+      renderWhitelist(resp.whitelist);
+    });
+  });
+
   btnSave.addEventListener('click', () => {
     const token = tokenInput.value.trim();
     if (!token) {
-      showFeedback('请输入 Token', 'error');
+      showFeedback('Please enter a Token', 'error');
       return;
     }
     saveToken(token);
@@ -52,14 +93,14 @@ document.addEventListener('DOMContentLoaded', () => {
       (response) => {
         btnSave.disabled = false;
         if (chrome.runtime.lastError) {
-          showFeedback('通信失败: ' + chrome.runtime.lastError.message, 'error');
+          showFeedback('Communication error: ' + chrome.runtime.lastError.message, 'error');
           return;
         }
         if (response && response.success) {
-          showFeedback(token ? 'Token 已保存，会话已刷新' : '已恢复免费版', 'success');
+          showFeedback(token ? 'Token saved, session refreshed' : 'Restored to free tier', 'success');
           updateStatus(response.data);
         } else {
-          const msg = FEEDBACK_MESSAGES[response?.code] || response?.error || '保存失败';
+          const msg = FEEDBACK_MESSAGES[response?.code] || response?.error || 'Save failed';
           showFeedback(msg, 'error');
         }
       }
@@ -71,12 +112,12 @@ document.addEventListener('DOMContentLoaded', () => {
       { action: 'authGetState' },
       (response) => {
         if (chrome.runtime.lastError || !response?.success) {
-          setStatus('warn', '无法获取状态');
+          setStatus('warn', 'Unable to get status');
           return;
         }
         updateStatus(response.data?.session);
         if (response.data?.hasCustomToken) {
-          tokenInput.placeholder = '已设置付费 Token（重新输入以更换）';
+          tokenInput.placeholder = 'Paid Token set (re-enter to replace)';
         }
       }
     );
@@ -84,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateStatus(session) {
     if (!session) {
-      setStatus('warn', '未初始化');
+      setStatus('warn', 'Not initialized');
       planLabel.textContent = 'Free';
       return;
     }
@@ -92,10 +133,10 @@ document.addEventListener('DOMContentLoaded', () => {
     planLabel.textContent = plan;
 
     if (session.hasAccessToken) {
-      const devices = `${session.deviceCount || 0}/${session.maxDevices || 3} 设备`;
+      const devices = `${session.deviceCount || 0}/${session.maxDevices || 3} devices`;
       setStatus('ok', `${plan} · ${devices}`);
     } else {
-      setStatus('warn', '会话未就绪');
+      setStatus('warn', 'Session not ready');
     }
   }
 
@@ -111,38 +152,44 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => feedback.classList.add('hidden'), 4000);
   }
 
-  // ── 站点黑名单管理 ──────────────────────────────
+  // ── 已启用站点白名单管理 ──────────────────────────────
   const blacklistContainer = document.getElementById('blacklistContainer');
 
-  function loadBlacklist() {
-    chrome.runtime.sendMessage({ action: 'blacklistGet' }, (response) => {
+  function loadWhitelist() {
+    chrome.runtime.sendMessage({ action: 'whitelistGet' }, (response) => {
       if (chrome.runtime.lastError || !response?.success) return;
-      renderBlacklist(response.blacklist);
+      renderWhitelist(response.whitelist);
     });
   }
 
-  function renderBlacklist(list) {
+  function renderWhitelist(list) {
     if (!list || list.length === 0) {
-      blacklistContainer.innerHTML = '<span class="blacklist-empty">无</span>';
+      blacklistContainer.innerHTML = '<span class="blacklist-empty">None</span>';
       return;
     }
     blacklistContainer.innerHTML = list.map((hostname) =>
       `<div class="blacklist-item">
         <span>${hostname}</span>
-        <span class="blacklist-remove" data-host="${hostname}">恢复</span>
+        <span class="blacklist-remove" data-host="${hostname}">Disable</span>
       </div>`
     ).join('');
 
     blacklistContainer.querySelectorAll('.blacklist-remove').forEach((btn) => {
       btn.addEventListener('click', () => {
         const host = btn.getAttribute('data-host');
-        chrome.runtime.sendMessage({ action: 'blacklistRemove', hostname: host }, (resp) => {
-          if (resp?.success) renderBlacklist(resp.blacklist);
+        chrome.runtime.sendMessage({ action: 'whitelistRemove', hostname: host }, (resp) => {
+          if (resp?.success) {
+            renderWhitelist(resp.whitelist);
+            if (host === currentHostname) {
+              siteToggle.checked = false;
+              siteToggleLabel.textContent = `${currentHostname} (disabled)`;
+            }
+          }
         });
       });
     });
   }
 
   loadState();
-  loadBlacklist();
+  loadWhitelist();
 });
