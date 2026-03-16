@@ -18,6 +18,6 @@
   },
   "devDependencies": {
     "esbuild": "^0.20.x",
-    "@aws-sdk/client-secretsmanager": "^3"
+    "@aws-sdk/client-secretsmanager": "^3.0.0"
   }
 }
