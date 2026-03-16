@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Content Script - DOM操作层
  * 职责：
  * 1. 监听用户选词事件 (mouseup)
@@ -40,12 +40,16 @@ let hintDismissed = false;   // suppresses hint after user explicitly dismisses 
 // 始终初始化监听器，包括未启用的站点（用于显示“启用提示”）
 initListeners();
 
-chrome.storage.local.get('whitelist', (result) => {
+chrome.storage.local.get(['whitelist', 'hintDismissedSites'], (result) => {
   const whitelist = result.whitelist || [];
+  const dismissed = result.hintDismissedSites || [];
   if (whitelist.includes(location.hostname)) {
     siteDisabled = false;
     console.log('[Mandrain] enabled on', location.hostname);
   } else {
+    if (dismissed.includes(location.hostname)) {
+      hintDismissed = true;
+    }
     console.log('[Mandrain] not enabled on', location.hostname);
   }
 });
@@ -60,6 +64,10 @@ chrome.runtime.onMessage.addListener((msg) => {
   if (msg.action === 'whitelistAdded' && siteDisabled) {
     siteDisabled = false;
     hintDismissed = false;
+    chrome.storage.local.get('hintDismissedSites', (result) => {
+      const sites = (result.hintDismissedSites || []).filter(s => s !== location.hostname);
+      chrome.storage.local.set({ hintDismissedSites: sites });
+    });
     console.log('[Mandrain] enabled on', location.hostname);
   }
   if (msg.action === 'whitelistRemoved' && !siteDisabled) {
@@ -1143,6 +1151,13 @@ function showEnableHint(rect) {
   shadow.querySelector('.hint-disable').addEventListener('click', () => {
     hintDismissed = true;
     destroyCard();
+    chrome.storage.local.get('hintDismissedSites', (result) => {
+      const sites = result.hintDismissedSites || [];
+      if (!sites.includes(location.hostname)) {
+        sites.push(location.hostname);
+        chrome.storage.local.set({ hintDismissedSites: sites });
+      }
+    });
   });
 
   document.addEventListener('pointerdown', onOutsidePointerDown, true);
