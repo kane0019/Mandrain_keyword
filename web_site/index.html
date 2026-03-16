@@ -231,62 +231,80 @@
       color: var(--gray-400);
       font-family: monospace;
     }
-    .ext-body { padding: 20px; }
+    .ext-body { padding: 16px 20px 20px; }
+    .ext-context {
+      font-size: 13px;
+      color: #444;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
     .ext-selected {
       background: #fff3cd;
-      border-radius: 4px;
-      padding: 2px 5px;
-      font-size: 18px;
+      border-radius: 3px;
+      padding: 0 3px;
       font-weight: 600;
       color: #856404;
-      display: inline-block;
-      margin-bottom: 14px;
     }
     .ext-card {
       background: #fff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 16px;
+      border: 1px solid #d0d0d0;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      padding: 14px;
+      position: relative;
+      font-size: 13px;
+      color: #333;
+      line-height: 1.6;
     }
-    .ext-card-word {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 4px;
+    .ext-card-close {
+      position: absolute;
+      top: 5px;
+      right: 6px;
+      color: #999;
+      font-size: 14px;
+      line-height: 1;
     }
-    .ext-card-pinyin {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 12px;
+    .ext-card-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: #222;
+      margin-bottom: 10px;
+      padding-right: 20px;
     }
-    .ext-card-section { margin-bottom: 10px; }
+    .ext-card-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
     .ext-card-label {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--blue);
-      margin-bottom: 3px;
+      color: #666;
+      font-weight: 500;
+      flex: 0 0 72px;
+      font-size: 13px;
     }
     .ext-card-value {
+      flex: 1;
       font-size: 13px;
-      color: var(--gray-800);
+      color: #333;
       line-height: 1.5;
     }
-    .ext-tag {
-      display: inline-block;
-      background: #fff0f0;
-      color: #c0392b;
-      font-size: 10px;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 99px;
-      margin-top: 8px;
+    .ext-card-footer {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #e8e8e8;
+      display: flex;
+      gap: 8px;
     }
-    .ext-tag-blue {
-      background: var(--blue-light);
-      color: var(--blue);
+    .ext-card-btn {
+      flex: 1;
+      padding: 5px 8px;
+      border: 1px solid #e0e0e0;
+      border-radius: 3px;
+      background: #f5f5f5;
+      font-size: 11px;
+      color: #555;
+      text-align: center;
     }
 
     /* ── Comparison ──────────────────────────────────── */
@@ -439,6 +457,53 @@
     }
     .usecase-zh { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
     .usecase-en { font-size: 12px; color: var(--text-muted); }
+
+    /* ── Video Demo ──────────────────────────────────── */
+    .video-section { background: var(--gray-50); }
+    .video-wrapper {
+      max-width: 800px;
+      margin: 48px auto 0;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      background: #000;
+      aspect-ratio: 16 / 9;
+      position: relative;
+    }
+    .video-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 50%, #16213e 100%);
+      color: #fff;
+      gap: 16px;
+      position: absolute;
+      inset: 0;
+    }
+    .video-play-btn {
+      width: 72px;
+      height: 72px;
+      background: rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .video-play-btn svg { width: 28px; height: 28px; fill: #fff; margin-left: 4px; }
+    .video-caption {
+      font-size: 15px;
+      color: rgba(255,255,255,0.7);
+      font-weight: 500;
+    }
+    .video-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,0.4);
+    }
 
     /* ── Pricing ─────────────────────────────────────── */
     .pricing-grid {
@@ -745,25 +810,28 @@
           <div class="ext-addr">weibo.com/timeline</div>
         </div>
         <div class="ext-body">
-          <div style="font-size:13px;color:#6c757d;margin-bottom:10px;">You selected:</div>
-          <div class="ext-selected">卷 (juǎn)</div>
+          <div class="ext-context">
+            现在年轻人都在<span class="ext-selected">卷</span>，谁也不想输在起跑线上。
+          </div>
           <div class="ext-card">
-            <div class="ext-card-word">卷 — juǎn</div>
-            <div class="ext-card-pinyin">Literally: "to roll" or "curl"</div>
-            <div class="ext-card-section">
-              <div class="ext-card-label">Natural translation</div>
-              <div class="ext-card-value">To participate in an exhausting cycle of overwork and competition — "the rat race"</div>
+            <div class="ext-card-close">✕</div>
+            <div class="ext-card-title">"卷" → "the rat race"</div>
+            <div class="ext-card-item">
+              <span class="ext-card-label">Definition</span>
+              <span class="ext-card-value">Exhausting cycle of hyper-competition where everyone works harder for diminishing returns.</span>
             </div>
-            <div class="ext-card-section">
-              <div class="ext-card-label">Implied meaning</div>
-              <div class="ext-card-value">Often used critically to describe relentless competition that benefits no one — "why are we all doing this to ourselves?"</div>
+            <div class="ext-card-item">
+              <span class="ext-card-label">Implication</span>
+              <span class="ext-card-value">Frustration at a system where opting out feels impossible — "why are we all doing this?"</span>
             </div>
-            <div class="ext-card-section">
-              <div class="ext-card-label">Sentiment</div>
-              <div class="ext-card-value">Tired, cynical, or self-aware exhaustion</div>
+            <div class="ext-card-item">
+              <span class="ext-card-label">Sentiment</span>
+              <span class="ext-card-value">Tired, cynical, self-aware exhaustion</span>
             </div>
-            <span class="ext-tag">Internet Slang</span>
-            <span class="ext-tag ext-tag-blue">Contextual Analysis</span>
+            <div class="ext-card-footer">
+              <div class="ext-card-btn">Copy</div>
+              <div class="ext-card-btn">Disable on this site</div>
+            </div>
           </div>
         </div>
       </div>
@@ -968,6 +1036,36 @@
   </div>
 </section>
 
+<!-- ══ VIDEO DEMO ══════════════════════════════════════════ -->
+<section class="section video-section" id="demo">
+  <div class="container" style="text-align:center;">
+    <div class="section-label">See it in action</div>
+    <h2 class="section-title">Watch how it works</h2>
+    <p class="section-sub">See Mandrain decode real Chinese internet slang in seconds — directly on any webpage, no switching tabs.</p>
+    <div class="video-wrapper">
+      <!-- Replace src with your YouTube embed URL, e.g. https://www.youtube.com/embed/VIDEO_ID -->
+      <iframe
+        id="demo-video"
+        width="100%"
+        height="100%"
+        src=""
+        title="Mandrain demo video"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        style="position:absolute;inset:0;display:none;"
+      ></iframe>
+      <div class="video-placeholder">
+        <div class="video-play-btn">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <div class="video-caption">Demo video coming soon</div>
+        <div class="video-sub">Replace this placeholder with your YouTube embed URL</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ══ PRICING ════════════════════════════════════════════ -->
 <section class="section" id="pricing">
   <div class="container" style="text-align:center;">
@@ -993,7 +1091,7 @@
       <div class="price-card featured">
         <div class="price-badge">Pro</div>
         <div class="price-tier">Pro</div>
-        <div class="price-amount">$4 <span>/ month</span></div>
+        <div class="price-amount">$4.99 <span>/ month</span></div>
         <div class="price-divider"></div>
         <ul class="price-features">
           <li>Everything in Free</li>
