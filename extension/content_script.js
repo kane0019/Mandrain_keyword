@@ -34,6 +34,7 @@ function getErrorMessage(code) {
 
 // 站点白名单：只在已启用的站点上激活插件
 let siteDisabled = true; // whitelist model: default disabled until confirmed
+const MAX_TEXT_LENGTH = 200; // shared by hint and translation
 
 // 始终初始化监听器，包括未启用的站点（用于显示“启用提示”）
 initListeners();
@@ -78,7 +79,8 @@ function onDocumentMouseUp(event) {
     const sel = window.getSelection();
     const text = sel?.toString().trim() || '';
     if (text.length >= 1 && text.length <= MAX_TEXT_LENGTH) {
-      showEnableHint(sel.getRangeAt(0)?.getBoundingClientRect());
+      const range = sel.rangeCount > 0 ? sel.getRangeAt(0) : null;
+      showEnableHint(range?.getBoundingClientRect());
     }
     return;
   }
