@@ -2,15 +2,15 @@ name: Deploy Website
 
 on:
   push:
-    branches: [main, dev]
+    branches: [dev]
     paths:
       - 'web_site/**'
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deploy environment'
+        description: 'Deploy environment (main branch only for prod)'
         required: true
-        default: dev
+        default: prod
         type: choice
         options:
           - dev
@@ -37,9 +37,8 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             ENV="${{ inputs.environment }}"
-          elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            ENV="prod"
           else
+            # push to dev branch → always dev
             ENV="dev"
           fi
           echo "environment=${ENV}" >> "$GITHUB_OUTPUT"
