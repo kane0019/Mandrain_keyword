@@ -4,44 +4,122 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Legal — Chinese Slang Translator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f9fa; color: #212529; line-height: 1.7; }
-    nav { background: #fff; border-bottom: 1px solid #e9ecef; padding: 14px 24px; display: flex; align-items: center; gap: 8px; font-size: 14px; }
-    nav a { color: #6c757d; text-decoration: none; } nav a:hover { text-decoration: underline; }
-    nav .sep { color: #adb5bd; }
-    .page { max-width: 780px; margin: 48px auto; padding: 0 24px 80px; }
-    .toc { background: #fff; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px 24px; margin-bottom: 40px; }
-    .toc h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: #6c757d; margin-bottom: 12px; }
-    .toc ul { list-style: none; } .toc ul li { margin-bottom: 6px; }
-    .toc ul li a { color: #0d6efd; text-decoration: none; font-size: 14px; } .toc ul li a:hover { text-decoration: underline; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #1a56db;
+      --blue-dark: #1246b3;
+      --blue-light: #e8f0fe;
+      --gray-50: #f8f9fa;
+      --gray-100: #f1f3f5;
+      --gray-200: #e9ecef;
+      --gray-400: #868e96;
+      --gray-600: #495057;
+      --gray-800: #212529;
+      --text: #1a1a2e;
+      --text-muted: #6c757d;
+      --border: #dee2e6;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--gray-50); color: var(--text);
+      line-height: 1.7; -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+    .nav-inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 24px;
+      height: 60px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo-gt { font-size: 14px; font-weight: 700; color: var(--text-muted); letter-spacing: -0.01em; text-decoration: none; }
+    .logo-gt:hover { color: var(--text); }
+    .logo-gt span { color: var(--blue); }
+    .nav-sep { color: var(--border); font-size: 18px; margin: 0 6px; }
+    .nav-product { font-size: 14px; font-weight: 600; color: var(--text); text-decoration: none; }
+    .nav-product:hover { color: var(--blue); }
+    .nav-current { font-size: 14px; color: var(--text-muted); }
+    .nav-right a { font-size: 14px; font-weight: 500; color: var(--gray-600); text-decoration: none; transition: color .15s; }
+    .nav-right a:hover { color: var(--text); }
+
+    /* ── Page ── */
+    .page { max-width: 780px; margin: 48px auto; padding: 0 24px 64px; }
+
+    .toc {
+      background: #fff; border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px 24px; margin-bottom: 40px;
+      box-shadow: var(--shadow);
+    }
+    .toc h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 12px; border: none; padding-top: 0; }
+    .toc ul { list-style: none; }
+    .toc ul li { margin-bottom: 6px; }
+    .toc ul li a { color: var(--blue); text-decoration: none; font-size: 14px; }
+    .toc ul li a:hover { text-decoration: underline; }
+
     section { margin-bottom: 56px; }
-    h1 { font-size: 28px; margin-bottom: 6px; }
-    .meta { font-size: 13px; color: #6c757d; margin-bottom: 36px; }
-    h2 { font-size: 19px; margin: 32px 0 10px; padding-top: 8px; border-top: 1px solid #e9ecef; }
-    h3 { font-size: 15px; margin: 20px 0 6px; color: #343a40; }
+    h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .meta { font-size: 13px; color: var(--text-muted); margin-bottom: 36px; }
+    h2 { font-size: 17px; font-weight: 600; margin: 32px 0 10px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text); }
+    h3 { font-size: 14px; font-weight: 600; margin: 18px 0 6px; color: var(--gray-800); }
     p { margin-bottom: 12px; font-size: 15px; }
-    ul { margin: 8px 0 12px 20px; font-size: 15px; } ul li { margin-bottom: 6px; }
+    ul { margin: 8px 0 12px 20px; font-size: 15px; }
+    ul li { margin-bottom: 6px; }
+    a { color: var(--blue); }
+    a:hover { color: var(--blue-dark); }
+    code { font-size: 13px; background: var(--gray-100); padding: 1px 5px; border-radius: 4px; }
+
     table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 14px; }
-    th { background: #f8f9fa; text-align: left; padding: 9px 12px; border: 1px solid #dee2e6; font-weight: 600; }
-    td { padding: 9px 12px; border: 1px solid #dee2e6; vertical-align: top; }
+    th { background: var(--gray-50); text-align: left; padding: 9px 13px; border: 1px solid var(--border); font-weight: 600; color: var(--gray-800); }
+    td { padding: 9px 13px; border: 1px solid var(--border); vertical-align: top; }
+
     .badge { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 20px; font-weight: 600; }
-    .badge-green { background: #d1fae5; color: #065f46; }
+    .badge-green  { background: #d1fae5; color: #065f46; }
     .badge-yellow { background: #fef3c7; color: #92400e; }
-    .badge-red { background: #fee2e2; color: #991b1b; }
-    .highlight-box { background: #f0f9ff; border-left: 3px solid #0ea5e9; padding: 14px 16px; border-radius: 0 6px 6px 0; margin: 16px 0; font-size: 14px; }
-    footer { text-align: center; font-size: 13px; color: #adb5bd; border-top: 1px solid #e9ecef; padding-top: 24px; }
-    a { color: #0d6efd; }
+    .badge-red    { background: #fee2e2; color: #991b1b; }
+
+    .highlight-box {
+      background: var(--blue-light); border-left: 3px solid var(--blue);
+      padding: 14px 16px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: 14px;
+    }
+
+    /* ── Footer ── */
+    .site-footer {
+      background: var(--gray-800); color: var(--gray-400);
+      text-align: center; font-size: 13px; padding: 28px 24px;
+    }
+    .site-footer a { color: var(--gray-400); text-decoration: none; }
+    .site-footer a:hover { color: #fff; }
+    .site-footer .sep { margin: 0 8px; opacity: .4; }
   </style>
 </head>
 <body>
 
 <nav>
-  <a href="../">Gecktool</a>
-  <span class="sep">/</span>
-  <a href="./">Chinese Slang Translator</a>
-  <span class="sep">/</span>
-  Legal
+  <div class="nav-inner">
+    <div style="display:flex;align-items:center;">
+      <a href="../" class="logo-gt">Geck<span>tool</span></a>
+      <span class="nav-sep">/</span>
+      <a href="./" class="nav-product">Chinese Slang Translator</a>
+      <span class="nav-sep">/</span>
+      <span class="nav-current">Legal</span>
+    </div>
+    <div class="nav-right">
+      <a href="./#pricing">Pricing</a>
+    </div>
+  </div>
 </nav>
 
 <div class="page">
@@ -260,10 +338,17 @@
     </ul>
   </section>
 
-  <footer>
-    © 2026 Gecktool · Chinese Slang Translator · <a href="./">Product page</a> · <a href="./refund.html">Refund Policy</a>
-  </footer>
-
 </div>
+
+<footer class="site-footer">
+  © 2026 Gecktool
+  <span class="sep">·</span>
+  <a href="./">Chinese Slang Translator</a>
+  <span class="sep">·</span>
+  <a href="./refund.html">Refund Policy</a>
+  <span class="sep">·</span>
+  <a href="./support.html">Contact Support</a>
+</footer>
+
 </body>
 </html>
