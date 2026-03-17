@@ -9,7 +9,7 @@ const bedrockClient = new BedrockRuntimeClient();
 const WORD_CACHE_TABLE = process.env.WORD_CACHE_TABLE;
 const MAX_TEXT_LENGTH = 30;
 const MAX_CONTEXT_LENGTH = 200; // prefix/suffix each
-const CACHE_TTL_SECONDS = process.env.CACHE_TTL_SECONDS ? parseInt(process.env.CACHE_TTL_SECONDS) : 86400; // default 24h
+
 
 /**
  * Build cache sort key — word-level only, context ignored.
@@ -110,7 +110,6 @@ export async function handler(event) {
   }
 
   // ---------- 5. 写入缓存 ----------
-  const ttl = Math.floor(Date.now() / 1000) + CACHE_TTL_SECONDS;
   await ddbClient.send(new PutCommand({
     TableName: WORD_CACHE_TABLE,
     Item: {
@@ -123,7 +122,6 @@ export async function handler(event) {
       // implication intentionally NOT cached — context-dependent.
       model: aiResult._model || 'unknown',
       source: 'cloud',
-      ttl,
     },
   }));
 
@@ -501,7 +499,6 @@ const _streamHandlerImpl = async (event, responseStream, _context) => {
 
       // ---------- Write cache ----------
       // implication intentionally NOT cached — context-dependent.
-      const ttl = Math.floor(Date.now() / 1000) + CACHE_TTL_SECONDS;
       await ddbClient.send(new PutCommand({
         TableName: WORD_CACHE_TABLE,
         Item: {
@@ -510,7 +507,7 @@ const _streamHandlerImpl = async (event, responseStream, _context) => {
           definition: aiResult.definition || '',
           sentiment: aiResult.sentiment || 'neutral',
           model: aiResult._model || 'unknown',
-          source: 'cloud', ttl,
+          source: 'cloud',
         },
       }));
 
