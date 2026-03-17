@@ -54,8 +54,8 @@
     <ul>
       <li><a href="#privacy">1. Privacy Policy</a></li>
       <li><a href="#terms">2. Terms &amp; Conditions</a></li>
-      <li><a href="#refund">3. Refund Policy</a></li>
-      <li><a href="#contact">4. Contact</a></li>
+      <li><a href="#contact">3. Contact</a></li>
+      <li><a href="./refund.html">Refund Policy →</a></li>
     </ul>
   </div>
 
@@ -167,6 +167,35 @@
     </table>
     <p>No analytics, advertising, or tracking services are used.</p>
 
+    <h2>Chrome Web Store data disclosure</h2>
+    <p>The Chrome Web Store requires extensions to disclose which categories of user data they access. The following four categories apply to this extension:</p>
+    <table>
+      <thead><tr><th>Category</th><th>What we access</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Authentication information</strong></td>
+          <td>Your license key (entered in the popup) and the short-lived JWT session token derived from it</td>
+          <td>Stored locally in <code>chrome.storage.local</code> to authenticate API requests without requiring you to re-enter your key each session. Never shared with third parties.</td>
+        </tr>
+        <tr>
+          <td><strong>Website content</strong></td>
+          <td>The text you explicitly select (≤ 30 characters) and up to 200 characters of surrounding text from the same page</td>
+          <td>Core function — this is the slang word and context sent to our API for analysis. Only triggered by your deliberate selection action.</td>
+        </tr>
+        <tr>
+          <td><strong>Web history</strong></td>
+          <td>The origin + path of the page where you make a selection (e.g. <code>weibo.com/timeline</code>). Query strings and URL fragments are stripped before transmission.</td>
+          <td>Provides domain context to the AI model, helping it distinguish slang that varies by platform (e.g. gaming forums vs. social media). Not stored server-side.</td>
+        </tr>
+        <tr>
+          <td><strong>User activity</strong></td>
+          <td>Mouse-up events on pages where you have enabled the extension, solely to detect when you have selected text</td>
+          <td>The extension must detect your text selection to trigger a lookup. No other mouse/keyboard activity is monitored or recorded.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>No other data categories are accessed. We do not collect personally identifiable information, health data, financial data, personal communications, or GPS/precise location data.</p>
+
     <h2>Your rights</h2>
     <p>Because we do not collect personally identifiable information, there is no personal data profile to access, correct, or delete. To remove all locally stored extension data, uninstall the extension from Chrome — this clears all <code>chrome.storage.local</code> entries. To request deletion of any cached word entries associated with your token, contact us at the address below.</p>
 
@@ -220,66 +249,19 @@
     <p>We may update these Terms at any time. Continued use after changes constitutes acceptance of the revised Terms.</p>
   </section>
 
-  <!-- ══ REFUND POLICY ══════════════════════════════════════════ -->
-  <section id="refund">
-    <h1 style="font-size:22px;">3. Refund Policy</h1>
-
-    <h2>Subscription model</h2>
-    <p>Chinese Slang Translator is offered as a monthly subscription at <strong>$4.99 / month</strong>. Subscriptions are billed monthly and renew automatically until cancelled.</p>
-
-    <h2>Refund eligibility</h2>
-    <table>
-      <thead><tr><th>Situation</th><th>Eligibility</th></tr></thead>
-      <tbody>
-        <tr>
-          <td>Request within <strong>7 days</strong> of first payment, extension did not work as described</td>
-          <td><span class="badge badge-green">Full refund</span></td>
-        </tr>
-        <tr>
-          <td>Request within <strong>7 days</strong>, changed your mind</td>
-          <td><span class="badge badge-green">Full refund</span></td>
-        </tr>
-        <tr>
-          <td>Request after 7 days but within 30 days, documented technical issue we could not resolve</td>
-          <td><span class="badge badge-yellow">Case-by-case</span></td>
-        </tr>
-        <tr>
-          <td>Request after 30 days</td>
-          <td><span class="badge badge-red">Not eligible</span></td>
-        </tr>
-        <tr>
-          <td>Renewal charge you forgot to cancel</td>
-          <td><span class="badge badge-yellow">One-time courtesy refund if requested within 3 days</span></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h2>How to request a refund</h2>
-    <p>Email <a href="mailto:hello@mandrain.app">hello@mandrain.app</a> with the subject line <strong>"Refund Request"</strong> and include:</p>
-    <ul>
-      <li>The email address used for your subscription</li>
-      <li>Date of purchase</li>
-      <li>Brief reason for the request</li>
-    </ul>
-    <p>We will respond within 3 business days. Approved refunds are processed within 5–10 business days depending on your payment provider.</p>
-
-    <h2>Cancellation</h2>
-    <p>You may cancel your subscription at any time. Cancellation stops future charges; you retain access until the end of the current billing period. Cancellation does not automatically trigger a refund for the current period unless it falls within the 7-day window above.</p>
-  </section>
-
   <!-- ══ CONTACT ════════════════════════════════════════════════ -->
   <section id="contact">
-    <h1 style="font-size:22px;">4. Contact</h1>
-    <p>For any questions about these policies, data requests, or refunds:</p>
+    <h1 style="font-size:22px;">3. Contact</h1>
+    <p>For questions about these policies, data requests, or refunds, please use our support form — we typically respond within 1–2 business days.</p>
     <ul>
-      <li>Email: <a href="mailto:hello@mandrain.app">hello@mandrain.app</a></li>
+      <li>Support: <a href="./support.html">Contact Support →</a></li>
       <li>Product: <a href="./">Chinese Slang Translator</a></li>
       <li>Publisher: Gecktool</li>
     </ul>
   </section>
 
   <footer>
-    © 2026 Gecktool · Chinese Slang Translator · <a href="./">Product page</a>
+    © 2026 Gecktool · Chinese Slang Translator · <a href="./">Product page</a> · <a href="./refund.html">Refund Policy</a>
   </footer>
 
 </div>
