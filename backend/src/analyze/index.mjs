@@ -555,7 +555,25 @@ async function invokeDeepSeekWithProgress(prompt, write) {
     body: JSON.stringify(requestBody),
   });
 
-  const resp = await bedrockSendWithRetry(command);
+  // Heartbeat during the connect phase so the client 30s watchdog stays alive.
+  // The stream-level heartbeat (inside the Promise below) only starts after
+  // bedrockSendWithRetry returns — without this, a timed-out connect attempt
+  // creates up to 24s of silence (12s × 2 retries) before falling back to Nova Pro.
+  const connectHeartbeat = setInterval(() => {
+    write({ type: 'status', stage: 'thinking', chunks: 0 });
+  }, 5000);
+
+  let resp;
+  try {
+    // maxRetries=0: one attempt only. If Bedrock doesn't connect in time the
+    // outer catch falls back to Nova Pro immediately. Retrying a timed-out
+    // connect just doubles the silence with no benefit (both attempts failed
+    // in the log, costing 24.5s before Nova Pro ran).
+    resp = await bedrockSendWithRetry(command, 12000, 0);
+  } finally {
+    clearInterval(connectHeartbeat);
+  }
+
   const stream = resp.body;
   let fullText = '';
   let chunkCount = 0;
