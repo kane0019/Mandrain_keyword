@@ -6,15 +6,13 @@
   "permissions": [
     "activeTab",
     "scripting",
-    "storage"
-  ],
-  "host_permissions": [
-    "<all_urls>"
+    "storage",
+    "tabs"
   ],
   "content_scripts": [
     {
       "matches": [
-        "<all_urls>"
+        "*://*/*"
       ],
       "js": [
         "content_script.js"
@@ -36,7 +34,7 @@
         "styles.css"
       ],
       "matches": [
-        "<all_urls>"
+        "*://*/*"
       ]
     }
   ],

@@ -127,7 +127,8 @@ async function handleWhitelistAdd(hostname, sendResponse) {
   }
   console.log('[Mandrain] whitelist add:', hostname);
   // Notify matching tabs so content script enables without page refresh
-  const tabs = await chrome.tabs.query({ url: `*://${hostname}/*` });
+  const allTabs = await chrome.tabs.query({});
+  const tabs = allTabs.filter(t => t.url && new URL(t.url).hostname === hostname);
   for (const tab of tabs) {
     chrome.tabs.sendMessage(tab.id, { action: 'whitelistAdded', hostname }).catch(() => {});
   }
@@ -140,7 +141,8 @@ async function handleWhitelistRemove(hostname, sendResponse) {
   await chrome.storage.local.set({ whitelist });
   console.log('[Mandrain] whitelist remove:', hostname);
   // Notify matching tabs so content script disables without page refresh
-  const tabs = await chrome.tabs.query({ url: `*://${hostname}/*` });
+  const allTabs = await chrome.tabs.query({});
+  const tabs = allTabs.filter(t => t.url && new URL(t.url).hostname === hostname);
   for (const tab of tabs) {
     chrome.tabs.sendMessage(tab.id, { action: 'whitelistRemoved', hostname }).catch(() => {});
   }

@@ -72,6 +72,7 @@ chrome.runtime.onMessage.addListener((msg) => {
   }
   if (msg.action === 'whitelistRemoved' && !siteDisabled) {
     siteDisabled = true;
+    window.getSelection()?.removeAllRanges(); // clear stale selection so enable hint won't fire spuriously
     destroyCard({ cancelPending: true });
     console.log('[Mandrain] disabled on', location.hostname);
   }
