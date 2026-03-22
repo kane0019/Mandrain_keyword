@@ -5,7 +5,6 @@
   "description": "Intelligent word analysis providing structured insights into literal meaning, subtext, and emotional tone.",
   "permissions": [
     "activeTab",
-    "scripting",
     "storage",
     "tabs"
   ],
