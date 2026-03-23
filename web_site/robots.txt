@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
+<<<<<<< HEAD
 Sitemap: https://www.gecktool.com/sitemap.xml
+=======
+Sitemap: https://gecktool.com/sitemap.xml
+>>>>>>> 6af96f8340684e66f4e46b497bd194fb87d8fb90
