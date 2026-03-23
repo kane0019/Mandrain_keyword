@@ -1,47 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-<<<<<<< HEAD
     <loc>https://www.gecktool.com/</loc>
-=======
-    <loc>https://gecktool.com/</loc>
->>>>>>> 6af96f8340684e66f4e46b497bd194fb87d8fb90
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-<<<<<<< HEAD
     <loc>https://www.gecktool.com/Chinese-Slang-Translator/</loc>
-=======
-    <loc>https://gecktool.com/Chinese-Slang-Translator/</loc>
->>>>>>> 6af96f8340684e66f4e46b497bd194fb87d8fb90
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-<<<<<<< HEAD
     <loc>https://www.gecktool.com/Chinese-Slang-Translator/support.html</loc>
-=======
-    <loc>https://gecktool.com/Chinese-Slang-Translator/support.html</loc>
->>>>>>> 6af96f8340684e66f4e46b497bd194fb87d8fb90
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-<<<<<<< HEAD
     <loc>https://www.gecktool.com/Chinese-Slang-Translator/legal.html</loc>
-=======
-    <loc>https://gecktool.com/Chinese-Slang-Translator/legal.html</loc>
->>>>>>> 6af96f8340684e66f4e46b497bd194fb87d8fb90
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
-<<<<<<< HEAD
     <loc>https://www.gecktool.com/Chinese-Slang-Translator/refund.html</loc>
-=======
-    <loc>https://gecktool.com/Chinese-Slang-Translator/refund.html</loc>
->>>>>>> 6af96f8340684e66f4e46b497bd194fb87d8fb90
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
