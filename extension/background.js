@@ -102,6 +102,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
+  if (request.action === 'openUpgradePage') {
+    chrome.tabs.create({ url: 'https://www.gecktool.com/Chinese-Slang-Translator/#pricing' });
+    sendResponse({ success: true });
+    return false;
+  }
+
   sendResponse({
     success: false,
     error: 'unsupported_action'

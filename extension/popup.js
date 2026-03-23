@@ -6,7 +6,7 @@
  * 3. 提供注册页面链接
  */
 
-const REGISTER_URL = 'https://example.com/register'; // 替换为实际注册页面
+const REGISTER_URL = 'https://www.gecktool.com/Chinese-Slang-Translator/#pricing';
 
 const FEEDBACK_MESSAGES = {
   TOKEN_INVALID: 'Invalid Token, please check and try again',
