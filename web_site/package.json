@@ -1,0 +1,13 @@
+{
+  "name": "cst-website",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node ./node_modules/@11ty/eleventy/cmd.js --output=_site",
+    "clean": "node -e \"require('fs').rmSync('_site', {recursive:true, force:true})\"",
+    "start": "node ./node_modules/@11ty/eleventy/cmd.js --serve"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1"
+  }
+}

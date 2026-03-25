@@ -1,0 +1,183 @@
+---
+templateEngineOverride: liquid
+permalink: /Chinese-Slang-Translator/blog/index.html
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chinese Slang & Business Terms Explained — Chinese Slang Translator</title>
+  <meta name="description" content="Plain-English explanations of Chinese internet slang, business jargon, and cultural expressions. Understand what Chinese text actually means." />
+  <link rel="canonical" href="https://www.gecktool.com/Chinese-Slang-Translator/blog/" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #1a56db;
+      --blue-dark: #1246b3;
+      --blue-light: #e8f0fe;
+      --gray-50: #f8f9fa;
+      --gray-100: #f1f3f5;
+      --gray-200: #e9ecef;
+      --gray-400: #868e96;
+      --gray-600: #495057;
+      --text: #1a1a2e;
+      --text-muted: #6c757d;
+      --border: #dee2e6;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: #fff;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    nav {
+      position: sticky; top: 0;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+    .nav-inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 24px;
+      height: 60px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-size: 18px; font-weight: 700; color: var(--blue); text-decoration: none; letter-spacing: -0.3px; }
+    .logo span { color: var(--text); }
+    .nav-brand { display: flex; align-items: center; gap: 8px; }
+    .logo-gt { font-size: 14px; font-weight: 700; color: var(--text-muted); text-decoration: none; }
+    .logo-gt span { color: var(--blue); }
+    .nav-sep { color: var(--border); font-size: 18px; }
+    .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+    .nav-links a { font-size: 14px; font-weight: 500; color: var(--gray-600); text-decoration: none; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { background: var(--blue); color: #fff !important; padding: 8px 18px; border-radius: 8px; font-size: 14px !important; font-weight: 600 !important; }
+    .nav-cta:hover { background: var(--blue-dark) !important; }
+
+    .page-hero {
+      background: var(--gray-50);
+      border-bottom: 1px solid var(--border);
+      padding: 56px 24px 48px;
+      text-align: center;
+    }
+    .page-hero h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 800; letter-spacing: -0.5px; margin-bottom: 16px; }
+    .page-hero p { font-size: 18px; color: var(--text-muted); max-width: 560px; margin: 0 auto; }
+
+    .glossary-section { padding: 72px 24px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .glossary-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+    .glossary-card:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border-color: var(--blue);
+    }
+    .card-zh { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+    .card-pinyin { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+    .card-summary { font-size: 14px; color: var(--gray-600); line-height: 1.5; }
+    .card-tag {
+      display: inline-block;
+      background: var(--blue-light); color: var(--blue);
+      font-size: 11px; font-weight: 600;
+      padding: 2px 8px; border-radius: 20px; margin-top: 14px;
+    }
+
+    .cta-banner {
+      background: var(--blue-light);
+      border-top: 1px solid #c7d9f8;
+      padding: 56px 24px;
+      text-align: center;
+    }
+    .cta-banner h2 { font-size: 26px; font-weight: 700; margin-bottom: 12px; }
+    .cta-banner p { font-size: 16px; color: var(--gray-600); max-width: 480px; margin: 0 auto 24px; }
+    .btn-primary {
+      display: inline-block; background: var(--blue); color: #fff;
+      padding: 12px 28px; border-radius: 8px; font-size: 15px; font-weight: 600;
+      text-decoration: none;
+    }
+    .btn-primary:hover { background: var(--blue-dark); }
+
+    footer {
+      border-top: 1px solid var(--border); padding: 32px 24px;
+      text-align: center; font-size: 13px; color: var(--text-muted);
+    }
+    footer a { color: var(--text-muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <a href="/" class="logo-gt">Geck<span>tool</span></a>
+      <span class="nav-sep">/</span>
+      <a href="/Chinese-Slang-Translator/" class="logo">Chinese <span>Slang Translator</span></a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="/Chinese-Slang-Translator/blog/">Glossary</a></li>
+      <li><a href="/Chinese-Slang-Translator/#pricing">Pricing</a></li>
+      <li><a href="/Chinese-Slang-Translator/support.html">Contact</a></li>
+      <li><a href="https://chromewebstore.google.com/detail/chinese-slang-translator/pilgpdbdibimblbdjepgekcfjippmnai" class="nav-cta" target="_blank" rel="noopener">Add to Chrome</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <h1>Chinese Slang & Business Terms Explained</h1>
+  <p>Plain-English explanations of Chinese internet slang, business jargon, and cultural expressions — with context a dictionary can't provide.</p>
+</div>
+
+<section class="glossary-section">
+  <div class="container">
+    <div class="glossary-grid">
+      {% assign sorted = collections.glossary | sort: 'data.title' %}
+      {% for entry in sorted %}
+      <a href="{{ entry.url }}" class="glossary-card">
+        <div class="card-zh">{{ entry.data.chinese }}</div>
+        {% if entry.data.pinyin %}<div class="card-pinyin">{{ entry.data.pinyin }}</div>{% endif %}
+        <div class="card-summary">{{ entry.data.description }}</div>
+        {% if entry.data.category %}<span class="card-tag">{{ entry.data.category }}</span>{% endif %}
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<div class="cta-banner">
+  <h2>See it in action</h2>
+  <p>Select any Chinese text while you browse and get an instant explanation — slang, tone, and cultural context included.</p>
+  <a href="https://chromewebstore.google.com/detail/chinese-slang-translator/pilgpdbdibimblbdjepgekcfjippmnai" class="btn-primary" target="_blank" rel="noopener">Add to Chrome — Free</a>
+</div>
+
+<footer>
+  <a href="/Chinese-Slang-Translator/">Chinese Slang Translator</a> &nbsp;·&nbsp;
+  <a href="/Chinese-Slang-Translator/support.html">Contact</a> &nbsp;·&nbsp;
+  <a href="/Chinese-Slang-Translator/legal.html">Privacy</a>
+</footer>
+
+</body>
+</html>

@@ -10,3 +10,5 @@ build/
 .env
 .env.local
 *.swp
+web_site/_site/
+web_site/node_modules/

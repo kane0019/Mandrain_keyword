@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ title }} — Chinese Slang Translator</title>
+  <meta name="description" content="{{ description }}" />
+  <link rel="canonical" href="https://www.gecktool.com{{ page.url }}" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://www.gecktool.com{{ page.url }}" />
+  <meta property="og:title" content="{{ title }} — Chinese Slang Translator" />
+  <meta property="og:description" content="{{ description }}" />
+  <meta property="og:site_name" content="Gecktool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="{{ title }} — Chinese Slang Translator" />
+  <meta name="twitter:description" content="{{ description }}" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": {{ title | json }},
+    "description": {{ description | json }},
+    "url": "https://www.gecktool.com{{ page.url }}",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Gecktool",
+      "url": "https://www.gecktool.com"
+    }
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #1a56db;
+      --blue-dark: #1246b3;
+      --blue-light: #e8f0fe;
+      --gray-50: #f8f9fa;
+      --gray-100: #f1f3f5;
+      --gray-200: #e9ecef;
+      --gray-400: #868e96;
+      --gray-600: #495057;
+      --gray-800: #212529;
+      --text: #1a1a2e;
+      --text-muted: #6c757d;
+      --border: #dee2e6;
+      --radius: 12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: #fff;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-size: 18px; font-weight: 700; color: var(--blue);
+      letter-spacing: -0.3px; text-decoration: none;
+    }
+    .logo span { color: var(--text); }
+    .nav-brand { display: flex; align-items: center; gap: 8px; }
+    .logo-gt { font-size: 14px; font-weight: 700; color: var(--text-muted); text-decoration: none; }
+    .logo-gt:hover { color: var(--text); }
+    .logo-gt span { color: var(--blue); }
+    .nav-sep { color: var(--border); font-size: 18px; line-height: 1; }
+    .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+    .nav-links a { font-size: 14px; font-weight: 500; color: var(--gray-600); text-decoration: none; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--blue); color: #fff !important;
+      padding: 8px 18px; border-radius: 8px;
+      font-size: 14px !important; font-weight: 600 !important;
+    }
+    .nav-cta:hover { background: var(--blue-dark) !important; }
+
+    /* ── Article ── */
+    .article-hero {
+      background: var(--gray-50);
+      border-bottom: 1px solid var(--border);
+      padding: 56px 24px 48px;
+    }
+    .article-hero .container { max-width: 760px; margin: 0 auto; }
+    .breadcrumb {
+      font-size: 13px; color: var(--text-muted); margin-bottom: 20px;
+    }
+    .breadcrumb a { color: var(--blue); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .article-title {
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .article-subtitle {
+      font-size: 18px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+    .article-meta {
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 16px;
+    }
+    .tag {
+      display: inline-block;
+      background: var(--blue-light);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .article-body {
+      padding: 56px 24px 80px;
+    }
+    .article-body .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    /* Markdown content styles */
+    .content h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 48px 0 16px;
+      letter-spacing: -0.3px;
+    }
+    .content h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 32px 0 12px;
+    }
+    .content p { margin-bottom: 20px; font-size: 16px; }
+    .content ul, .content ol { margin: 0 0 20px 24px; }
+    .content li { margin-bottom: 8px; font-size: 16px; }
+    .content strong { font-weight: 600; }
+    .content em { font-style: italic; }
+    .content blockquote {
+      border-left: 3px solid var(--blue);
+      padding: 12px 20px;
+      background: var(--blue-light);
+      border-radius: 0 8px 8px 0;
+      margin: 24px 0;
+      font-size: 16px;
+    }
+    .content code {
+      font-family: monospace;
+      background: var(--gray-100);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .content hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 40px 0;
+    }
+
+    /* Example card */
+    .example-card {
+      background: var(--gray-50);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin: 24px 0;
+    }
+    .example-card .zh {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .example-card .en {
+      font-size: 15px;
+      color: var(--text-muted);
+    }
+
+    /* ── CTA box ── */
+    .cta-box {
+      background: var(--blue-light);
+      border: 1px solid #c7d9f8;
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-top: 56px;
+      text-align: center;
+    }
+    .cta-box h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .cta-box p {
+      font-size: 15px;
+      color: var(--gray-600);
+      margin-bottom: 20px;
+    }
+    .btn-primary {
+      display: inline-block;
+      background: var(--blue);
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: var(--blue-dark); }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    footer a { color: var(--text-muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <a href="/" class="logo-gt">Geck<span>tool</span></a>
+      <span class="nav-sep">/</span>
+      <a href="/Chinese-Slang-Translator/" class="logo">Chinese <span>Slang Translator</span></a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="/Chinese-Slang-Translator/blog/">Glossary</a></li>
+      <li><a href="/Chinese-Slang-Translator/#pricing">Pricing</a></li>
+      <li><a href="/Chinese-Slang-Translator/support.html">Contact</a></li>
+      <li><a href="https://chromewebstore.google.com/detail/chinese-slang-translator/pilgpdbdibimblbdjepgekcfjippmnai" class="nav-cta" target="_blank" rel="noopener">Add to Chrome</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="article-hero">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="/Chinese-Slang-Translator/">Chinese Slang Translator</a> / <a href="/Chinese-Slang-Translator/blog/">Glossary</a> / {{ chinese }}
+    </div>
+    <h1 class="article-title">{{ title }}</h1>
+    <p class="article-subtitle">{{ subtitle }}</p>
+    <div class="article-meta">
+      {% if category %}<span class="tag">{{ category }}</span>{% endif %}
+      {% if difficulty %}<span class="tag">{{ difficulty }}</span>{% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="article-body">
+  <div class="container">
+    <div class="content">
+      {{ content }}
+    </div>
+
+    <div class="cta-box">
+      <h3>Encounter more terms like this?</h3>
+      <p>Chinese Slang Translator explains slang, business jargon, and cultural subtext instantly — just select any text while you browse.</p>
+      <a href="https://chromewebstore.google.com/detail/chinese-slang-translator/pilgpdbdibimblbdjepgekcfjippmnai" class="btn-primary" target="_blank" rel="noopener">Add to Chrome — Free</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="/Chinese-Slang-Translator/">Chinese Slang Translator</a> &nbsp;·&nbsp;
+  <a href="/Chinese-Slang-Translator/blog/">Glossary</a> &nbsp;·&nbsp;
+  <a href="/Chinese-Slang-Translator/support.html">Contact</a> &nbsp;·&nbsp;
+  <a href="/Chinese-Slang-Translator/legal.html">Privacy</a>
+</footer>
+
+</body>
+</html>
