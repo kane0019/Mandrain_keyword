@@ -26,16 +26,34 @@ Literal translation: **letting things rot** or **putting out the mess**.
 
 People often reach for "giving up," "not caring anymore," or "letting things slide." Those are all in the right area — but none of them quite capture it.
 
-The difference comes down to **sequence and attitude**:
+The most honest translations that native English speakers land on tend to involve profanity:
+
+- *"I've run out of fucks to give"*
+- *"Screw it. I can't be bothered anymore. I'm done trying."*
+- *"Fuck it, screw it, can't be fucked"*
+
+That f-word requirement isn't accidental — it's baked into the etymology (see below). More polite alternatives like "throw in the towel" or "let it go to ruin" capture the action but lose the attitude.
+
+The closest clean approximation: *"It's basically that feeling of knowing things are going badly and just... letting them stay bad."* Which is, admittedly, a ridiculously long way to explain one word. But that's the vibe it carries.
+
+The key difference from simple giving up comes down to **sequence**:
 
 - 放弃 (fàngqì) = neutral giving up, before or during the attempt
-- 摆烂 = things are **already** kind of a mess, and you are **no longer seriously trying to fix them**
+- 摆烂 = real effort came first, things are **already** a mess, and you've stopped pretending to fix them
 
-There's often a specific "fine, whatever" energy to it — not passive resignation, but an active decision to stop trying to hold things together. You're not just failing; you're choosing to let yourself fail.
+You're not just failing — you're choosing to let yourself fail, with a "fine, whatever" energy that's more active than passive resignation.
 
-The closest English approximation might be: *"It's basically that feeling of knowing things are going badly and just... letting them stay bad."*
+## Etymology: Why the F-Word Is Built In
 
-Which is, admittedly, a ridiculously long way to explain one word. But that's the vibe it carries.
+摆烂 has roots in Taiwanese slang — 白爛/北懶 (*beilan*), where 爛 (*lan*) literally meant "balls" in a crude, gangster-ish register. The original term had real vulgarity to it.
+
+As the word spread to mainland China and broader Chinese internet culture, the gangster tone softened — but the underlying negativity stayed. That's why polite translations always feel slightly off: the word was never polite to begin with.
+
+## The Closest English Equivalent: Bedrot
+
+The English slang *bedrot* (or *bed rotting*) comes closest in spirit — the act of lying in bed for hours, scrolling, dissociating, and ignoring things you're supposed to do. Both words describe a state that's not quite laziness and not quite depression, somewhere in between.
+
+The difference: bedrot is more about physical inaction. 摆烂 is specifically about something that *should* be getting done — and consciously not doing it.
 
 ---
 
