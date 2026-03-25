@@ -72,6 +72,6 @@ Beijing has actively pushed back against 躺平 ideology, with state media calli
 ## Related Terms
 
 - **[内卷 (nèijuǎn)](/Chinese-Slang-Translator/blog/neijuan/)** — the competitive rat race that 躺平 is a response to
-- **摆烂 (bǎi làn)** — "let it rot"; giving up entirely, even more defeatist than 躺平
+- **[摆烂 (bǎi làn)](/Chinese-Slang-Translator/blog/bailuan/)** — "let it rot"; knowing things are going badly and no longer trying to fix them; more chaotic than 躺平
 - **佛系 (fó xì)** — "Buddhist style"; going through the motions without emotional investment
 - **卷王 (juǎn wáng)** — the grind-hard overachiever; the opposite of someone who 躺平s
