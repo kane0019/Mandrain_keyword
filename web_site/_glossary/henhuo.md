@@ -7,6 +7,12 @@ pinyin: "hěn huó"
 category: "Internet Culture & Media"
 difficulty: "intermediate"
 tags: ["internet slang", "social media", "content culture", "Douyin"]
+date: 2026-03-25
+faqs:
+  - q: "What does 狠活 mean in Chinese?"
+    a: "狠活 (hěn huó) describes content or skills so impressively extreme, precise, or shocking that they stop you cold. It is used for jaw-dropping videos, impossible-seeming craftsmanship, and highly engineered viral content on platforms like Douyin."
+  - q: "What is 科技与狠活 and why did it go viral?"
+    a: "科技与狠活 (kējì yǔ hěn huó) means technology and ruthless craft. It was coined by food blogger 辛吉飞 in 2022 to ironically describe how artificial additives perfectly mimic real ingredients. It went viral and is now used to call out anything more artificial or engineered than it first appears."
 ---
 
 ## What Does 狠活 Literally Mean?

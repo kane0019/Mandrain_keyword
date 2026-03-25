@@ -6,6 +6,12 @@ pinyin: "nèijuǎn"
 description: "内卷 describes a cycle of intense, self-defeating competition where everyone works harder but nobody gets ahead. Used to describe overwork culture, hyper-competitive education, and saturated job markets."
 category: "Social & Work Culture"
 difficulty: "Intermediate"
+date: 2026-03-25
+faqs:
+  - q: "What does 内卷 mean in Chinese?"
+    a: "内卷 (nèijuǎn) describes a cycle of intense, self-defeating competition where everyone works harder but the total rewards do not increase. Borrowed from anthropology, it became China's defining word for exhausting, zero-sum overwork culture across universities, workplaces, and business sectors."
+  - q: "How is 内卷 different from normal competition?"
+    a: "Normal competition (竞争) produces a winner — more effort leads to better results for someone. 内卷 produces no winner: everyone escalates effort but the total outcome stays the same or shrinks. The competition is irrational and exhausting for all participants."
 ---
 
 ## Literal meaning
@@ -63,7 +69,7 @@ This is **not** simply "competition." The implication is that the competition is
 
 ## Related terms
 
-- **躺平 (tǎng píng)** — "lie flat": the counter-response to 内卷; choosing to opt out of the competitive race entirely
+- **[躺平 (tǎng píng)](/Chinese-Slang-Translator/blog/tangping/)** — "lie flat": the counter-response to 内卷; choosing to opt out of the competitive race entirely
 - **卷王** — someone who 卷 harder than anyone else; can be said admiringly or critically
 - **反卷** — anti-involution; resisting the pressure to over-compete
-- **存量竞争 (cúnliàng jìngzhēng)** — zero-sum competition in a saturated market: the business-register equivalent of 内卷
+- **[存量竞争 (cúnliàng jìngzhēng)](/Chinese-Slang-Translator/blog/cunliangjingzheng/)** — zero-sum competition in a saturated market: the business-register equivalent of 内卷

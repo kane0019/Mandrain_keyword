@@ -24,6 +24,7 @@
     "headline": {{ title | json }},
     "description": {{ description | json }},
     "url": "https://www.gecktool.com{{ page.url }}",
+    "datePublished": "{{ date | date: '%Y-%m-%d' }}",
     "publisher": {
       "@type": "Organization",
       "name": "Gecktool",
@@ -31,6 +32,25 @@
     }
   }
   </script>
+
+  {% if faqs %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {% for faq in faqs %}{
+        "@type": "Question",
+        "name": {{ faq.q | json }},
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": {{ faq.a | json }}
+        }
+      }{% unless forloop.last %},{% endunless %}{% endfor %}
+    ]
+  }
+  </script>
+  {% endif %}
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -280,6 +300,7 @@
     <div class="article-meta">
       {% if category %}<span class="tag">{{ category }}</span>{% endif %}
       {% if difficulty %}<span class="tag">{{ difficulty }}</span>{% endif %}
+      {% if date %}<span>Published {{ date | date: "%B %d, %Y" }}</span>{% endif %}
     </div>
   </div>
 </div>

@@ -7,6 +7,12 @@ pinyin: "pò fáng"
 category: "Emotion & Internet Culture"
 difficulty: "beginner"
 tags: ["emotion", "internet slang", "social media", "viral"]
+date: 2026-03-25
+faqs:
+  - q: "What does 破防 mean in Chinese?"
+    a: "破防 (pò fáng) means your emotional defenses have been breached — you were unexpectedly and deeply moved by content, causing strong emotion or tears you were not prepared for. It originally came from gaming terminology about breaking through a defense line."
+  - q: "How is 破防 used on Chinese social media?"
+    a: "Chinese internet users comment 破防了 on videos or posts that unexpectedly made them emotional. On platforms like Bilibili and Weibo, it signals that content achieved deep emotional resonance — the goal of most successful Chinese content creators and brands."
 ---
 
 ## What Does 破防 Literally Mean?

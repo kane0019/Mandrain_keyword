@@ -1,4 +1,4 @@
 {
-  "layout": "post",
+  "layout": "post.liquid",
   "permalink": "/Chinese-Slang-Translator/blog/{{ page.fileSlug }}/"
 }

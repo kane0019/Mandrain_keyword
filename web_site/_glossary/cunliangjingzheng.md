@@ -7,6 +7,12 @@ pinyin: "cúnliàng jìngzhēng"
 category: "Business & Economics"
 difficulty: "advanced"
 tags: ["business", "economics", "market strategy", "corporate China"]
+date: 2026-03-25
+faqs:
+  - q: "What does 存量竞争 mean in Chinese business?"
+    a: "存量竞争 (cúnliàng jìngzhēng) means competing for existing customers in a saturated, zero-growth market. It is the Chinese business term for zero-sum competition where the only way to gain market share is to take it from competitors — no new customers are entering the market."
+  - q: "What is the difference between 存量竞争 and 增量竞争?"
+    a: "增量竞争 (zēngliàng jìngzhēng) is competition in a growing market where companies can win without directly taking from rivals. 存量竞争 is zero-sum — the customer pool is fixed. China's post-growth economy has shifted most consumer sectors from 增量 to 存量 competition."
 ---
 
 ## What Does 存量竞争 Literally Mean?
@@ -79,7 +85,7 @@ If you're entering or analyzing the Chinese market, 存量竞争 signals:
 ## Related Terms
 
 - **增量市场 (zēngliàng shìchǎng)** — growing market; the opposite of 存量竞争
-- **内卷 (nèijuǎn)** — involution; the social/labor analog of 存量竞争
+- **[内卷 (nèijuǎn)](/Chinese-Slang-Translator/blog/neijuan/)** — involution; the social/labor analog of 存量竞争
 - **价格战 (jiàgé zhàn)** — price war; the typical battlefield tactic in 存量竞争
 - **护城河 (hù chéng hé)** — moat; competitive defensibility (what companies try to build to survive 存量竞争)
 - **精细化运营 (jīngxì huà yùnyíng)** — precision operations; the operational approach required in 存量竞争 (squeezing more from each user)

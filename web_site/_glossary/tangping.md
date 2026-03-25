@@ -7,6 +7,12 @@ pinyin: "tǎng píng"
 category: "Social & Work Culture"
 difficulty: "beginner"
 tags: ["work culture", "youth culture", "anti-hustle", "social media"]
+date: 2026-03-25
+faqs:
+  - q: "What does 躺平 mean in Chinese?"
+    a: "躺平 (tǎng píng) literally means 'lying flat.' It describes the deliberate choice to opt out of China's high-pressure work and achievement culture — refusing to chase promotions, buy property, or meet society's timeline expectations."
+  - q: "Is 躺平 the same as being lazy?"
+    a: "No. 躺平 is a conscious rejection of the 996 work culture (9am to 9pm, 6 days a week) after rewards like affordable housing and career advancement became unattainable for many young Chinese people. It is a social statement, not a personality trait."
 ---
 
 ## What Does 躺平 Literally Mean?
@@ -65,7 +71,7 @@ Beijing has actively pushed back against 躺平 ideology, with state media calli
 
 ## Related Terms
 
-- **内卷 (nèijuǎn)** — the competitive rat race that 躺平 is a response to
+- **[内卷 (nèijuǎn)](/Chinese-Slang-Translator/blog/neijuan/)** — the competitive rat race that 躺平 is a response to
 - **摆烂 (bǎi làn)** — "let it rot"; giving up entirely, even more defeatist than 躺平
 - **佛系 (fó xì)** — "Buddhist style"; going through the motions without emotional investment
 - **卷王 (juǎn wáng)** — the grind-hard overachiever; the opposite of someone who 躺平s
