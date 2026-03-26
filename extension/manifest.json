@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Chinese Slang Translator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Intelligent word analysis providing structured insights into literal meaning, subtext, and emotional tone.",
   "permissions": [
     "activeTab",

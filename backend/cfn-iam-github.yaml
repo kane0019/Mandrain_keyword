@@ -8,9 +8,6 @@ Parameters:
   GitHubOrg:
     Type: String
     Description: GitHub organisation or user name (e.g. "your-org")
-  GitHubRepo:
-    Type: String
-    Description: GitHub repository name (e.g. "Mandrain_keyword")
   LambdaBucketDev:
     Type: String
     Description: S3 bucket for Lambda packages
@@ -28,7 +25,7 @@ Resources:
   GitHubActionsDeployRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: mandrain-github-actions-deploy
+      RoleName: github-action-role
       Description: GitHub Actions deployment role for Mandrain Keyword
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
@@ -41,8 +38,8 @@ Resources:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
               StringLike:
-                # Allows any branch/tag/PR in the repo
-                token.actions.githubusercontent.com:sub: !Sub 'repo:${GitHubOrg}/${GitHubRepo}:*'
+                # Allows any repo under the GitHub org/user
+                token.actions.githubusercontent.com:sub: !Sub 'repo:${GitHubOrg}/*'
       Tags:
         - Key: Project
           Value: mandrain-keyword
@@ -51,7 +48,7 @@ Resources:
   GitHubActionsDeployPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: mandrain-github-deploy-policy
+      PolicyName: github-action-deploy-policy
       Roles:
         - !Ref GitHubActionsDeployRole
       PolicyDocument:
@@ -77,7 +74,14 @@ Resources:
               - cloudformation:DeleteChangeSet
               - cloudformation:DescribeChangeSet
               - cloudformation:ExecuteChangeSet
-            Resource: !Sub 'arn:aws:cloudformation:*:${AWS::AccountId}:stack/mandrain-*'
+            Resource: !Sub 'arn:aws:cloudformation:*:${AWS::AccountId}:stack/*'
+
+          # CloudFormation — allow SAM/macro transforms (account-id is "aws" in these ARNs)
+          - Sid: CloudFormationTransforms
+            Effect: Allow
+            Action:
+              - cloudformation:CreateChangeSet
+            Resource: 'arn:aws:cloudformation:*:aws:transform/*'
 
           # S3 — Lambda code packages (scoped to project bucket)
           - Sid: S3LambdaPackages
@@ -114,7 +118,7 @@ Resources:
               - lambda:GetFunctionUrlConfig
               - lambda:ListFunctionUrlConfigs
             Resource:
-              - !Sub 'arn:aws:lambda:*:${AWS::AccountId}:function:mandrain-*'
+              - !Sub 'arn:aws:lambda:*:${AWS::AccountId}:function:*'
 
           # Lambda — read-only on layers (Bedrock SDK etc.)
           - Sid: LambdaLayerRead
@@ -133,7 +137,7 @@ Resources:
               - logs:DescribeLogGroups
               - logs:PutRetentionPolicy
               - logs:DeleteRetentionPolicy
-            Resource: !Sub 'arn:aws:logs:*:${AWS::AccountId}:log-group:/aws/lambda/mandrain-*'
+            Resource: !Sub 'arn:aws:logs:*:${AWS::AccountId}:log-group:/aws/lambda/*'
 
           # DynamoDB — tables scoped to project
           - Sid: DynamoDB
@@ -149,7 +153,7 @@ Resources:
               - dynamodb:TagResource
               - dynamodb:UntagResource
               - dynamodb:DescribeContinuousBackups
-            Resource: !Sub 'arn:aws:dynamodb:*:${AWS::AccountId}:table/mandrain-*'
+            Resource: !Sub 'arn:aws:dynamodb:*:${AWS::AccountId}:table/*'
 
           # API Gateway — REST APIs
           - Sid: APIGateway
@@ -181,7 +185,7 @@ Resources:
               - iam:TagRole
               - iam:UntagRole
             Resource:
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/mandrain-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
 
           # Secrets Manager — read JWT secret ARN during deploy
           - Sid: SecretsManagerRead
@@ -193,7 +197,7 @@ Resources:
               - secretsmanager:DescribeSecret
               - secretsmanager:GetSecretValue
               - secretsmanager:TagResource
-            Resource: !Sub 'arn:aws:secretsmanager:*:${AWS::AccountId}:secret:mandrain-*'
+            Resource: !Sub 'arn:aws:secretsmanager:*:${AWS::AccountId}:secret:*'
 
           # EC2 / VPC — for cfn-vpc-s3 stack
           - Sid: VPC
@@ -251,8 +255,8 @@ Resources:
               - s3:GetBucketLocation
               - s3:PutObjectAcl
             Resource:
-              - !Sub 'arn:aws:s3:::mandrain-website-*'
-              - !Sub 'arn:aws:s3:::mandrain-website-*/*'
+              - 'arn:aws:s3:::*'
+              - 'arn:aws:s3:::*/*'
 
           # CloudFormation — deploy website stack
           - Sid: CloudFormationWebsite
@@ -267,7 +271,7 @@ Resources:
               - cloudformation:DeleteChangeSet
               - cloudformation:DescribeChangeSet
               - cloudformation:ExecuteChangeSet
-            Resource: !Sub 'arn:aws:cloudformation:*:${AWS::AccountId}:stack/mandrain-website-*'
+            Resource: !Sub 'arn:aws:cloudformation:*:${AWS::AccountId}:stack/*'
 
           # SSM — CloudFormation reads parameter store during deploy
           - Sid: SSMRead
@@ -275,7 +279,7 @@ Resources:
             Action:
               - ssm:GetParameters
               - ssm:GetParameter
-            Resource: !Sub 'arn:aws:ssm:*:${AWS::AccountId}:parameter/mandrain-*'
+            Resource: !Sub 'arn:aws:ssm:*:${AWS::AccountId}:parameter/*'
 
 Outputs:
   DeployRoleArn:
@@ -283,4 +287,4 @@ Outputs:
       Set this as the AWS_ROLE_ARN secret in your GitHub repository.
     Value: !GetAtt GitHubActionsDeployRole.Arn
     Export:
-      Name: mandrain-github-deploy-role-arn
+      Name: github-action-role-arn
