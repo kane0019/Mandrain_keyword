@@ -47,6 +47,25 @@ Resources:
             Action: s3:GetObject
             Resource: !Sub '${WebsiteBucket.Arn}/*'
 
+  # ========== Apex Domain Redirect Bucket ==========
+  # Redirects gecktool.com (no-www) → www.gecktool.com so Google has one canonical URL.
+  # NOTE: S3 website hosting is HTTP-only. For HTTPS redirect (required for SEO), point the
+  # apex domain DNS to a CloudFront distribution that has a Function/Lambda@Edge doing the
+  # 301 redirect, then alias this bucket only as a fallback HTTP endpoint.
+  ApexRedirectBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'mandrain-apex-redirect-${EnvironmentName}'
+      WebsiteConfiguration:
+        RedirectAllRequestsTo:
+          HostName: www.gecktool.com
+          Protocol: https
+      Tags:
+        - Key: Project
+          Value: mandrain-keyword
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
 Outputs:
   BucketName:
     Description: S3 bucket name - set this as WEBSITE_BUCKET_DEV (or PROD) in GitHub Actions variables
@@ -59,3 +78,11 @@ Outputs:
     Value: !GetAtt WebsiteBucket.WebsiteURL
     Export:
       Name: !Sub 'mandrain-website-url-${EnvironmentName}'
+
+  ApexRedirectURL:
+    Description: >
+      S3 website endpoint for the apex redirect bucket. Point the gecktool.com (no-www)
+      DNS A/ALIAS record to a CloudFront distribution fronting this bucket to get HTTPS redirects.
+    Value: !GetAtt ApexRedirectBucket.WebsiteURL
+    Export:
+      Name: !Sub 'mandrain-apex-redirect-url-${EnvironmentName}'
