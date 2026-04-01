@@ -250,9 +250,17 @@ async function handleWordQuery(request, sendResponse, sender) {
     // 会话/鉴权类错误直接透传错误码，不做降级
     const authErrors = ['TOKEN_INVALID', 'SUBSCRIPTION_INACTIVE', 'DEVICE_LIMIT_EXCEEDED', 'TOKEN_MISSING'];
     if (authErrors.includes(error.code)) {
+      let code = error.code;
+      // No custom token = free user hitting auth wall → show upgrade prompt instead of token error
+      if (code === 'TOKEN_INVALID' || code === 'TOKEN_MISSING') {
+        const stored = await chrome.storage.local.get(STORAGE_KEYS.LICENSE_TOKEN);
+        if (!String(stored[STORAGE_KEYS.LICENSE_TOKEN] || '').trim()) {
+          code = 'UPGRADE_REQUIRED';
+        }
+      }
       sendResponse({
         success: false,
-        code: error.code,
+        code,
         error: error.message
       });
       return;
@@ -378,6 +386,14 @@ async function queryCloudAPIStreaming(word, context, pageUrl, tabId, requestId, 
         console.warn('[Mandrain] Streaming auth error, refreshing session and retrying...');
         await chrome.storage.local.remove('auth.session');
         return queryCloudAPIStreaming(word, context, pageUrl, tabId, requestId, streamUrl, true);
+      }
+
+      // No custom token = free user hitting auth wall → show upgrade prompt instead of token error
+      if (errCode === 'TOKEN_INVALID' || errCode === 'TOKEN_MISSING') {
+        const stored = await chrome.storage.local.get(STORAGE_KEYS.LICENSE_TOKEN);
+        if (!String(stored[STORAGE_KEYS.LICENSE_TOKEN] || '').trim()) {
+          errCode = 'UPGRADE_REQUIRED';
+        }
       }
 
       sendStreamEvent(tabId, requestId, { type: 'error', error: errCode, message: errMsg });
