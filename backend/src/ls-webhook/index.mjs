@@ -147,7 +147,7 @@ async function handleLicenseKeyCreated(payload) {
       return;
     }
     throw err;
-  }));
+  });
 }
 
 // ---------- subscription_created ----------
