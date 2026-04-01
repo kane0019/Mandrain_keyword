@@ -141,7 +141,7 @@ async function handleLicenseKeyCreated(payload) {
     },
     // Don't overwrite existing records (idempotency — LS may retry)
     ConditionExpression: 'attribute_not_exists(license_token)',
-  }).catch(err => {
+  })).catch(err => {
     if (err.name === 'ConditionalCheckFailedException') {
       console.log(`[Webhook] License ${licenseKey} already exists, skipping`);
       return;
